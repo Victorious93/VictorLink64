@@ -15,6 +15,7 @@ Legend: ☑ done and evidenced · ◐ partly done · ☐ not started
 - ☑ Debug-only CI workflow: on a GitHub runner (head `a08b3f4`) `assembleDebug` succeeded in 18m17s and the payload verifier passed — ☐ artifact upload **blocked by the repository's Actions artifact-storage quota** (owner action: free/raise storage, re-run)
 - ◐ Binary provenance: committed binaries inventoried, **correspondence to source not verified**
 - ☐ Release signing (none exists)
+- ☑ Branding: `assets/logo.png` wired into the adaptive launcher icon (foreground inside the 66/108 dp safe zone on `#031227`), legacy icons, and the Android TV banner. Compiled and resource-checked with `aapt2`; **how it looks on a real launcher/TV is unverified** (only a mask preview was inspected). The logo tagline reads "PLAY · CONNECT · CAST"; Cast is **not implemented**.
 
 ### Phase 2 — Local gameplay and controls
 ☐ direct launch / one-time import · ☐ ZIP/ROM hardening review of upstream code · ☐ save-state metadata + incompatibility refusal · ☐ unified N64 input model · ☐ stuck-input clearing on controller loss · ☐ UI reduced to Play/Resume/Connect/Controls/Settings
