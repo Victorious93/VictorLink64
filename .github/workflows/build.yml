@@ -27,6 +27,10 @@ jobs:
         distribution: temurin
 
     - uses: android-actions/setup-android@v3
+      with:
+        # Pinned as in upstream CI: the action's default cmdline-tools (16.0)
+        # fails with "Failed to find package 'tools'".
+        cmdline-tools-version: 9477386
 
     - name: Install pinned NDK and CMake
       run: sdkmanager "ndk;26.1.10909125" "cmake;3.22.1"
