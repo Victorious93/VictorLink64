@@ -26,14 +26,14 @@ jobs:
         java-version: 21
         distribution: temurin
 
-    - uses: android-actions/setup-android@v3
-      with:
-        # Pinned as in upstream CI: the action's default cmdline-tools (16.0)
-        # fails with "Failed to find package 'tools'".
-        cmdline-tools-version: 9477386
-
-    - name: Install pinned NDK and CMake
-      run: sdkmanager "ndk;26.1.10909125" "cmake;3.22.1"
+    # The runner image ships an Android SDK with sdkmanager on PATH.
+    # android-actions/setup-android@v3 is avoided: it requests the removed
+    # `tools` package and fails ("Failed to find package 'tools'").
+    - name: Install pinned Android SDK packages
+      run: |
+        yes | sdkmanager --licenses > /dev/null || true
+        sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;26.1.10909125" "cmake;3.22.1"
+        echo "sdk.dir=${ANDROID_HOME}" > local.properties
 
     - name: Install native build helpers
       run: |
