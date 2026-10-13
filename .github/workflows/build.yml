@@ -26,14 +26,20 @@ jobs:
         java-version: 21
         distribution: temurin
 
-    # The runner image ships an Android SDK with sdkmanager on PATH.
-    # android-actions/setup-android@v3 is avoided: it requests the removed
-    # `tools` package and fails ("Failed to find package 'tools'").
+    # Use the Android SDK preinstalled on the runner image. sdkmanager is not
+    # on PATH there, so locate the newest cmdline-tools install. Avoids
+    # android-actions/setup-android@v3, which requests the removed `tools`
+    # package and fails ("Failed to find package 'tools'").
     - name: Install pinned Android SDK packages
       run: |
-        yes | sdkmanager --licenses > /dev/null || true
-        sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;26.1.10909125" "cmake;3.22.1"
-        echo "sdk.dir=${ANDROID_HOME}" > local.properties
+        SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+        SM=$(ls -d "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | sort -V | tail -1)
+        if [ -z "$SM" ]; then echo "sdkmanager not found under $SDK/cmdline-tools"; ls -la "$SDK" || true; exit 1; fi
+        echo "Using $SM"
+        yes | "$SM" --sdk_root="$SDK" --licenses > /dev/null || true
+        "$SM" --sdk_root="$SDK" "platforms;android-36" "build-tools;36.0.0" "ndk;26.1.10909125" "cmake;3.22.1"
+        echo "sdk.dir=$SDK" > local.properties
+        echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
 
     - name: Install native build helpers
       run: |
