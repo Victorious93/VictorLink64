@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/fzurita/GLideN64.git
+	branch = master
+	commit = a2f16608b395515c60067f29c12d95c63975d33b
+	parent = 397e1dd6e45a04812cd2c43b2f2424704079e103
+	method = merge
+	cmdver = 0.4.3

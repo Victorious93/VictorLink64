@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Sebesség %1$d %%</string>
+  <string name="menuItem_slotSave">Mentés</string>
+  <string name="menuItem_slotLoad">Mentett hely betöltése</string>
+  <string name="menuItem_setSlot">Mentett hely %1$d</string>
+  <string name="menuItem_fileSave">Mentés fájlba…</string>
+  <string name="menuItem_fileLoad">Betöltés fájlból</string>
+  <string name="menuItem_setSpeed">Játék sebesség</string>
+  <string name="menuItem_paks">Controller Paks</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">IME változtatása</string>
+  <string name="menuItem_exit">Kilépés</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_unmapAll">Kiosztás megszüntése</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Játék</string>
+  <string name="menuItem_settings">Beállítások</string>
+  <string name="menuItem_help">Segítség</string>
+  <string name="menuItem_faq">GYIK</string>
+  <string name="menuItem_controllerDiagnostics">Kontroller diagnosztika</string>
+  <string name="menuItem_reportBug">Bug jelentése</string>
+  <string name="menuItem_about">Névjegy</string>
+  <string name="menuItem_credits">Kreditek</string>
+  <string name="menuItem_localeOverride">Nyelv</string>
+  <!--ManageProfilesActivity-->
+  <!--Popup Dialogs-->
+  <!--Lists-->
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+    <string name="toast_loadingSlot">Mentése  %1$d betöltése</string>
+  <string name="toast_savingSlot">%1$d Mentése</string>
+  <string name="toast_loadingFile">Betöltés %1$s…</string>
+  <string name="toast_savingFile">Mentés %1$s…</string>
+  <string name="toast_overwritingFile">%1$s felülírása…</string>
+  <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">SD kártya nem elérhető (USB-t csatlakoztasd le majd próbáld újra)</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Folytatás</string>
+  <string name="actionResume_summary">Bizonytalan csalások használatánál</string>
+    <string name="actionReloadAssets_title">Alkalmazás forrás újratöltése</string>
+  <string name="actionReloadAssets_summary">Nem befolyásolja a felhasználói beállításokat, a ROMokat, vagy az egyéni adatokat</string>
+  <!--Preference Screens-->
+  <string name="screenCheats_summaryDisabled">Kikapcsolva</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Csalás beállítások (hosszan nyomd a jegyzetekért)</string>
+  <string name="categoryGln64_title">Gln64 beállítások</string>
+  <string name="categoryRice_title">Rice beállítások</string>
+  <string name="categoryAudio_title">Hang</string>
+  <string name="categoryTouchscreen_title">Érintőpanel</string>
+  <string name="categoryInput_title">Bevitel</string>
+  <string name="categoryData_title">Adat</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Csalás engedélyezése</string>
+  <string name="touchscreenFeedback_title">Haptic visszajelzés</string>
+  <string name="touchscreenFeedback_summary">Gombnyomáskor rezgés</string>
+  <string name="inputVolumeMappable_title">Programozható hangerő gombok</string>
+  <string name="inputVolumeMappable_summary">Hangerő gombok programozásának engedélyezése</string>
+  <string name="inputShareController_title">Kontroller megosztása</string>
+  <string name="inputShareController_summary">Egy beviteli eszközt több játékos is irányíthat</string>
+  <string name="gln64Fog_title">Köd</string>
+  <string name="gln64Fog_summary">(dolgozunk rajta)</string>
+  <string name="gln64Sai_title">2xSaI textúra szűrő</string>
+  <string name="gln64Sai_summary">Csökkenti a textúra pixeleződést</string>
+  <string name="gln64ScreenClear_title">Képernyőtisztítás kényszerítése</string>
+  <string name="gln64ScreenClear_summary">Kapcsold ki a sebességért (okozhat videoproblémákat)</string>
+  <string name="gln64AlphaTest_title">Alfa teszt</string>
+  <string name="gln64AlphaTest_summary">Kapcsold ki a sebességért (fekete textúrákat okozhat)</string>
+  <string name="riceAutoFrameskip_title">Automata képkockaugrás </string>
+  <string name="riceAutoFrameskip_summary">Növeli a játék sebességét, fps szám ellenében</string>
+  <string name="riceFastTexture_title">Gyors textúra betöltés</string>
+  <string name="riceFastTexture_summary">Kijavítja a kör átmeneteket</string>
+  <string name="riceForceTextureFilter_title">Textúra szűrés</string>
+  <string name="riceForceTextureFilter_summary">Kijavítja a textúrák csillogását, és homályosodását messzi tárgyaknál</string>
+  <string name="riceHiResTextures_title">Magas felbontású textúrák</string>
+  <string name="riceHiResTextures_summary">Importált textúra csomagok használata</string>
+  <string name="riceFog_title">Köd</string>
+  <string name="audioSwapChannels_title">Hang csatornák megcserélése</string>
+  <string name="audioSwapChannels_summary">Kicseréli a bal és jobb hang csatornákat</string>
+  <!--Gallery sections-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Gomb auto-tartása</string>
+  <string name="touchscreenAutoHold_entryDisabled">Kikapcsolva</string>
+  <string name="touchscreenAutoHold_entryLongPress">Hosszan nyomáskor</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Elcsúsztatáskor</string>
+  <string name="displayOrientation_title">Képernyő orientáció</string>
+  <string name="displayOrientation_entryLandscape">Elforgatott</string>
+  <string name="displayOrientation_entryReverseLandscape">Fordított elforgatott</string>
+  <string name="displayOrientation_entryPortrait">Portré</string>
+  <string name="displayOrientation_entryReversePortrait">Fordított portré</string>
+    <string name="videoPlugin_entryNone">Nincs (video kikapcsolva)</string>
+  <string name="videoHardwareType_title">Vibrálás csökkentése</string>
+  <string name="videoHardwareType_entryAuto">Telefon/tablet alapján auto-felismerés</string>
+  <string name="videoHardwareType_entryStandard">Alap profil</string>
+  <string name="videoHardwareType_entryI">I profil</string>
+  <string name="videoHardwareType_entryO1">O-1 profil</string>
+  <string name="videoHardwareType_entryO2">O-2 profil</string>
+  <string name="videoHardwareType_entryQ">Q profil</string>
+  <string name="videoHardwareType_entryT">T profil</string>
+  <string name="gln64Frameskip_title">Képkocka ugrás</string>
+  <string name="gln64Frameskip_entryNever">Soha ne ugorjon képkockát</string>
+  <string name="gln64Frameskip_entryUpTo1">Egynél többet soha</string>
+  <string name="gln64Frameskip_entryUpTo2">Kettőnél többet soha</string>
+  <string name="gln64Frameskip_entryUpTo3">Háromnál többet soha</string>
+  <string name="gln64Frameskip_entryUpTo4">Négynél többet soha</string>
+  <string name="gln64Frameskip_entryUpTo5">Ötnél többet soha</string>
+  <string name="gln64Frameskip_entryExactly1">Pontosan 1 képkocka</string>
+  <string name="gln64Frameskip_entryExactly2">Pontosan 2 képkocka</string>
+  <string name="gln64Frameskip_entryExactly3">Pontosan 3 képkocka</string>
+  <string name="gln64Frameskip_entryExactly4">Pontosan 4 képkocka</string>
+  <string name="gln64Frameskip_entryExactly5">Pontosan 5 képkocka</string>
+  <string name="riceScreenUpdate_title">Képernyő frissítési módszer</string>
+  <string name="riceScreenUpdate_entryRomDefault">ROM alapértelmezett</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">VI origin update</string>
+  <string name="riceScreenUpdate_entryVIOriginChange">VI origin változás</string>
+  <string name="riceScreenUpdate_entryCIChange">CI változás</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">Első CI változásnál</string>
+  <string name="riceScreenUpdate_entryFirstPrimDraw">Első primitív rajzolásnál</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">Képernyő tisztítás előtt</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">Képernyő rajzolás után</string>
+  <string name="riceTextureEnhancement_title">Textúra felkonvertálás/fokozás</string>
+  <string name="riceTextureEnhancement_entryNone">Nincs</string>
+  <string name="riceTextureEnhancement_entryScale2x">Scale 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Élesítés</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Több élesítés</string>
+  <string name="navigationMode_title">Kisegítő lehetőségek</string>
+  <string name="navigationMode_summary">Menü navigációs mód: %1$s</string>
+  <string name="navigationMode_entryAuto">A készülék konfigurációból auto-kiválasztás</string>
+  <string name="navigationMode_entryStandard">Alap mód</string>
+  <string name="r4300Emulator_title">R4300 emulátor</string>
+  <string name="r4300Emulator_entryPureInterpreter">Tiszta interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Gyorsítótárazott interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dinamikus újrafordító (dynarec)</string>
+  <string name="localeOverride_entrySystemDefault">Rendszer alapértelmezett</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Érintőkijelző átlátszóság</string>
+  <string name="displayActionBarTransparency_title">Action bar átlátszóság</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+    <!--Player Map Preferences-->
+  <string name="playerMap_title">Többjátékos</string>
+  <string name="playerMap_summary">Minden játékos kontrollerének a definiálása</string>
+  <!--Profile Preferences-->
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Megerősítés</string>
+  <string name="confirmResetGame_message">Biztos újraindítod? Az összes eddigi mentett állás el fog veszni.</string>
+  <string name="confirmOverwriteFile_message">Felülírod %1$s ?</string>
+  <string name="confirmUnmapAll_message"> %1$s beviteli eszköz kiosztásának megszüntetése?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">Fájl neve</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Inicializálás</string>
+  <string name="assetExtractor_progress">%1$.0f%% kész: %2$s</string>
+  <string name="assetExtractor_finished">Befejezve</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Csalás %1$d</string>
+  <string name="cheats_longPress">(hosszú nyomás a teljes szövegért)</string>
+  <string name="cheat_disabled">(kikapcsolva)</string>
+  <string name="cheatOption_title">Teljes szöveg</string>
+  <string name="cheatNotes_title">Jegyzetek</string>
+  <string name="cheatNotes_none">(nincsenek jegyzetek ehhez a csaláshoz)</string>
+  <!--Cheat Editor-->
+    <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Textúrák kicsomagolása</string>
+    <string name="pathHiResTexturesTask_errorMessage">Probléma a textúrák kicsomagolásánál!</string>
+  <!--Scan Roms Dialog-->
+  <!--ROM Scanning-->
+  <!--ROM information calculation-->
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Gyökérmappa </string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Készülék %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Készülék  %1$d</string>
+  <string name="playerMapPreference_popupTitle">Játékos %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Kiosztás megszüntése</string>
+    <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Kiosztás megszüntése</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Increment slot</string>
+  <string name="inputMapActivity_reset">Újraindítás</string>
+  <string name="inputMapActivity_pause">Szünet</string>
+  <string name="inputMapActivity_stop">Megállít</string>
+  <string name="inputMapActivity_frameAdvance">Képkocka haladás</string>
+  <string name="inputMapActivity_fastForward">Gyors tekerés</string>
+  <string name="inputMapActivity_speedDown">Sebesség csökkentése</string>
+  <string name="inputMapActivity_speedUp">Sebesség növelése</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Vissza billentyű</string>
+  <string name="inputMapActivity_simulateMenu">Menü billentyű</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Nyomj meg egy gombot vagy billentyűt</string>
+  <string name="diagnosticActivity_textMotion_text">Érintsd meg a képernyőt vagy a joystickot</string>
+</resources>

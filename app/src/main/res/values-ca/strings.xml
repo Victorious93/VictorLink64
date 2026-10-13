@@ -1,0 +1,287 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Velocitat %1$d %%</string>
+  <string name="menuItem_slotSave">Guarda l\'slot</string>
+  <string name="menuItem_slotLoad">Carrega slot</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Guarda a fitxer…</string>
+  <string name="menuItem_fileLoad">Carrega des de fitxer</string>
+  <string name="menuItem_setSpeed">Velocitat de joc</string>
+  <string name="menuItem_paks">	
+Controller Paks</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Modifica IME</string>
+  <string name="menuItem_exit">Surt</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Deadzone</string>
+  <string name="menuItem_sensitivity">Sensibilitat</string>
+  <string name="menuItem_unmapAll">Desassigna-ho tot</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Juga</string>
+  <string name="menuItem_settings">Configuració</string>
+  <string name="menuItem_help">Ajuda</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Fòrum d\'ajuda</string>
+  <string name="menuItem_controllerDiagnostics">Diagnostic del comandament</string>
+  <string name="menuItem_reportBug">Reporta una errada</string>
+  <string name="menuItem_about">Sobre</string>
+  <string name="menuItem_credits">Crèdits</string>
+  <string name="menuItem_localeOverride">Idioma</string>
+  <!--ManageProfilesActivity-->
+  <!--Popup Dialogs-->
+  <!--Lists-->
+  <string name="listItem_edit">Editar</string>
+  <string name="listItem_copy">Copiar</string>
+  <string name="listItem_delete">Esborrar</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+    <string name="toast_loadingSlot">Carregant slot %1$d…</string>
+  <string name="toast_savingSlot">Guardant slot %1$d…</string>
+  <string name="toast_loadingFile">Carregant %1$s…</string>
+  <string name="toast_savingFile">Guardant %1$s…</string>
+  <string name="toast_overwritingFile">Sobreescrivint  %1$s…</string>
+  <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">La targeta SD no està accessible (desconnecta el cable USB i prova-ho de nou).</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Resumeix</string>
+  <string name="actionResume_summary">Impredictible si els cheats són utilitzats</string>
+    <string name="actionReloadAssets_title">Recarrega els recursos de l\'aplicació</string>
+  <string name="actionReloadAssets_summary">NO afecta la configuració de l\'usuari, ROM, partides i altres dades personalitzades</string>
+  <!--Preference Screens-->
+  <string name="screenCheats_summaryDisabled">Deshabilitat</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Configuració dels cheats (mantingues oprimit per mostrar notes)</string>
+  <string name="categoryGln64_title">Configuració de Gln64</string>
+  <string name="categoryRice_title">Configuració de Rice</string>
+  <string name="categoryGlide64_title">Configuració de Glide64</string>
+  <string name="categoryAudio_title">Àudio</string>
+  <string name="categoryTouchscreen_title">Pantalla tàctil</string>
+  <string name="categoryInput_title">Entrada</string>
+  <string name="categoryData_title">Dades</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">	
+Habilita cheats</string>
+  <string name="touchscreenFeedback_title">Retroalimentació hàptica</string>
+  <string name="touchscreenFeedback_summary">Vibra en prémer botons</string>
+  <string name="inputVolumeMappable_title">Tecles de volum assignables</string>
+  <string name="inputVolumeMappable_summary">Permetre que les tecles de volum siguin assignades a controls</string>
+  <string name="inputShareController_title">Compartir comandament</string>
+  <string name="inputShareController_summary">Permet que un únic dispositiu d\'entrada controli a diversos jugadors a la vegada</string>
+  <string name="displayImmersiveMode_title">Mode de Immersive</string>
+  <string name="displayImmersiveMode_summary">Amaga completament la navegació i la barra d\'estat</string>
+  <string name="gln64Fog_title">boira</string>
+  <string name="gln64Fog_summary">(manca treballar-hi)</string>
+  <string name="gln64Sai_title">Filtre de textura 2xSaI</string>
+  <string name="gln64Sai_summary">Redueix la pixelació de les textures</string>
+  <string name="gln64ScreenClear_title">Forçar el netejat de pantalla</string>
+  <string name="gln64ScreenClear_summary">Deshabilita per a una major velocitat (pot causar errors de vídeo)</string>
+  <string name="gln64AlphaTest_title">Test alfa</string>
+  <string name="gln64AlphaTest_summary">Deshabilita per millorar la velocitat (pot causar textures negres)</string>
+  <string name="riceAutoFrameskip_title">Salt de quadres automàtic (frameskip)</string>
+  <string name="riceAutoFrameskip_summary">Millora la velocitat del joc en detriment de la velocitat de quadres (frameskip)</string>
+  <string name="riceFastTexture_title">Carrega ràpida de textures</string>
+  <string name="riceFastTexture_summary">Corregeix els cercles de transició</string>
+  <string name="riceForceTextureFilter_title">Filtrar de textures</string>
+  <string name="riceForceTextureFilter_summary">Arregla la brillantor de textures i el desenfocament dels objectes distants</string>
+  <string name="riceHiResTextures_title">Textures en alta resolució</string>
+  <string name="riceHiResTextures_summary">Utilitza pacs de textures millorades</string>
+  <string name="riceFog_title">boira</string>
+  <string name="riceFog_summary">Mostra efectes de boira</string>
+  <string name="audioSwapChannels_title">Intercanvia els canals d\'àudio</string>
+  <string name="audioSwapChannels_summary">Intercanviar els canals d\'àudio esquerre i dret </string>
+  <!--Gallery sections-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Mantenir botons automàticament</string>
+  <string name="touchscreenAutoHold_entryDisabled">Deshabilitat</string>
+  <string name="touchscreenAutoHold_entryLongPress">En lliscar</string>
+  <string name="touchscreenAutoHold_entrySlideOut">En lliscar</string>
+  <string name="touchscreenStyle_title">Estil del botó</string>
+  <string name="touchscreenStyle_entryOutline">Borejat</string>
+  <string name="touchscreenStyle_entryShaded">Ombrejat</string>
+  <string name="displayOrientation_title">Orientació de la pantalla</string>
+  <string name="displayOrientation_entryLandscape">Apaïsat</string>
+  <string name="displayOrientation_entryReverseLandscape">Apaïsat invertit</string>
+  <string name="displayOrientation_entryPortrait">Vertical</string>
+  <string name="displayOrientation_entryReversePortrait">Vertical invertit</string>
+    <string name="displayResolution_title">Resolució de renderitzat</string>
+  <string name="displayResolution_entryNative">Natiu (la millor qualitat)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (framerate més alt)</string>
+  <string name="displayScaling_title">Escalat de pantalla</string>
+  <string name="videoPlugin_entryNone">Cap (vídeo deshabilitat)</string>
+  <string name="videoHardwareType_title">Reducció del parpelleig</string>
+  <string name="videoHardwareType_entryAuto">Auto-detecta des del model de mòbil/tablet</string>
+  <string name="videoHardwareType_entryStandard">Perfil estàndard</string>
+  <string name="videoHardwareType_entryI">	
+Perfil I</string>
+  <string name="videoHardwareType_entryO1">Perfil O-1</string>
+  <string name="videoHardwareType_entryO2">Perfil O-2</string>
+  <string name="videoHardwareType_entryQ">Perfil Q</string>
+  <string name="videoHardwareType_entryT">	
+Perfil T</string>
+  <string name="videoHardwareType_entryCustom">Perfil personalitzat</string>
+  <string name="videoPolygonOffset_title">Polygon offset</string>
+  <string name="videoPolygonOffset_summary">Flicker reduction bias personalitzat</string>
+  <string name="gln64Frameskip_title">Salt de quadres (Frameskip)</string>
+  <string name="gln64Frameskip_entryNever">Mai saltar quadres (frameskip)</string>
+  <string name="gln64Frameskip_entryUpTo1">No més de 1 frame</string>
+  <string name="gln64Frameskip_entryUpTo2">No més de 2 frames</string>
+  <string name="gln64Frameskip_entryUpTo3">No més de 3 frames</string>
+  <string name="gln64Frameskip_entryUpTo4">No més de 4 frames</string>
+  <string name="gln64Frameskip_entryUpTo5">No més de 5 frames</string>
+  <string name="gln64Frameskip_entryExactly1">Exactament 1 frame</string>
+  <string name="gln64Frameskip_entryExactly2">Exactament 2 frames</string>
+  <string name="gln64Frameskip_entryExactly3">Exactament 3 frames</string>
+  <string name="gln64Frameskip_entryExactly4">Exactament 4 frames</string>
+  <string name="gln64Frameskip_entryExactly5">Exactament 5 frames</string>
+  <string name="riceScreenUpdate_title">Mètode de refresc de pantalla</string>
+  <string name="riceScreenUpdate_entryRomDefault">ROM per defecte</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">VI </string>
+  <string name="riceScreenUpdate_entryVIOriginChange">VI origin change</string>
+  <string name="riceScreenUpdate_entryCIChange">CI change</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">First CI change</string>
+  <string name="riceScreenUpdate_entryFirstPrimDraw">Pintat primitiu</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">Abans de netejar la pantalla</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">Desprès del pintat de pantalla</string>
+  <string name="riceTextureEnhancement_title">Augment de qualitat de textures</string>
+  <string name="riceTextureEnhancement_entryNone">Cap</string>
+  <string name="riceTextureEnhancement_entryScale2x">Scale 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Agut</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Més agut</string>
+  <string name="navigationMode_title">Accessibilitat</string>
+  <string name="navigationMode_summary">Mode de navegació del menú: %1$s</string>
+  <string name="navigationMode_entryAuto">Seleccionar automàticament de la configuració del dispositiu</string>
+  <string name="navigationMode_entryStandard">Mode estàndard</string>
+  <string name="navigationMode_entryBigScreen">Pantalla completa (No hi ha comandament tàctil;utilitzar només amb comandament/teclat)</string>
+  <string name="r4300Emulator_title">Emulador R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Intèrpret pur</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Intèrpret  a cache</string>
+  <string name="r4300Emulator_entryDynarec">Recompilador dinàmic (dynarec)</string>
+  <string name="localeOverride_entrySystemDefault">Per defecte del sistema</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Opacitat de la pantalla tàctil</string>
+  <string name="touchscreenScale_title">Escala del botó</string>
+  <string name="displayActionBarTransparency_title">Opacitat de la barra d\'accions</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+    <!--Player Map Preferences-->
+  <string name="playerMap_title">Multijugador</string>
+  <string name="playerMap_summary">Definir controlador de cada jugador</string>
+  <!--Profile Preferences-->
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Confirmació</string>
+  <string name="confirmResetGame_message">Vols reinicialitzar el joc? Tots els progressos fets des l\'última vegada que vas guardar la partida es perdran.</string>
+  <string name="confirmOverwriteFile_message">Sobreescriu %1$s?</string>
+  <string name="confirmUnmapAll_message">Desassigna tots el controls per a %1$s?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+    <string name="invalidInstall_message">Probalbement el Mupen64 Plus AE no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">nom de fitxer</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Inicialitzant</string>
+  <string name="assetExtractor_progress">%1$.0f%% completat: %2$s</string>
+  <string name="assetExtractor_finished">Finalitzat</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Cheat %1$d</string>
+  <string name="cheats_longPress">(mantingues premut per mostrar el text complet)</string>
+  <string name="cheat_disabled">(deshabilitat)</string>
+  <string name="cheatOption_title">Text complet</string>
+  <string name="cheatNotes_title">Notes</string>
+  <string name="cheatNotes_none">(no hi ha notes disponibles per aquest cheat)</string>
+  <!--Cheat Editor-->
+    <string name="cheatEditor_confirm">Està segur?</string>
+  <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Extraient textures</string>
+    <string name="pathHiResTexturesTask_errorMessage">Error extraient les textures!</string>
+  <!--Scan Roms Dialog-->
+  <!--ROM Scanning-->
+  <!--ROM information calculation-->
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Directori superior</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Terminal %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Terminal %1$d</string>
+  <string name="playerMapPreference_popupTitle">Jugador %1$d</string>
+  <string name="playerMapPreference_popupUnmap">	
+Dessasignar</string>
+    <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Dessasignar</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Incrementa slot</string>
+  <string name="inputMapActivity_reset">Reinicia</string>
+  <string name="inputMapActivity_pause">Pausa</string>
+  <string name="inputMapActivity_stop">Atura</string>
+  <string name="inputMapActivity_frameAdvance">Avanç de quadres (frame)</string>
+  <string name="inputMapActivity_fastForward">Avanç ràpid</string>
+  <string name="inputMapActivity_speedDown">Reduir velocitat</string>
+  <string name="inputMapActivity_speedUp">Accelerar</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tecla de retorn</string>
+  <string name="inputMapActivity_simulateMenu">Tecla de menú</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Prem un botó o tecla…</string>
+  <string name="diagnosticActivity_textMotion_text">	
+Pantalla tàctil o joystick…</string>
+</resources>

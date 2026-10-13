@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menuItem_globalSettings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/menuItem_globalSettings"/>
+    <item
+        android:id="@+id/menuItem_sensorConfiguration"
+        android:title="@string/menuItem_sensorConfiguration"/>
+    <item
+        android:id="@+id/menuItem_buttonsConfiguration"
+        android:title="@string/menuItem_buttonsConfiguration"/>
+    <item
+        android:id="@+id/menuItem_buttons"
+        android:title="@string/touchscreenProfileActivity_buttons">
+        <menu>
+            <group
+                android:id="@+id/menuGroup_buttons"
+                android:checkableBehavior="all" >
+                <item
+                    android:id="@+id/menuItem_analog"
+                    android:title="@string/controller_analog"/>
+                <item
+                    android:id="@+id/menuItem_dpad"
+                    android:title="@string/controller_dpad"/>
+                <item
+                    android:id="@+id/menuItem_groupAB"
+                    android:title="@string/controller_groupAB"/>
+                <item
+                    android:id="@+id/menuItem_buttonA"
+                    android:title="@string/controller_buttonA"/>
+                <item
+                    android:id="@+id/menuItem_buttonB"
+                    android:title="@string/controller_buttonB"/>
+                <item
+                    android:id="@+id/menuItem_groupC"
+                    android:title="@string/controller_groupC"/>
+                <item
+                    android:id="@+id/menuItem_buttonCR"
+                    android:title="@string/controller_buttonCr"/>
+                <item
+                    android:id="@+id/menuItem_buttonCL"
+                    android:title="@string/controller_buttonCl"/>
+                <item
+                    android:id="@+id/menuItem_buttonCD"
+                    android:title="@string/controller_buttonCd"/>
+                <item
+                    android:id="@+id/menuItem_buttonCU"
+                    android:title="@string/controller_buttonCu"/>
+                <item
+                    android:id="@+id/menuItem_buttonL"
+                    android:title="@string/controller_buttonL"/>
+                <item
+                    android:id="@+id/menuItem_buttonR"
+                    android:title="@string/controller_buttonR"/>
+                <item
+                    android:id="@+id/menuItem_buttonZ"
+                    android:title="@string/controller_buttonZ"/>
+                <item
+                    android:id="@+id/menuItem_buttonS"
+                    android:title="@string/controller_buttonS"/>
+                <item
+                    android:id="@+id/menuItem_buttonSensor"
+                    android:title="@string/controller_buttonSensor"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menuItem_exit"
+        android:title="@string/menuItem_exit"/>
+
+</menu>

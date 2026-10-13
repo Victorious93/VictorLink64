@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
+	branch = master
+	commit = f22dc143771f1a0784c7d62977722a68fa0bdf85
+	parent = 1b926c6aaf87f889a6d9fd8dfbc1872a721fb9ff
+	method = merge
+	cmdver = 0.4.3

@@ -1,0 +1,328 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Velocità %1$d %%</string>
+  <string name="menuItem_slotSave">Salva stato</string>
+  <string name="menuItem_slotLoad">Carica stato</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Salva a file…</string>
+  <string name="menuItem_fileLoad">Carica da file…</string>
+  <string name="menuItem_screenshot">Screenshot</string>
+  <string name="menuItem_setSpeed">Velocità gioco</string>
+  <string name="menuItem_enableFramelimiter">Sincronizza l\'audio</string>
+  <string name="menuItem_paks">Pak controller</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Cambia Metodo di input</string>
+  <string name="menuItem_exit">Esci</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Zona morta</string>
+  <string name="menuItem_sensitivity">Sensibilità</string>
+  <string name="menuItem_unmapAll">Rimuovi tasti impostati da tutto</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Gioca</string>
+  <string name="menuItem_refreshRoms">Aggiorna ROM</string>
+  <string name="menuItem_settings">Impostazioni</string>
+  <string name="menuItem_globalSettings">Impostazioni globali</string>
+  <string name="menuItem_emulationProfiles">Profili emulatore</string>
+  <string name="menuItem_touchscreenProfiles">Profili touchscreen</string>
+  <string name="menuItem_controllerProfiles">Profili controller</string>
+    <string name="menuItem_help">Aiuto</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_helpForum">Forum aiuto</string>
+  <string name="menuItem_controllerDiagnostics">Diagnostica controller</string>
+  <string name="menuItem_reportBug">Segnala bug</string>
+  <string name="menuItem_about">Info</string>
+  <string name="menuItem_credits">Crediti</string>
+  <string name="menuItem_appVersion">Versione app</string>
+  <string name="menuItem_logcat">Logcat</string>
+  <string name="menuItem_hardwareInfo">Info hardware</string>
+  <string name="menuItem_localeOverride">Linguaggio</string>
+  <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Nuovo</string>
+  <string name="menuItem_hideBuiltins">Nascondi componenti integrate</string>
+  <string name="menuItem_showBuiltins">Mostra componenti integrate</string>
+  <string name="popup_titleBuiltin">%1$s (componente integrata)</string>
+  <string name="popup_titleCustom">%1$s</string>
+  <string name="profile_name_cannot_be_empty">Il nome non può essere vuoto</string>
+  <string name="profile_name_cannot_contain_brackets">Il nome non può contenere parentesi</string>
+  <string name="profile_name_must_be_unique">Il nome deve essere unico</string>
+  <string name="profile_manage_profiles">Gestisci profili</string>
+  <!--Popup Dialogs-->
+  <string name="popup_version">Versione: %1$s\nCodice della versione: %2$d</string>
+  <!--Lists-->
+    <string name="listItem_edit">Modifica</string>
+  <string name="listItem_rename">Rinomina</string>
+  <string name="listItem_copy">Copia</string>
+  <string name="listItem_delete">Elimina</string>
+  <string name="listItem_disabled">(Disabilitato)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Nome profilo</string>
+  <string name="hint_profileComment">Descrizione (opzionale)</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+    <string name="toast_loadingSlot">Caricando slot %1$d…</string>
+  <string name="toast_savingSlot">Salvando slot %1$d…</string>
+  <string name="toast_loadingFile">Caricando %1$s…</string>
+  <string name="toast_savingFile">Salvando %1$s…</string>
+  <string name="toast_overwritingFile">Sovrascrivendo %1$s…</string>
+    <string name="toast_canceling">Annullamento in corso...</string>
+  <string name="toast_pleaseWait">Attendere prego...</string>
+  <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">Scheda SD non accessibile (disconnetti cavo USB e riprova)</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Riprendi</string>
+  <string name="actionResume_summary">Imprevedibile se vengono usati trucchi</string>
+    <string name="actionWiki_title">Wiki</string>
+  <string name="actionReloadAssets_title">Ricarica risorse app</string>
+  <string name="actionReloadAssets_summary">NON influenza impostazioni utente, ROM, salvataggi o altri dati personalizzati</string>
+  <string name="actionResetUserPrefs_title">Predefiniti</string>
+  <string name="actionResetGamePrefs_title">Predefiniti</string>
+  <string name="actionCheatEditor_title">Gestisci trucchi</string>
+  <string name="actionCheatEditor_summary">Aggiungi, modifica ed elimina trucchi personalizzti</string>
+  <string name="actionShare_title">Condividi</string>
+  <!--Preference Screens-->
+    <string name="screenCheats_title">Trucchi</string>
+  <string name="screenCheats_summaryEnabled">Abilitato</string>
+  <string name="screenCheats_summaryDisabled">Disabilitato</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Opzioni trucchi (lascia premuto per le note)</string>
+  <string name="categoryGln64_title">Impostazioni Gln64</string>
+  <string name="categoryRice_title">Impostazioni Rice</string>
+  <string name="categoryGlide64_title">Impostazioni Glide64</string>
+  <string name="categoryDisplay_title">Schermo</string>
+  <string name="categoryAudio_title">Audio</string>
+  <string name="categoryTouchscreen_title">Touchscreen</string>
+  <string name="categoryInput_title">Input</string>
+  <string name="categoryData_title">Dati</string>
+    <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Abilita trucchi</string>
+  <string name="touchscreenFeedback_title">Feedback aptico</string>
+  <string name="touchscreenFeedback_summary">Vibra su pressione tasti</string>
+  <string name="inputVolumeMappable_title">Tasti volume impostabili</string>
+  <string name="inputVolumeMappable_summary">Abilita i tasti volume ad essere impostati a controlli</string>
+  <string name="inputShareController_title">Condividi controller</string>
+  <string name="inputShareController_summary">Abilita un singolo dispositivo di input di controllare giocatori multipli contemporaneamente</string>
+  <string name="displayImmersiveMode_title">Modalità immersiva</string>
+  <string name="displayImmersiveMode_summary">Nascondi completamente la barra di navigazione e di stato</string>
+  <string name="gln64Fog_title">Nebbia</string>
+  <string name="gln64Fog_summary">(dobbiamo lavorarci)</string>
+  <string name="gln64Sai_title">Filtro texture 2xSal</string>
+  <string name="gln64Sai_summary">Riduce pixelazione texture</string>
+  <string name="gln64ScreenClear_title">Forza pulizia schermo</string>
+  <string name="gln64ScreenClear_summary">Disabilita per prestazioni (potrebbe causare bug video)</string>
+  <string name="gln64AlphaTest_title">Test alpha</string>
+  <string name="gln64AlphaTest_summary">Disabilita per prestazioni (causa texture nere)</string>
+  <string name="riceAutoFrameskip_title">Salto fotogrammi automatico</string>
+  <string name="riceAutoFrameskip_summary">Migliora velocità gioco al costo della frequenza fotogrammi</string>
+  <string name="riceFastTexture_title">Caricamento veloce texture</string>
+  <string name="riceFastTexture_summary">Sistema le transizioni a cerchio</string>
+  <string name="riceForceTextureFilter_title">Filtro texture</string>
+  <string name="riceForceTextureFilter_summary">Sistema texture lampeggianti e sfocatura su oggetti distanti</string>
+  <string name="riceHiResTextures_title">Texture ad alta risoluzione</string>
+  <string name="riceHiResTextures_summary">Usa pacchetti texture importati</string>
+  <string name="riceFog_title">Nebbia</string>
+  <string name="riceFog_summary">Mostra effetti nebbia</string>
+  <string name="audioSwapChannels_title">Inverti canali audio</string>
+  <string name="audioSwapChannels_summary">Inverte i canali audio sinistra e destra</string>
+  <!--Gallery sections-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto tasto premuto</string>
+  <string name="touchscreenAutoHold_entryDisabled">Disabilitato</string>
+  <string name="touchscreenAutoHold_entryLongPress">Su tocco lungo</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Su scorrimento-off</string>
+  <string name="touchscreenStyle_title">Stile tasti</string>
+  <string name="touchscreenStyle_entryOutline">Bordi</string>
+  <string name="touchscreenStyle_entryShaded">Ombreggiato</string>
+  <string name="displayOrientation_title">Orientazione schermo</string>
+  <string name="displayOrientation_entryLandscape">Panorama</string>
+  <string name="displayOrientation_entryReverseLandscape">Panorama inverso</string>
+  <string name="displayOrientation_entryPortrait">Ritratto</string>
+  <string name="displayOrientation_entryReversePortrait">Ritratto inverso</string>
+    <string name="displayResolution_title">Risoluzione di rendering</string>
+  <string name="displayResolution_entryNative">Nativa (qualità migliore)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (framerate migliore)</string>
+  <string name="displayScaling_title">Ridimensionamento dello schermo</string>
+  <string name="displayFps_title">Framerate</string>
+  <string name="videoPlugin_title">Plugin video</string>
+  <string name="videoPlugin_entryNone">Nessuno (video disabilitato)</string>
+  <string name="videoHardwareType_title">Riduzione tremolamento</string>
+  <string name="videoHardwareType_entryAuto">Individua automaticamente dal modello del telefono/tablet</string>
+  <string name="videoHardwareType_entryStandard">Profilo standard</string>
+  <string name="videoHardwareType_entryI">Profilo I</string>
+  <string name="videoHardwareType_entryO1">Profilo O-1</string>
+  <string name="videoHardwareType_entryO2">Profilo O-2</string>
+  <string name="videoHardwareType_entryQ">Profilo Q</string>
+  <string name="videoHardwareType_entryT">Profilo T</string>
+  <string name="videoHardwareType_entryCustom">Profilo personalizzato</string>
+  <string name="videoPolygonOffset_title">Compensa i poligoni</string>
+  <string name="videoPolygonOffset_summary">Compenso personalizzato riduzione tremolio</string>
+  <string name="gln64Frameskip_title">Salto fotogrammi</string>
+  <string name="gln64Frameskip_entryNever">Non saltare mai fotogrammi</string>
+  <string name="gln64Frameskip_entryUpTo1">Non più di 1 fotogramma</string>
+  <string name="gln64Frameskip_entryUpTo2">Non più di 2 fotogrammi</string>
+  <string name="gln64Frameskip_entryUpTo3">Non più di 3 fotogrammi</string>
+  <string name="gln64Frameskip_entryUpTo4">Non più di 4 fotogrammi</string>
+  <string name="gln64Frameskip_entryUpTo5">Non più di 5 fotogrammi</string>
+  <string name="gln64Frameskip_entryExactly1">Esattamente 1 fotogrammo</string>
+  <string name="gln64Frameskip_entryExactly2">Esattamente 2 fotogrammi</string>
+  <string name="gln64Frameskip_entryExactly3">Esattamente 3 fotogrammi</string>
+  <string name="gln64Frameskip_entryExactly4">Esattamente 4 fotogrammi</string>
+  <string name="gln64Frameskip_entryExactly5">Esattamente 5 fotogrammi</string>
+  <string name="riceScreenUpdate_title">Metodo di aggiornamento schermo</string>
+  <string name="riceScreenUpdate_entryRomDefault">Default della rom</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">Aggiornamento VI origin</string>
+  <string name="riceScreenUpdate_entryVIOriginChange">Cambiamento VI origin</string>
+  <string name="riceScreenUpdate_entryCIChange">Cambio CI</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">Primo cambio CI</string>
+  <string name="riceScreenUpdate_entryFirstPrimDraw">Primo disegno primitivo</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">Prima della pulizia schermo</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">Dopo disegno schermo</string>
+  <string name="riceTextureEnhancement_title">Aumento risoluzione/miglioramento texture</string>
+  <string name="riceTextureEnhancement_entryNone">Nessuno</string>
+  <string name="riceTextureEnhancement_entryScale2x">Scala 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x SaI</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Nitido</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Più nitido</string>
+  <string name="navigationMode_title">Accessibilità</string>
+  <string name="navigationMode_summary">Modalità di navigazione menu: %1$s</string>
+  <string name="navigationMode_entryAuto">Seleziona automaticamente dalla configurazione del dispositivo</string>
+  <string name="navigationMode_entryStandard">Modalità standard</string>
+  <string name="navigationMode_entryBigScreen">Modalità grande-schermo (niente touchscreen; solo input gamepad/tastiera)</string>
+  <string name="r4300Emulator_title">Emulatore R4300</string>
+  <string name="r4300Emulator_entryPureInterpreter">Interprete puro</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Interprete in cache</string>
+  <string name="r4300Emulator_entryDynarec">Ricompilatore dinamico (dynarec)</string>
+  <string name="localeOverride_entrySystemDefault">Default di sistema</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Trasparenza touchscreen</string>
+  <string name="touchscreenScale_title">Scala tasti</string>
+  <string name="displayActionBarTransparency_title">Opacità barra d\'azione</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+    <!--Player Map Preferences-->
+  <string name="playerMap_title">Multigiocatore</string>
+  <string name="playerMap_summary">Definisci il controller di ogni giocatore</string>
+  <!--Profile Preferences-->
+  <string name="emulationProfile_title">Profilo emulazione</string>
+  <string name="touchscreenProfile_title">Profilo touchscreen</string>
+    <string name="controllerProfile1_title">Profilo controller 1</string>
+  <string name="controllerProfile2_title">Profilo controller 2</string>
+  <string name="controllerProfile3_title">Profilo controller 3</string>
+  <string name="controllerProfile4_title">Profilo controller 4</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Conferma</string>
+  <string name="confirmResetGame_message">Resettare il gioco? Tutto il progresso dopo il tuo ultimo salvataggio verrà perso.</string>
+  <string name="confirmOverwriteFile_message">Sovrascrivere %1$s?</string>
+  <string name="confirmUnmapAll_message">Rimuovere tasti impostati da tutti gli input per %1$s?</string>
+  <string name="confirmDeleteProfile_message">Eliminare il profilo \"%1$s\"?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+    <string name="invalidInstall_message">Mupen64 Plus AE potrebbe non essersi installato correttamente. Per favore prova a reinstallare l\'app se hai problemi di crash.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">nome file</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Inizializzando</string>
+  <string name="assetExtractor_progress">%1$.0f%% completo: %2$s</string>
+  <string name="assetExtractor_finished">Finito</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Trucco %1$d</string>
+  <string name="cheats_longPress">(Lascia premuto per il testo completo)</string>
+  <string name="cheat_disabled">(disabilitato)</string>
+  <string name="cheatOption_title">Testo completo</string>
+  <string name="cheatNotes_title">Note</string>
+  <string name="cheatNotes_none">(Niente note disponibili per questi trucchi)</string>
+  <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Editor trucchi</string>cheatEditor_empty
+    <string name="cheatEditor_delete">Elimina trucco</string>
+  <string name="cheatEditor_confirm">Confermi?</string>
+    <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Spacchettando texture</string>
+    <string name="pathHiResTexturesTask_errorMessage">Problema spacchettando texture!</string>
+  <!--Scan Roms Dialog-->
+  <!--ROM Scanning-->
+  <!--ROM information calculation-->
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Cartella superiore</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Dispositivo %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Dispositivo %1$d</string>
+  <string name="playerMapPreference_popupTitle">Giocatore %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Rimuovi</string>
+    <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Rimuovi</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analogico →</string>
+  <string name="inputMapActivity_btnAL">Analogico ←</string>
+  <string name="inputMapActivity_btnAD">Analogico ↓</string>
+  <string name="inputMapActivity_btnAU">Analogico ↑</string>
+  <string name="inputMapActivity_incrementSlot">Incrementa slot</string>
+  <string name="inputMapActivity_reset">Resetta</string>
+  <string name="inputMapActivity_pause">Pausa</string>
+  <string name="inputMapActivity_stop">Ferma</string>
+  <string name="inputMapActivity_frameAdvance">Avanza fotogramma</string>
+  <string name="inputMapActivity_fastForward">Avanzamento rapido</string>
+  <string name="inputMapActivity_speedDown">Abbassa velocità</string>
+  <string name="inputMapActivity_speedUp">Aumenta velocità</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tasto indietro</string>
+  <string name="inputMapActivity_simulateMenu">Tasto menu </string>
+  <string name="inputMapActivity_screenshot">Screenshot</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Premi tasto o lettera…</string>
+  <string name="diagnosticActivity_textMotion_text">Touchscreen o joystick…</string>
+</resources>
