@@ -55,7 +55,7 @@ class RaphnetControllerHandler
         void onDeviceReady();
     }
 
-    private static final String ACTION_USB_PERMISSION = "org.mupen64plusae.v3.alpha.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "org.victoriousframework.victorlink64.USB_PERMISSION";
     private static final int RAPHNET_VENDOR_ID = 0x289b;
 
     private final Context mContext;
