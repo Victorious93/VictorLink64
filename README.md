@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.png" width="256"></p>
+
 # VictorLink64
 
 A Victorious Framework project by Victorious: an Android N64 game app with an integrated emulator, built on [Mupen64Plus-AE](https://github.com/mupen64plus-ae/mupen64plus-ae) (GPL v3), pinned at commit `33bf7021549d7873e976884370fbd1a8e7333bc7`.
