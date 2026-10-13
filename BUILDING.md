@@ -55,6 +55,6 @@ Application ID `org.victoriousframework.victorlink64` (debug build adds `.debug`
 
 ## CI
 
-`.github/workflows/build.yml` builds the debug APK, runs the verifier tests and payload check, and uploads the debug APK as a workflow artifact. It holds read-only permissions and never creates tags or releases. **It has not run yet**; treat it as unverified until a run completes.
+`.github/workflows/build.yml` builds the debug APK, runs the verifier tests and payload check, and uploads the debug APK as a workflow artifact. It holds read-only permissions and never creates tags or releases. On a GitHub runner it built the APK (18m17s) and the verifier passed; the final artifact upload failed with `Artifact storage quota has been hit` (account/repo limit, not code). It uses the runner's preinstalled Android SDK and locates `sdkmanager` itself, because `android-actions/setup-android@v3` fails with `Failed to find package 'tools'`. Builds are **not bit-for-bit reproducible**: the runner APK (SHA-256 `f146b839…90ea`) differs from the sandbox APK (`13a74d6d…1d6a`).
 
 — Victorious

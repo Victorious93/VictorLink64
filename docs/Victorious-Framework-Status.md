@@ -12,7 +12,7 @@ Legend: ☑ done and evidenced · ◐ partly done · ☐ not started
 - ☑ Unmodified baseline debug build (4 ABIs) and payload check
 - ☑ Payload verifier with tests (17 passing), diagnostic-ROM exact path + SHA-256 exception
 - ☑ VictorLink64 label, application ID, artifact name, USB action string
-- ☑ Debug-only CI workflow written — ☐ **not yet run**
+- ☑ Debug-only CI workflow: on a GitHub runner (head `a08b3f4`) `assembleDebug` succeeded in 18m17s and the payload verifier passed — ☐ artifact upload **blocked by the repository's Actions artifact-storage quota** (owner action: free/raise storage, re-run)
 - ◐ Binary provenance: committed binaries inventoried, **correspondence to source not verified**
 - ☐ Release signing (none exists)
 
@@ -42,7 +42,7 @@ Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and C
 
 ## Next steps
 
-1. Run the CI workflow and confirm it passes on GitHub.
+1. Free or raise Actions artifact storage and re-run the failed job once so the CI-built APK can be downloaded.
 2. Obtain an Android device or emulator; install `VictorLink64-debug.apk` and boot the diagnostic asset, then a user-supplied ROM; record results here.
 3. Read upstream `FileUtil`/`CacheRomInfoService` import paths against the hardening requirements; then start Phase 2.
 
