@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Hastighet %1$d %%</string>
+  <string name="menuItem_slotSave">Spara slot</string>
+  <string name="menuItem_slotLoad">Ladda slot</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Spara till fil…</string>
+  <string name="menuItem_fileLoad">Ladda från fil…</string>
+  <string name="menuItem_setSpeed">Spel hastighet</string>
+  <string name="menuItem_paks">Kontroller Paks</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Byt IME</string>
+  <string name="menuItem_exit">Avsluta</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Dödzon</string>
+  <string name="menuItem_sensitivity">Sensitivitet</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Spela</string>
+  <string name="menuItem_settings">Inställningar</string>
+  <string name="menuItem_globalSettings">Globala inställningar</string>
+  <string name="menuItem_touchscreenProfiles">Pekskärmsprofiler</string>
+  <string name="menuItem_controllerProfiles">Kontrollerprofiler</string>
+  <string name="menuItem_help">Hjälp</string>
+  <string name="menuItem_faq">FAQ</string>
+  <string name="menuItem_controllerDiagnostics">Kontroll diagnostik</string>
+  <string name="menuItem_reportBug">Rapportera bugg</string>
+  <string name="menuItem_about">Om</string>
+  <string name="menuItem_credits">krediter</string>
+  <string name="menuItem_hardwareInfo">Hårdvaruinformation</string>
+  <string name="menuItem_localeOverride">Språk</string>
+  <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Ny</string>
+  <string name="menuItem_hideBuiltins">Göm inbyggda</string>
+  <string name="menuItem_showBuiltins">Visa inbyggda</string>
+  <string name="popup_titleBuiltin">%1$s (inbyggd)</string>
+  <string name="popup_titleCustom">%1$s</string>
+  <string name="profile_name_cannot_be_empty">Namn kan inte vara tomt</string>
+  <string name="profile_name_cannot_contain_brackets">Namn kan inte innehålla klammerparentes</string>
+  <string name="profile_name_must_be_unique">Namn måste vara unikt</string>
+  <string name="profile_manage_profiles">Hantera profiler</string>
+  <!--Popup Dialogs-->
+  <!--Lists-->
+  <string name="listItem_edit">Ändra</string>
+  <string name="listItem_rename">Byt namn</string>
+  <string name="listItem_copy">Kopiera</string>
+  <string name="listItem_delete">Ta bort</string>
+  <string name="listItem_disabled">(Inaktiverad)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profilnamn</string>
+  <string name="hint_profileComment">Beskrivning (valfritt)</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+    <string name="toast_loadingSlot">Laddar slot %1$d…</string>
+  <string name="toast_savingSlot">Sparar slot %1$d…</string>
+  <string name="toast_loadingFile">Laddar %1$s…</string>
+  <string name="toast_savingFile">Sparar %1$s…</string>
+  <string name="toast_overwritingFile">Skriver över %1$s…</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">Det går inte att komma åt SD kortet (koppla ur USB kabeln och försök igen).</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Återuppta</string>
+  <string name="actionResume_summary">Oförutsägbar om fusk används</string>
+    <string name="actionReloadAssets_title">Ladda om app resurser</string>
+  <string name="actionReloadAssets_summary">Påverkar INTE användarinställningar, ROMs, sparfiler, eller andra egna data</string>
+  <string name="actionCheatEditor_title">Hantera fuskkoder</string>
+  <string name="actionShare_title">Dela</string>
+  <!--Preference Screens-->
+    <string name="screenCheats_title">Fusk</string>
+  <string name="screenCheats_summaryEnabled">Akriverad</string>
+  <string name="screenCheats_summaryDisabled">Inaktiverad</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Fusk alternativ (håll in för beskrivning)</string>
+  <string name="categoryGln64_title">Gln64 inställningar</string>
+  <string name="categoryRice_title">Rice inställningar</string>
+  <string name="categoryGlide64_title">Glide64 inställningar</string>
+  <string name="categoryDisplay_title">Visa</string>
+  <string name="categoryAudio_title">Ljud</string>
+  <string name="categoryTouchscreen_title">Pekskärm</string>
+  <string name="categoryInput_title">ingång</string>
+  <string name="categoryData_title">Data</string>
+  <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Aktivera fusk</string>
+  <string name="touchscreenFeedback_title">Haptisk återkoppling</string>
+  <string name="touchscreenFeedback_summary">Vibrera vid knapptryckning</string>
+  <string name="inputVolumeMappable_title">Mappable volymknapparna</string>
+  <string name="inputVolumeMappable_summary">Tillåt volymknapparna at bli mappade till kontroller</string>
+  <string name="inputShareController_title">Dela controller</string>
+  <string name="inputShareController_summary">Låt en enda inmatningsenhet för att styra flera spelare på gång</string>
+  <string name="gln64Fog_title">Dimma</string>
+  <string name="gln64Fog_summary">(behövs arbete)</string>
+  <string name="gln64Sai_title">2xSaI textur filter</string>
+  <string name="gln64Sai_summary">Minskar textur bildpunktuppdelning</string>
+  <string name="gln64ScreenClear_title">Tving skärm klarning</string>
+  <string name="gln64ScreenClear_summary">Inaktivera för hastighet (kan orsaka video buggar)</string>
+  <string name="gln64AlphaTest_title">Alpha test</string>
+  <string name="gln64AlphaTest_summary">Inaktivera för hastighet (kan orsaka svarta texturer)</string>
+  <string name="riceAutoFrameskip_title">Auto frameskip</string>
+  <string name="riceAutoFrameskip_summary">Förbättrar spel hastighet till kostnad av framerate</string>
+  <string name="riceFastTexture_title">Snabb textur laddning</string>
+  <string name="riceFastTexture_summary">Fixar cirkel övergångar</string>
+  <string name="riceForceTextureFilter_title">Textur filtrering</string>
+  <string name="riceForceTextureFilter_summary">Fixar texture skimrande och oskärpa på avlägsna föremål</string>
+  <string name="riceHiResTextures_title">Högupplösta texturer</string>
+  <string name="riceHiResTextures_summary">Använd importerade textur förpackningar</string>
+  <string name="riceFog_title">Dimma</string>
+  <string name="riceFog_summary">Visa dim effekter.</string>
+  <string name="audioSwapChannels_title">Byt ljudkanaler</string>
+  <string name="audioSwapChannels_summary">Byt de vänstra och högra ljudkanalerna</string>
+  <!--Gallery sections-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Auto-hållning av knapp</string>
+  <string name="touchscreenAutoHold_entryDisabled">Inaktiverad</string>
+  <string name="touchscreenAutoHold_entryLongPress">vid långt-tryck</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Vid slide-off</string>
+  <string name="touchscreenStyle_title">Knapp stil</string>
+  <string name="touchscreenStyle_entryOutline">Konturer</string>
+  <string name="touchscreenStyle_entryShaded">Skuggad</string>
+  <string name="displayOrientation_title">Skärmorientering</string>
+  <string name="displayOrientation_entryLandscape">Landskap</string>
+  <string name="displayOrientation_entryReverseLandscape">Omvänd landskap</string>
+  <string name="displayOrientation_entryPortrait">Porträtt</string>
+  <string name="displayOrientation_entryReversePortrait">Omvänd porträtt</string>
+    <string name="displayResolution_title">Renderingsupplösning</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (högsta framerate)</string>
+  <string name="displayScaling_title">Skärm skalning</string>
+  <string name="videoPlugin_entryNone">Ingen (video inaktiverad)</string>
+  <string name="videoHardwareType_title">Flimmer minskning</string>
+  <string name="videoHardwareType_entryAuto">Auto-upptäck från mobil/tablett modell</string>
+  <string name="videoHardwareType_entryStandard">Standard profil</string>
+  <string name="videoHardwareType_entryI">I profil</string>
+  <string name="videoHardwareType_entryO1">O-1 profil</string>
+  <string name="videoHardwareType_entryO2">O-2 profil</string>
+  <string name="videoHardwareType_entryQ">Q profil</string>
+  <string name="videoHardwareType_entryT">T profil</string>
+  <string name="videoHardwareType_entryCustom">Personlig profil</string>
+  <string name="gln64Frameskip_title">Frameskip</string>
+  <string name="gln64Frameskip_entryNever">Aldrig hoppa ramar</string>
+  <string name="gln64Frameskip_entryUpTo1">Inte mer än 1 ram</string>
+  <string name="gln64Frameskip_entryUpTo2">Inte mer än 2 ramar</string>
+  <string name="gln64Frameskip_entryUpTo3">Inte mer än 3 ramar</string>
+  <string name="gln64Frameskip_entryUpTo4">Inte mer än 4 ramar</string>
+  <string name="gln64Frameskip_entryUpTo5">Inte mer än 5 ramar</string>
+  <string name="gln64Frameskip_entryExactly1">Precis 1 ram</string>
+  <string name="gln64Frameskip_entryExactly2">Precis 2 ramar</string>
+  <string name="gln64Frameskip_entryExactly3">Precis 3 ramar</string>
+  <string name="gln64Frameskip_entryExactly4">Precis 4 ramar</string>
+  <string name="gln64Frameskip_entryExactly5">Precis 5 ramar</string>
+  <string name="riceScreenUpdate_title">Skärm uppdateringsmetod</string>
+  <string name="riceScreenUpdate_entryRomDefault">ROM standard</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">VI ursprungs uppdatering</string>
+  <string name="riceScreenUpdate_entryVIOriginChange">VI ursprungs förändring</string>
+  <string name="riceScreenUpdate_entryCIChange">CI förändring</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">Första CI förändringen</string>
+  <string name="riceTextureEnhancement_title">Textur uppskalning/förbättring</string>
+  <string name="riceTextureEnhancement_entryNone">Inga</string>
+  <string name="riceTextureEnhancement_entryScale2x">Skala 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Skärpa</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Skärpa mer</string>
+  <string name="navigationMode_title">Tillgänglighet</string>
+  <string name="navigationMode_summary">Meny navigeringsläge: %1$s</string>
+  <string name="navigationMode_entryAuto">Auto-välj från enhetens konfiguration</string>
+  <string name="navigationMode_entryStandard">Standard läge</string>
+  <string name="r4300Emulator_title">R4300 emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Ren interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Cachad interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dynamisk recompiler (dynarec)</string>
+  <string name="localeOverride_entrySystemDefault">System standard</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Knapp opacitet</string>
+  <string name="touchscreenScale_title">Knapp skala</string>
+  <string name="displayActionBarTransparency_title">Action bar opacitet</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+    <!--Player Map Preferences-->
+  <string name="playerMap_title">Multi-player</string>
+  <string name="playerMap_summary">Definera varje spelares kontroll(er)</string>
+  <!--Profile Preferences-->
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Konfirmation</string>
+  <string name="confirmResetGame_message">Återställ spelet? Alla framsteg har sparats kommer att förloras.</string>
+  <string name="confirmOverwriteFile_message">Skriva över %1$s?</string>
+  <string name="confirmUnmapAll_message">Avtilldela alla kommandon för %1$s?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+    <string name="invalidInstall_message">Mupen64 Plus AE kanske inte har installerats korrekt. Försök att installera om appen om du upplever några krascher.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">filnamn</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Initierar</string>
+  <string name="assetExtractor_progress">%1$.0f%% gjort: %2$s</string>
+  <string name="assetExtractor_finished">Färdig</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Fusk %1$d</string>
+  <string name="cheats_longPress">(lång-tryck för full text)</string>
+  <string name="cheat_disabled">(inaktiverad)</string>
+  <string name="cheatOption_title">Full text</string>
+  <string name="cheatNotes_title">Anteckningar</string>
+  <string name="cheatNotes_none">(inga anteckningar tillgängliga för detta fusk)</string>
+  <!--Cheat Editor-->
+    <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Uppackning texturer</string>
+    <string name="pathHiResTexturesTask_errorMessage">Problem med uppackning av texturer!</string>
+  <!--Scan Roms Dialog-->
+  <!--ROM Scanning-->
+  <!--ROM information calculation-->
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Grund mapp</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Enhet %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Enhet %1$d</string>
+  <string name="playerMapPreference_popupTitle">Spelare %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Unmap</string>
+    <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <string name="controller_buttonCr">C-pad →</string>
+  <string name="controller_buttonCl">C-pad ←</string>
+  <string name="controller_buttonCd">C-pad ↓</string>
+  <string name="controller_buttonCu">C-pad ↑</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Unmap</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-pad →</string>
+  <string name="inputMapActivity_btnCL">C-pad ←</string>
+  <string name="inputMapActivity_btnCD">C-pad ↓</string>
+  <string name="inputMapActivity_btnCU">C-pad ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analog →</string>
+  <string name="inputMapActivity_btnAL">Analog ←</string>
+  <string name="inputMapActivity_btnAD">Analog ↓</string>
+  <string name="inputMapActivity_btnAU">Analog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Inkrementera slot</string>
+  <string name="inputMapActivity_reset">Ladda om</string>
+  <string name="inputMapActivity_pause">Paus</string>
+  <string name="inputMapActivity_stop">Stopp</string>
+  <string name="inputMapActivity_frameAdvance">Frame avancering</string>
+  <string name="inputMapActivity_fastForward">Snabbspolning</string>
+  <string name="inputMapActivity_speedDown">Sakta ner</string>
+  <string name="inputMapActivity_speedUp">Snabba up</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Tillbaka knappen</string>
+  <string name="inputMapActivity_simulateMenu">Meny knappen</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Tryck på en knapp…</string>
+  <string name="diagnosticActivity_textMotion_text">Tryck skärmen eller joysticken…</string>
+</resources>

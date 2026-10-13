@@ -1,0 +1,60 @@
+# Generated and temporary files
+bin/
+gen/
+obj/
+tmp/
+*~
+*~.nib
+*.a
+*.ap_
+*.apk
+*.bak
+*.class
+*.d
+*.dex
+*.o
+*.so
+*.swp
+*.tmp
+gdb.setup
+gdbserver
+
+# Eclipse project files
+.settings/
+.externalToolBuilders/
+proguard/
+build/
+.buildpath
+.classpath
+.cproject
+.loadpath
+.metadata
+.project
+.gradle
+.artifacts
+*.launch
+*.pydevproject
+local.properties
+gradle.properties
+app/.directory
+app/release
+app/.cxx
+app/pro
+app/free
+
+# Intellij project files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Crash-report related
+crashreport.txt
+
+# Transifex client
+tx.exe
+
+# Victorious Framework: local build artifacts
+__pycache__/
+*.pyc
+local.properties

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Wherever possible, use Android's built-in Preference framework for defining global
+    user settings and the menu interface that supports them:
+        http://developer.android.com/guide/topics/ui/settings.html
+        http://developer.android.com/design/patterns/settings.html
+    
+    Please follow our naming convention (casing and underscores) for all Preferences:
+        <androidx.preference.CheckBoxPreference
+            android:key="myKey"
+            android:title="@string/myKey_title"
+            android:summary="@string/myKey_summary"
+            ...
+            />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            ...
+            android:entries="@array/myKey_entries"
+            android:entryValues="@array/myKey_values"
+            android:defaultValue="@string/myKey_default"
+            ...
+            />
+        <paulscode.android.mupen64plusae.MyCustomPreference
+            ...
+            mupen64:myAttribute="@string/myKey_myAttribute"
+            ...
+            />
+    
+    Strings should never be hard-coded into this file, with the exception perhaps of
+    boolean default values.  Instead, define all strings as resources in:
+        res/values/strings.xml
+    
+    To improve code readability, define all arrays as resources in:
+        res/values/arrays.xml
+    Define default array values below the arrays themselves in arrays.xml, rather than
+    in strings.xml.  This makes it easy to keep arrays and their default values
+    synchronized.
+    
+    To minimize app size, consider using Android's built-in resources when possible.
+    For example, consider icon resources in "@android:drawable/..." instead of custom
+    resources in "@drawable/...".       
+    ***********************************************************************************
+-->
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res-auto"
+    android:key="screenRoot" >
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayResolution_default"
+        android:entries="@array/displayResolution_entries"
+        android:entryValues="@array/displayResolution_values"
+        android:key="displayResolution"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayResolution_title" />
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="100"
+        android:key="displayZoomSeek"
+        android:title="@string/displayZoom_title"
+        mupen64:maximumValue="130"
+        mupen64:minimumValue="70"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayScaling_default"
+        android:entries="@array/displayScaling_entries"
+        android:entryValues="@array/displayScaling_values"
+        android:key="displayScaling"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayScaling_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayOrientation_default"
+        android:entries="@array/displayOrientation_entries"
+        android:entryValues="@array/displayOrientation_values"
+        android:key="displayOrientation"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayOrientation_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="displayImmersiveMode_v2"
+        android:summary="@string/displayImmersiveMode_summary"
+        android:title="@string/displayImmersiveMode_title" />
+
+    <paulscode.android.mupen64plusae.preference.SeekBarPreference
+        android:defaultValue="80"
+        android:key="displayActionBarTransparency"
+        android:title="@string/displayActionBarTransparency_title"
+        mupen64:maximumValue="100"
+        mupen64:minimumValue="30"
+        mupen64:stepSize="1"
+        mupen64:units="%" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/displayFps_default"
+        android:entries="@array/displayFps_entries"
+        android:entryValues="@array/displayFps_values"
+        android:key="displayFpsV2"
+        android:summary="@string/selectedValue"
+        android:title="@string/displayFps_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="threadedGLideN64"
+        android:summary="@string/gliden64_threaded_video_summary"
+        android:title="@string/gliden64_threaded_video_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="hybridTextureFilter_v2"
+        android:summary="@string/gliden64_hybrid_filter_summary"
+        android:title="@string/gliden64_hybrid_filter_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/videoHardwareType_default"
+        android:entries="@array/videoHardwareType_entries"
+        android:entryValues="@array/videoHardwareType_values"
+        android:key="videoHardwareType"
+        android:summary="@string/selectedValue"
+        android:title="@string/videoHardwareType_title" />
+
+    <androidx.preference.EditTextPreference
+        android:defaultValue="-3.0"
+        android:inputType="numberDecimal|numberSigned"
+        android:key="videoPolygonOffset"
+        android:summary="@string/videoPolygonOffset_summary"
+        android:title="@string/videoPolygonOffset_title" />
+
+</androidx.preference.PreferenceScreen>

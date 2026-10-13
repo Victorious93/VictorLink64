@@ -1,0 +1,66 @@
+# Victorious Framework: VictorLink64 debug build.
+# Builds and structurally verifies the debug APK only. This workflow never
+# creates tags, releases, or published packages, and holds read-only permissions.
+name: VictorLink64 debug build
+
+on:
+  push:
+    branches-ignore: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-java@v4
+      with:
+        java-version: 21
+        distribution: temurin
+
+    # Use the Android SDK preinstalled on the runner image. sdkmanager is not
+    # on PATH there, so locate the newest cmdline-tools install. Avoids
+    # android-actions/setup-android@v3, which requests the removed `tools`
+    # package and fails ("Failed to find package 'tools'").
+    - name: Install pinned Android SDK packages
+      run: |
+        SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+        SM=$(ls -d "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | sort -V | tail -1)
+        if [ -z "$SM" ]; then echo "sdkmanager not found under $SDK/cmdline-tools"; ls -la "$SDK" || true; exit 1; fi
+        echo "Using $SM"
+        yes | "$SM" --sdk_root="$SDK" --licenses > /dev/null || true
+        "$SM" --sdk_root="$SDK" "platforms;android-36" "build-tools;36.0.0" "ndk;26.1.10909125" "cmake;3.22.1"
+        echo "sdk.dir=$SDK" > local.properties
+        echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+
+    - name: Install native build helpers
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends file gawk
+
+    - name: Verifier unit tests
+      run: python3 -I -m unittest discover -s scripts/tests -v
+
+    - name: Build debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Verify APK payload
+      run: |
+        APK=app/build/outputs/apk/debug/VictorLink64-debug.apk
+        LIBS=$(unzip -l "$APK" | awk '{print $4}' | grep '^lib/arm64-v8a/' | xargs -n1 basename | sort | paste -sd,)
+        python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a,armeabi-v7a,x86,x86_64 --libs "$LIBS"
+        sha256sum "$APK"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: VictorLink64-debug-${{ github.sha }}
+        path: app/build/outputs/apk/debug/VictorLink64-debug.apk
+        if-no-files-found: error

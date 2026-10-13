@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ***********************************************************************************
+    RECOMMENDED PRACTICES FOR DESIGNERS & DEVELOPERS:
+    
+    Wherever possible, use Android's built-in Preference framework for defining global
+    user settings and the menu interface that supports them:
+        http://developer.android.com/guide/topics/ui/settings.html
+        http://developer.android.com/design/patterns/settings.html
+    
+    Please follow our naming convention (casing and underscores) for all Preferences:
+        <androidx.preference.CheckBoxPreference
+            android:key="myKey"
+            android:title="@string/myKey_title"
+            android:summary="@string/myKey_summary"
+            ...
+            />
+        <paulscode.android.mupen64plusae.preference.CompatListPreference
+            ...
+            android:entries="@array/myKey_entries"
+            android:entryValues="@array/myKey_values"
+            android:defaultValue="@string/myKey_default"
+            ...
+            />
+        <paulscode.android.mupen64plusae.MyCustomPreference
+            ...
+            mupen64:myAttribute="@string/myKey_myAttribute"
+            ...
+            />
+    
+    Strings should never be hard-coded into this file, with the exception perhaps of
+    boolean default values.  Instead, define all strings as resources in:
+        res/values/strings.xml
+    
+    To improve code readability, define all arrays as resources in:
+        res/values/arrays.xml
+    Define default array values below the arrays themselves in arrays.xml, rather than
+    in strings.xml.  This makes it easy to keep arrays and their default values
+    synchronized.
+    
+    To minimize app size, consider using Android's built-in resources when possible.
+    For example, consider icon resources in "@android:drawable/..." instead of custom
+    resources in "@drawable/...".       
+    ***********************************************************************************
+-->
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mupen64="http://schemas.android.com/apk/res-auto"
+    android:key="screenRoot" >
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/navigationMode_default"
+        android:entries="@array/navigationMode_entries"
+        android:entryValues="@array/navigationMode_values"
+        android:key="navigationMode"
+        android:summary="@string/navigationMode_summary"
+        android:title="@string/navigationMode_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="autoPlayerMapping"
+        android:summary="@string/defaultsAutoPlayerMapping_summary"
+        android:title="@string/defaultsAutoPlayerMapping_title" />
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="allEmulatedControllersPlugged"
+        android:summary="@string/defaultsAllEmulatedControllersAlwaysAttached_summary"
+        android:title="@string/defaultsAllEmulatedControllersAlwaysAttached_title" />
+    <androidx.preference.CheckBoxPreference
+        android:icon="@drawable/ic_gamepad"
+        android:defaultValue="false"
+        android:key="inputShareController"
+        android:summary="@string/inputShareController_summary"
+        android:title="@string/inputShareController_title" />
+    <paulscode.android.mupen64plusae.preference.PlayerMapPreference
+        android:icon="@drawable/ic_users"
+        android:key="playerMap"
+        android:summary="@string/playerMap_summary"
+        android:title="@string/playerMap_title" />
+
+    <paulscode.android.mupen64plusae.preference.CompatListPreference
+        android:defaultValue="@string/inGameMenuSetting_default"
+        android:entries="@array/inGameMenuSetting_entries"
+        android:entryValues="@array/inGameMenuSetting_values"
+        android:key="inGameMenu"
+        android:summary="@string/selectedValue"
+        android:title="@string/inGameMenuSetting_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="inputVolumeMappable"
+        android:summary="@string/inputVolumeMappable_summary"
+        android:title="@string/inputVolumeMappable_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="inputBackMappable"
+        android:summary="@string/inputBackMappable_summary"
+        android:title="@string/inputBackMappable_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="inputMenuMappable"
+        android:summary="@string/inputMenuMappable_summary"
+        android:title="@string/inputMenuMappable_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="holdButtonForMenu"
+        android:summary="@string/inputHoldControllerMenuKey_summary"
+        android:title="@string/inputHoldControllerMenuKey_title" />
+
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="false"
+        android:key="useRaphnetAdapter"
+        android:summary="@string/inputUseRaphnetAdapter_summary"
+        android:title="@string/inputUseRaphnetAdapter_title" />
+
+</androidx.preference.PreferenceScreen>

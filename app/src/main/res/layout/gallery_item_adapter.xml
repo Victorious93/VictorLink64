@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?attr/selectableItemBackground"
+    android:focusable="true"
+    android:id="@+id/galleryItem"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/galleryHalfSpacing"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageArt"
+        android:layout_width="@dimen/galleryImageWidth"
+        android:layout_height="@dimen/galleryImageHeight"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/default_coverart" />
+
+    <LinearLayout
+        android:id="@+id/info"
+        android:layout_width="@dimen/galleryImageWidth"
+        android:layout_height="@dimen/galleryTextHeight"
+        android:orientation="horizontal" >
+        
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/galleryItemAdapter_dummyText"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+</LinearLayout>

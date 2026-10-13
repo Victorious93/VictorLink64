@@ -1,0 +1,316 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--**************************************************************************-->
+  <!--Menu Strings-->
+  <!--**************************************************************************-->
+  <!--In-Game Menu-->
+  <string name="menuItem_toggleSpeed">Snelheid %1$d %%</string>
+  <string name="menuItem_slotSave">Slot opslaan</string>
+  <string name="menuItem_slotLoad">Slot laden</string>
+  <string name="menuItem_setSlot">Slot %1$d</string>
+  <string name="menuItem_fileSave">Opslaan naar bestand…</string>
+  <string name="menuItem_fileLoad">Laden van bestand…</string>
+  <string name="menuItem_setSpeed">Spelsnelheid</string>
+  <string name="menuItem_paks">Controllerpacks</string>
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <!--capitalize since trademark-->
+  <string name="menuItem_setIme">Verander Invoermethode</string>
+  <string name="menuItem_exit">Einde</string>
+  <!--Input Mapping Activity-->
+  <string name="menuItem_deadzone">Deadzone</string>
+  <string name="menuItem_sensitivity">Gevoeligheid</string>
+  <string name="menuItem_unmapAll">Alle toewijzingen verwijderen</string>
+  <!--Menu Activity-->
+  <string name="menuItem_play">Spelen</string>
+  <string name="menuItem_settings">Instellingen</string>
+  <string name="menuItem_globalSettings">Globale instellingen</string>
+  <string name="menuItem_emulationProfiles">Gebruikersprofiel</string>
+  <string name="menuItem_touchscreenProfiles">Touchscreenprofielen</string>
+  <string name="menuItem_controllerProfiles">Controllerprofielen</string>
+    <string name="menuItem_help">Help</string>
+  <string name="menuItem_faq">Veelgestelde vragen</string>
+  <string name="menuItem_helpForum">Helpforum</string>
+  <string name="menuItem_controllerDiagnostics">Controllerdiagnose</string>
+  <string name="menuItem_reportBug">Meld bug</string>
+  <string name="menuItem_about">Over</string>
+  <string name="menuItem_credits">Credits</string>
+  <string name="menuItem_appVersion">Appversie</string>
+  <string name="menuItem_hardwareInfo">Hardware informatie</string>
+  <string name="menuItem_localeOverride">Taal</string>
+  <!--ManageProfilesActivity-->
+  <string name="menuItem_new">Nieuw</string>
+  <string name="menuItem_hideBuiltins">Verberg ingebouwde functies</string>
+  <string name="menuItem_showBuiltins">Toon ingebouwde functies</string>
+  <string name="popup_titleBuiltin">%1$s (ingebouwd)</string>
+  <string name="popup_titleCustom">%1$s</string>
+  <string name="profile_name_cannot_be_empty">Naam kan niet leeg zijn</string>
+  <string name="profile_name_cannot_contain_brackets">Naam mag geen haakjes bevatten</string>
+  <string name="profile_name_must_be_unique">Naam moet uniek zijn</string>
+  <string name="profile_manage_profiles">Beheer profielen</string>
+  <!--Popup Dialogs-->
+  <!--Lists-->
+  <string name="listItem_edit">Verander</string>
+  <string name="listItem_rename">Hernoem</string>
+  <string name="listItem_copy">Kopiëer</string>
+  <string name="listItem_delete">Verwijder</string>
+  <string name="listItem_disabled">(Uitgeschakeld)</string>
+  <!--ManageProfilesActivity Name/Comment Dialog-->
+  <string name="hint_profileName">Profiel naam</string>
+  <string name="hint_profileComment">Beschrijving (optioneel)</string>
+  <!--**************************************************************************-->
+  <!--Toast Messages-->
+  <!--Developers: Follow punctuation and grammar as shown below-->
+  <!--**************************************************************************-->
+  <!--Something happening (typically use '-ing' and '…')-->
+    <string name="toast_loadingSlot">Slot %1$d laden…</string>
+  <string name="toast_savingSlot">Slot %1$d opslaan…</string>
+  <string name="toast_loadingFile">%1$s laden…</string>
+  <string name="toast_savingFile">%1$s opslaan…</string>
+  <string name="toast_overwritingFile">%1$s wordt overschreven…</string>
+    <!--Something happened (use '.')-->
+    <string name="toast_sdInaccessible">SD-kaart niet beschikbaar (verwijder de USB-kabel en probeer opnieuw).</string>
+  <!--**************************************************************************-->
+  <!--Preference Menu Strings-->
+  <!--Developers: Please follow naming conventions described in preferences.xml-->
+  <!--Developers: In general, capitalize first word only and avoid punctuation-->
+  <!--**************************************************************************-->
+  <!--Actions (simply launch an action, aren't related to persistent data)-->
+  <string name="actionResume_title">Hervat</string>
+  <string name="actionResume_summary">Onvoorspelbaar als cheats worden gebruikt</string>
+    <string name="actionReloadAssets_title">Applicatiebronnen herladen</string>
+  <string name="actionReloadAssets_summary">Heeft geen invloed op gebruikersinstellingen, ROM\'s, opgeslagen spellen, of andere eigen gegevens</string>
+  <string name="actionCheatEditor_title">Beheer cheat codes</string>
+  <string name="actionCheatEditor_summary">Voeg toe, verander en verwijder cheat codes</string>
+  <string name="actionShare_title">Deel</string>
+  <!--Preference Screens-->
+    <string name="screenCheats_title">Cheats</string>
+  <string name="screenCheats_summaryEnabled">Ingeschakeld</string>
+  <string name="screenCheats_summaryDisabled">Uitgeschakeld</string>
+  <!--Preference Categories-->
+  <string name="categoryCheats_title">Cheat opties (lang indrukken voor opmerkingen)</string>
+  <string name="categoryGln64_title">Gln64 instellingen</string>
+  <string name="categoryRice_title">Rice instellingen</string>
+  <string name="categoryGlide64_title">Glide64 instellingen</string>
+  <string name="categoryDisplay_title">Scherm</string>
+  <string name="categoryAudio_title">Geluid</string>
+  <string name="categoryTouchscreen_title">Aanraakscherm</string>
+  <string name="categoryInput_title">Invoer</string>
+  <string name="categoryData_title">Gegevens</string>
+    <!--Checkbox Preferences-->
+  <string name="playShowCheats_title">Cheats inschakelen</string>
+  <string name="touchscreenFeedback_title">Haptische feedback</string>
+  <string name="touchscreenFeedback_summary">Trillen bij knopaanraking</string>
+  <string name="inputVolumeMappable_title">Toewijsbare volumeknoppen</string>
+  <string name="inputVolumeMappable_summary">Sta het toe om volumeknoppen toe te wijzen</string>
+  <string name="inputShareController_title">Deel controller</string>
+  <string name="inputShareController_summary">Laat meerdere spelers besturen met 1 invoerapparaat</string>
+  <string name="displayImmersiveMode_title">Meeslepende modus</string>
+  <string name="displayImmersiveMode_summary">Navigatie- en statusbalk volledig verbergen</string>
+  <string name="gln64Fog_title">Mist</string>
+  <string name="gln64Fog_summary">(moet aan gewerkt worden)</string>
+  <string name="gln64Sai_title">2xSal textuurfilter</string>
+  <string name="gln64Sai_summary">Verminderd korreligheid van texturen</string>
+  <string name="gln64ScreenClear_title">Forceer scherm leegmaken</string>
+  <string name="gln64ScreenClear_summary">Schakel uit voor snelheid (kan beeldfouten veroorzaken)</string>
+  <string name="gln64AlphaTest_title">Transparantietest</string>
+  <string name="gln64AlphaTest_summary">Uitschakelen voor snelheid (veroorzaakt zwarte texturen)</string>
+  <string name="riceAutoFrameskip_title">Automatisch frames overslaan</string>
+  <string name="riceAutoFrameskip_summary">Verbetert spelsnelheid ten koste van framesnelheid</string>
+  <string name="riceFastTexture_title">Snel texturen laden</string>
+  <string name="riceFastTexture_summary">Verbetert cirkelovergangen</string>
+  <string name="riceForceTextureFilter_title">Textuurfilter</string>
+  <string name="riceForceTextureFilter_summary">Verhelpt textuurflikkering en onscherpte van objecten ver weg</string>
+  <string name="riceHiResTextures_title">Hoge resolutie texturen</string>
+  <string name="riceHiResTextures_summary">Gebruik geïmporteerde textuurpakketten</string>
+  <string name="riceFog_title">Mist</string>
+  <string name="riceFog_summary">Misteffect tonen</string>
+  <string name="audioSwapChannels_title">Verwissel geluidskanalen</string>
+  <string name="audioSwapChannels_summary">Verwissel linker- en rechteraudiokanaal</string>
+  <!--Gallery sections-->
+  <!--List Preferences (in this app, most ListPreferences use android:summary="@string/selectedValue")-->
+  <string name="touchscreenAutoHold_title">Button automatisch vasthouden</string>
+  <string name="touchscreenAutoHold_entryDisabled">Uitgeschakeld</string>
+  <string name="touchscreenAutoHold_entryLongPress">Bij lang indrukken</string>
+  <string name="touchscreenAutoHold_entrySlideOut">Bij afglijden</string>
+  <string name="touchscreenStyle_title">Knopstijl</string>
+  <string name="touchscreenStyle_entryOutline">Omtrekken</string>
+  <string name="touchscreenStyle_entryShaded">Gearceerd</string>
+  <string name="displayOrientation_title">Schermoriëntatie</string>
+  <string name="displayOrientation_entryLandscape">Landschap</string>
+  <string name="displayOrientation_entryReverseLandscape">Omgekeerd landschap</string>
+  <string name="displayOrientation_entryPortrait">Portet</string>
+  <string name="displayOrientation_entryReversePortrait">Omgekeerd portret</string>
+    <string name="displayResolution_title">Gerenderde resolutie</string>
+  <string name="displayResolution_entryNative">Eigen (hoogste kwaliteit)</string>
+  <string name="displayResolution_entry960x720">960 x 720</string>
+  <string name="displayResolution_entry800x600">800 x 600</string>
+  <string name="displayResolution_entry640x480">640 x 480</string>
+  <string name="displayResolution_entry480x360">480 x 360</string>
+  <string name="displayResolution_entry320x240">320 x 240</string>
+  <string name="displayResolution_entry160x120">160 x 120 (hoogste beeldfrequentie)</string>
+  <string name="displayScaling_title">Schermschaling</string>
+  <string name="videoPlugin_title">Videoplugin</string>
+  <string name="videoPlugin_entryNone">Geen (video uitgeschakeld)</string>
+  <string name="videoHardwareType_title">Knipperonderdrukking</string>
+  <string name="videoHardwareType_entryAuto">Automatische herkenning van telefoon-/tabletmodel</string>
+  <string name="videoHardwareType_entryStandard">Standaardprofiel</string>
+  <string name="videoHardwareType_entryI">I profiel</string>
+  <string name="videoHardwareType_entryO1">O-1 profiel</string>
+  <string name="videoHardwareType_entryO2">O-2 profiel</string>
+  <string name="videoHardwareType_entryQ">Q profiel</string>
+  <string name="videoHardwareType_entryT">T profiel</string>
+  <string name="videoHardwareType_entryCustom">Gebruikersprofiel</string>
+  <string name="videoPolygonOffset_title">Polygoon offset</string>
+  <string name="videoPolygonOffset_summary">Eigen knipperreductie bias</string>
+  <string name="gln64Frameskip_title">Beelden overslaan</string>
+  <string name="gln64Frameskip_entryNever">Sla nooit beelden over</string>
+  <string name="gln64Frameskip_entryUpTo1">Niet meer dan 1 beeld</string>
+  <string name="gln64Frameskip_entryUpTo2">Niet meer dan 2 beelden</string>
+  <string name="gln64Frameskip_entryUpTo3">Niet meer dan 3 beelden</string>
+  <string name="gln64Frameskip_entryUpTo4">Niet meer dan 4 beelden</string>
+  <string name="gln64Frameskip_entryUpTo5">Niet meer dan 5 beelden</string>
+  <string name="gln64Frameskip_entryExactly1">Precies 1 beeld</string>
+  <string name="gln64Frameskip_entryExactly2">Precies 2 beelden</string>
+  <string name="gln64Frameskip_entryExactly3">Precies 3 beelden</string>
+  <string name="gln64Frameskip_entryExactly4">Precies 4 beelden</string>
+  <string name="gln64Frameskip_entryExactly5">Precies 5 beelden</string>
+  <string name="riceScreenUpdate_title">Schermverversingsmethode</string>
+  <string name="riceScreenUpdate_entryRomDefault">ROM-standaard</string>
+  <string name="riceScreenUpdate_entryVIOriginUpdate">VI oorsprong update</string>
+  <string name="riceScreenUpdate_entryVIOriginChange">VI oorsprong verandering</string>
+  <string name="riceScreenUpdate_entryCIChange">CI verandering</string>
+  <string name="riceScreenUpdate_entryFirstCIChange">Eerste CI verandering</string>
+  <string name="riceScreenUpdate_entryFirstPrimDraw">Tekenen eerste primitieve</string>
+  <string name="riceScreenUpdate_entryBeforeScreenClear">Voor scherm wissen</string>
+  <string name="riceScreenUpdate_entryAfterScreenDrawn">Na scherm getekend</string>
+  <string name="riceTextureEnhancement_title">Textuuropschaling/verbetering</string>
+  <string name="riceTextureEnhancement_entryNone">Geen</string>
+  <string name="riceTextureEnhancement_entryScale2x">Opschalen 2x</string>
+  <string name="riceTextureEnhancement_entry2xsai">2x Sal</string>
+  <string name="riceTextureEnhancement_entryHq2x">HQ2x</string>
+  <string name="riceTextureEnhancement_entryLq2x">LQ2x</string>
+  <string name="riceTextureEnhancement_entryHq4x">HQ4x</string>
+  <string name="riceTextureEnhancement_entrySharpen">Verscherpen</string>
+  <string name="riceTextureEnhancement_entrySharpen_more">Meer verscherpen</string>
+  <string name="navigationMode_title">Toegankelijkheid</string>
+  <string name="navigationMode_summary">Menunavigatiemodus: %1$s</string>
+  <string name="navigationMode_entryAuto">Automatisch selecteren uit apparaatconfiguratie</string>
+  <string name="navigationMode_entryStandard">Standaardmodus</string>
+  <string name="navigationMode_entryBigScreen">Groot scherm-modus (geen touchscreen; alleen gamepad/toetsenbord)</string>
+  <string name="r4300Emulator_title">R4300 emulator</string>
+  <string name="r4300Emulator_entryPureInterpreter">Pure interpreter</string>
+  <string name="r4300Emulator_entryCachedInterpreter">Gecachete interpreter</string>
+  <string name="r4300Emulator_entryDynarec">Dynamische hercompileerder (dynarec)</string>
+  <string name="localeOverride_entrySystemDefault">Systeemstandaardwaarden</string>
+  <!--Seek Bar Preferences (selected value and units will become the summary-->
+  <string name="touchscreenTransparency_title">Knoptransparantie</string>
+  <string name="touchscreenScale_title">Knopschaal</string>
+  <string name="displayActionBarTransparency_title">Actiebalk doorzichtigheid</string>
+  <!--Path Preferences (selected path will become the summary)-->
+  <!--'~' indicates rel path & use storage dir if path doesn't exist-->
+  <!--'!' indicates rel path & create parent dirs if path doesn't exist-->
+    <!--Player Map Preferences-->
+  <string name="playerMap_title">Meerdere spelers</string>
+  <string name="playerMap_summary">Controller voor elke speler instellen</string>
+  <!--Profile Preferences-->
+  <string name="emulationProfile_title">Emulatie profiel</string>
+  <string name="touchscreenProfile_title">Aanraakscherm profiel</string>
+    <string name="controllerProfile1_title">Profiel van controller 1</string>
+  <string name="controllerProfile2_title">Profiel van controller 2</string>
+  <string name="controllerProfile3_title">Profiel van controller 3</string>
+  <string name="controllerProfile4_title">Profiel van controller 4</string>
+  <!--**************************************************************************-->
+  <!--Dialogs and Other Feedback-->
+  <!--Developers: Use formatting arguments rather than string concatenation:-->
+  <!--http://developer.android.com/guide/topics/resources/string-resource.html-->
+  <!--**************************************************************************-->
+  <!--Confirmation Dialogs-->
+  <string name="confirm_title">Bevestiging</string>
+  <string name="confirmResetGame_message">Spel resetten? Alle voortgang sinds de laatste keer opslaan gaat verloren.</string>
+  <string name="confirmOverwriteFile_message">%1$s overschrijven?</string>
+  <string name="confirmUnmapAll_message">Alle invoertoewijzigingen verwijderen voor %1$s?</string>
+  <string name="confirmDeleteProfile_message">Wilt u het profiel \"%1$s\" verwijderen?</string>
+  <!--Change Log-->
+  <!--Corrupt Installation Warning-->
+    <string name="invalidInstall_message">Mupen64 Plus AE is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
+  <!--Text Editor Hints (start lower-case)-->
+  <string name="hintFileSave">bestandsnaam</string>
+  <!--Asset Extractor-->
+  <string name="assetExtractor_initializing">Bezig te initialiseren</string>
+  <string name="assetExtractor_progress">%1$.0f%% gedaan: %2$s</string>
+  <string name="assetExtractor_finished">Voltooid</string>
+  <!--Cheats Configuration-->
+  <string name="cheats_defaultName">Cheat %1$d</string>
+  <string name="cheats_longPress">(lang indrukken voor volledige tekst)</string>
+  <string name="cheat_disabled">(uitgeschakeld)</string>
+  <string name="cheatOption_title">Volledige tekst</string>
+  <string name="cheatNotes_title">Opmerkingen</string>
+  <string name="cheatNotes_none">(geen opmerkingen beschikbaar voor deze cheat)</string>
+  <!--Cheat Editor-->
+  <string name="menuItem_cheatEditor">Cheat editor</string>cheatEditor_empty
+    <string name="cheatEditor_delete">Verwijder cheat</string>
+  <string name="cheatEditor_confirm">Weet u het zeker?</string>
+    <!--Hi-Res Texture Unpacking-->
+  <string name="pathHiResTexturesTask_title">Texturen uitpakken</string>
+    <string name="pathHiResTexturesTask_errorMessage">Probleem met het uitpakken van texturen!</string>
+  <!--Scan Roms Dialog-->
+  <!--ROM Scanning-->
+  <!--ROM information calculation-->
+  <!--Seek Bar Preference-->
+  <string name="seekBarPreference_summary">%1$d %2$s</string>
+  <!--Path Preference-->
+  <string name="pathPreference_parentFolder">Bovenliggende map</string>
+  <!--Player Mapping-->
+  <string name="playerMap_deviceWithName">Apparaat %1$d (%2$s)</string>
+  <string name="playerMap_deviceWithoutName">Apparaat %1$d</string>
+  <string name="playerMapPreference_popupTitle">Speler %1$d</string>
+  <string name="playerMapPreference_popupUnmap">Toewijzing ongedaan maken</string>
+    <!--Touchscreen Profile Activity-->
+  <!--Controller button names-->
+  <string name="controller_buttonCr">C-knop →</string>
+  <string name="controller_buttonCl">C-knop ←</string>
+  <string name="controller_buttonCd">C-knop ↓</string>
+  <string name="controller_buttonCu">C-knop ↑</string>
+  <!--Input Mapping-->
+  <string name="inputMapActivity_popupUnmap">Toewijzing ongedaan maken</string>
+  <string name="inputMapActivity_btnA">A</string>
+  <string name="inputMapActivity_btnB">B</string>
+  <string name="inputMapActivity_btnC">C</string>
+  <string name="inputMapActivity_btnL">L</string>
+  <string name="inputMapActivity_btnR">R</string>
+  <string name="inputMapActivity_btnZ">Z</string>
+  <string name="inputMapActivity_btnS">S</string>
+  <string name="inputMapActivity_btnCR">C-knop →</string>
+  <string name="inputMapActivity_btnCL">C-knop ←</string>
+  <string name="inputMapActivity_btnCD">C-knop ↓</string>
+  <string name="inputMapActivity_btnCU">C-knop ↑</string>
+  <string name="inputMapActivity_btnDR">D-pad →</string>
+  <string name="inputMapActivity_btnDL">D-pad ←</string>
+  <string name="inputMapActivity_btnDD">D-pad ↓</string>
+  <string name="inputMapActivity_btnDU">D-pad ↑</string>
+  <string name="inputMapActivity_btnAR">Analoog →</string>
+  <string name="inputMapActivity_btnAL">Analoog ←</string>
+  <string name="inputMapActivity_btnAD">Analoog ↓</string>
+  <string name="inputMapActivity_btnAU">Analoog ↑</string>
+  <string name="inputMapActivity_incrementSlot">Slot ophogen</string>
+  <string name="inputMapActivity_reset">Resetten</string>
+  <string name="inputMapActivity_pause">Pauze</string>
+  <string name="inputMapActivity_stop">Stop</string>
+  <string name="inputMapActivity_frameAdvance">Frame verder</string>
+  <string name="inputMapActivity_fastForward">Versneld vooruit</string>
+  <string name="inputMapActivity_speedDown">Vertragen</string>
+  <string name="inputMapActivity_speedUp">Versnellen</string>
+  <string name="inputMapActivity_gameshark">Gameshark</string>
+  <string name="inputMapActivity_simulateBack">Terugtoets</string>
+  <string name="inputMapActivity_simulateMenu">Menutoets</string>
+  <!--Controller Diagnostics-->
+  <string name="diagnosticActivity_textKey_text">Druk op knop of toets…</string>
+  <string name="diagnosticActivity_textMotion_text">Aanraakscherm of joystick</string>
+</resources>

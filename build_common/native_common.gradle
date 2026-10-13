@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+apply from: '../build_common/version_common.gradle'
+
+android {
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel = 'FULL'
+            }
+        }
+        debug {
+            minifyEnabled false
+            jniDebuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                debugSymbolLevel = 'FULL'
+            }
+        }
+        android {
+        }
+    }
+
+    externalNativeBuild{
+        ndkBuild{
+            path "Android.mk"
+        }
+    }
+
+    defaultConfig {
+        externalNativeBuild {
+            ndkBuild {
+                arguments.add("NDK_APPLICATION_MK:=Application.mk")
+                arguments.add("-j11")
+                cppFlags "-fexceptions"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
