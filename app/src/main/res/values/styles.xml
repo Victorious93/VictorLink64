@@ -52,17 +52,35 @@
 
     <!-- Dark (default) Theme Styles -->
     <style name="MupenTheme_Dark.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/vl_navy_surface</item>
+        <item name="colorPrimaryDark">@color/vl_navy</item>
+        <item name="colorAccent">@color/vl_cyan</item>
+        <item name="colorControlActivated">@color/vl_cyan</item>
+        <item name="colorControlHighlight">#3322D3EE</item>
+        <item name="android:windowBackground">@color/vl_navy</item>
+        <item name="android:colorBackground">@color/vl_navy</item>
+        <item name="android:textColorPrimary">@color/vl_on_navy</item>
+        <item name="android:textColorSecondary">@color/vl_on_navy_muted</item>
         <item name="android:fontFamily">@string/default_font</item>
-        <item name="android:navigationBarColor">@color/mupen_black</item>
+        <item name="android:navigationBarColor">@color/vl_navy</item>
         <item name="android:textSize">17sp</item>
-        <item name="android:statusBarColor">@color/mupen_black</item>
+        <item name="android:statusBarColor">@color/vl_navy</item>
     </style>
 
     <style name="MupenTheme_Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/vl_navy_surface</item>
+        <item name="colorPrimaryDark">@color/vl_navy</item>
+        <item name="colorAccent">@color/vl_cyan</item>
+        <item name="colorControlActivated">@color/vl_cyan</item>
+        <item name="colorControlHighlight">#3322D3EE</item>
+        <item name="android:windowBackground">@color/vl_navy</item>
+        <item name="android:colorBackground">@color/vl_navy</item>
+        <item name="android:textColorPrimary">@color/vl_on_navy</item>
+        <item name="android:textColorSecondary">@color/vl_on_navy_muted</item>
         <item name="android:fontFamily">@string/default_font</item>
-        <item name="android:navigationBarColor">@color/mupen_black</item>
+        <item name="android:navigationBarColor">@color/vl_navy</item>
         <item name="android:textSize">17sp</item>
-        <item name="android:statusBarColor">@color/mupen_black</item>
+        <item name="android:statusBarColor">@color/vl_navy</item>
     </style>
 
     <style name="MupenTheme_Dark_Sidebar" parent="MupenTheme_Dark">

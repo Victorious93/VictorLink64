@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- VictorLink64 splash, Victorious Framework branding -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/vl_navy"
     android:gravity="center"
-    android:background="#0A1128"
-    android:padding="24dp">
+    android:orientation="vertical"
+    android:padding="24dp"
+    tools:ignore="UseCompoundDrawables" >
+
     <ImageView
         android:id="@+id/mainImage"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/vl64_logo" />
+        android:src="@drawable/vl_logo" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,6 +30,7 @@
         android:letterSpacing="0.2"
         android:shadowColor="#FF3B3B"
         android:shadowRadius="12" />
+
     <TextView
         android:id="@+id/mainText"
         android:layout_width="match_parent"
@@ -31,6 +38,11 @@
         android:layout_marginTop="24dp"
         android:gravity="center"
         android:minLines="2"
-        android:textColor="#8FA3C8"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@color/vl_on_navy_muted"
+        android:textSize="14sp"
+        android:letterSpacing="0.02"
         android:text="@string/assetExtractor_initializing" />
+
 </LinearLayout>
