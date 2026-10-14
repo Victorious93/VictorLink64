@@ -21,7 +21,7 @@
     <color name="mupen_black">#F2061A33</color>
     <color name="mupen_white">#EFEFEF</color>
     <color name="mupen_black_wAlpha">#00ffffff</color>
-    <color name="mupen_primary">#22D3EE</color>
+    <color name="mupen_primary">#1EA0FF</color>
     <color name="mupen_highlight">#22808080</color>
 
 
@@ -31,12 +31,12 @@
 
 
     <!-- VictorLink64 brand palette (Victorious Framework), matched to assets/logo.png -->
-    <color name="vl_navy">#031227</color>
+    <color name="vl_navy">#0A1128</color>
     <color name="vl_navy_surface">#0A1E3A</color>
     <color name="vl_navy_variant">#13294B</color>
-    <color name="vl_cyan">#22D3EE</color>
-    <color name="vl_cyan_dark">#0891B2</color>
-    <color name="vl_red">#EF3E4A</color>
+    <color name="vl_cyan">#1EA0FF</color>
+    <color name="vl_cyan_dark">#0B6FC2</color>
+    <color name="vl_red">#FF3B3B</color>
     <color name="vl_on_navy">#E6EEF8</color>
     <color name="vl_on_navy_muted">#8FA3BF</color>
 </resources>

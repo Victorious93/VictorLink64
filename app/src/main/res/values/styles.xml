@@ -56,7 +56,7 @@
         <item name="colorPrimaryDark">@color/vl_navy</item>
         <item name="colorAccent">@color/vl_cyan</item>
         <item name="colorControlActivated">@color/vl_cyan</item>
-        <item name="colorControlHighlight">#3322D3EE</item>
+        <item name="colorControlHighlight">#331EA0FF</item>
         <item name="android:windowBackground">@color/vl_navy</item>
         <item name="android:colorBackground">@color/vl_navy</item>
         <item name="android:textColorPrimary">@color/vl_on_navy</item>
@@ -72,7 +72,7 @@
         <item name="colorPrimaryDark">@color/vl_navy</item>
         <item name="colorAccent">@color/vl_cyan</item>
         <item name="colorControlActivated">@color/vl_cyan</item>
-        <item name="colorControlHighlight">#3322D3EE</item>
+        <item name="colorControlHighlight">#331EA0FF</item>
         <item name="android:windowBackground">@color/vl_navy</item>
         <item name="android:colorBackground">@color/vl_navy</item>
         <item name="android:textColorPrimary">@color/vl_on_navy</item>
