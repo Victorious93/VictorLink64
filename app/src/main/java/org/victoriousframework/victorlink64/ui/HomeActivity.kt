@@ -218,19 +218,19 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         Row(
-            Modifier.fillMaxWidth().clip16().background(NeonRed.copy(alpha = .15f))
-                .border(1.dp, NeonRed, RoundedCornerShape(16.dp))
+            Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .12f))
+                .border(1.dp, NeonBlue, RoundedCornerShape(16.dp))
                 .clickable { ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.chess.ChessActivity::class.java)) }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("♞", fontSize = 30.sp, color = NeonRed)
+            Text("♞", fontSize = 30.sp, color = NeonBlue)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text("Chess", color = Color.White, fontWeight = FontWeight.Bold)
                 Text("Built-in · vs phone or pass & play", color = Muted, fontSize = 12.sp)
             }
-            Icon(Icons.Filled.PlayArrow, "Play chess", tint = NeonRed)
+            Icon(Icons.Filled.PlayArrow, "Play chess", tint = NeonBlue)
         }
         Spacer(Modifier.height(12.dp))
         when {
