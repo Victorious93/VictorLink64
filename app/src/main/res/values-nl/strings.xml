@@ -239,7 +239,7 @@
   <string name="confirmDeleteProfile_message">Wilt u het profiel \"%1$s\" verwijderen?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
+    <string name="invalidInstall_message">VictorLink64 is mogelijk onjuist geïnstalleerd. Installeer de app opnieuw als u last heeft van crashes.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">bestandsnaam</string>
   <!--Asset Extractor-->

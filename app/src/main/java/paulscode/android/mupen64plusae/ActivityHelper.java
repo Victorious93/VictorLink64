@@ -185,13 +185,13 @@ public class ActivityHelper
     {
         if (data.getData() != null)
         {
-            Intent intent = new Intent( context, GalleryActivity.class );
+            Intent intent = new Intent( context, org.victoriousframework.victorlink64.ui.HomeActivity.class );
             intent.putExtra( Keys.ROM_PATH, data.getData().toString() );
             context.startActivity( intent );
         }
         else
         {
-            Intent intent = new Intent( context, GalleryActivity.class );
+            Intent intent = new Intent( context, org.victoriousframework.victorlink64.ui.HomeActivity.class );
             intent.putExtras(data);
             context.startActivity( intent );
             intent.replaceExtras((Bundle)null);

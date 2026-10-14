@@ -20,6 +20,18 @@
         android:src="@drawable/vl_logo" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/vl64_tagline"
+        android:textColor="#1EA0FF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2"
+        android:shadowColor="#FF3B3B"
+        android:shadowRadius="12" />
+
+    <TextView
         android:id="@+id/mainText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

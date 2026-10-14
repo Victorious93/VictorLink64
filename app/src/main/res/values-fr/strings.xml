@@ -45,7 +45,7 @@
   <string name="menuItem_controllerDiagnostics">Diagnostiquer la manette</string>
   <string name="menuItem_reportBug">Signaler un bug</string>
   <string name="menuItem_about">À propos</string>
-  <string name="menuItem_credits">Équipe de Mupen64Plus</string>
+  <string name="menuItem_credits">Équipe de VictorLink64</string>
   <string name="menuItem_appVersion">Version de l\'application</string>
   <string name="menuItem_logcat">Logcat</string>
   <string name="menuItem_hardwareInfo">Informations matériel</string>
@@ -61,7 +61,7 @@
   <string name="profile_name_must_be_unique">Le nom doit être unique</string>
   <string name="profile_manage_profiles">Gérer les profiles</string>
   <!--Popup Dialogs-->
-  <string name="popup_faq">Mupen64Plus est développé et entretenu par des bénévoles.<small>\n\nSi vous rencontrez des bugs graphiques, essayez de changer le  <i>plugin vidéo </i>. Si vous rencontrez des problèmes de lag, essayez de changer le <i>saut d\'images vidéo</i> ou le <i>plugin vidéo</i>.\n\nSi les ROMs ne se lancent pas, essayez de dézipper la ROM ou essayez une version différente de la ROM.\n\nEn cas de problèmes de contrôles à l\'écran tactile, essayez de changer <i>l\'échelle des boutons</i> ou la <i>disposition des boutons</i>.\n\nPour d\'autres problèmes, ou si vous êtes bloqué, merci d\'utiliser le bouton <i>FAQ</i> ci-dessous.Pour des bugs non liés à un jeu particulier, utilisez le bouton <i>Signaler un bug</i> ci-dessous. Nous répondons à la vaste majorité des messages en moins de 24 heures. Promis.\n\n</small>Merci de nous aider à améliorer l\'application !</string>
+  <string name="popup_faq">VictorLink64 est développé et entretenu par des bénévoles.<small>\n\nSi vous rencontrez des bugs graphiques, essayez de changer le  <i>plugin vidéo </i>. Si vous rencontrez des problèmes de lag, essayez de changer le <i>saut d\'images vidéo</i> ou le <i>plugin vidéo</i>.\n\nSi les ROMs ne se lancent pas, essayez de dézipper la ROM ou essayez une version différente de la ROM.\n\nEn cas de problèmes de contrôles à l\'écran tactile, essayez de changer <i>l\'échelle des boutons</i> ou la <i>disposition des boutons</i>.\n\nPour d\'autres problèmes, ou si vous êtes bloqué, merci d\'utiliser le bouton <i>FAQ</i> ci-dessous.Pour des bugs non liés à un jeu particulier, utilisez le bouton <i>Signaler un bug</i> ci-dessous. Nous répondons à la vaste majorité des messages en moins de 24 heures. Promis.\n\n</small>Merci de nous aider à améliorer l\'application !</string>
   <string name="popup_version">Version : %1$s\nCode de version: %2$d</string>
   <!--Lists-->
     <string name="listItem_edit">Modifier</string>
@@ -272,7 +272,7 @@
   <string name="confirmDeleteProfile_message">Supprimer le profil \"%1$s\" ?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE pourrait ne pas avoir été installé correctement. Veuillez réinstaller l\'application en cas de plantages.</string>
+    <string name="invalidInstall_message">VictorLink64 pourrait ne pas avoir été installé correctement. Veuillez réinstaller l\'application en cas de plantages.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nomdefichier</string>
   <!--Asset Extractor-->

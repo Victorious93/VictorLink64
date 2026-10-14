@@ -239,7 +239,7 @@
   <string name="confirmDeleteProfile_message">Eliminar perfil \"%1$s\"?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE non se instalou correctamente. Por favor, probe a reinstalar a aplicación se sufre crebas.</string>
+    <string name="invalidInstall_message">VictorLink64 non se instalou correctamente. Por favor, probe a reinstalar a aplicación se sufre crebas.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nome do arquivo</string>
   <!--Asset Extractor-->

@@ -210,7 +210,7 @@ Perfil T</string>
   <string name="confirmUnmapAll_message">Desassigna tots el controls per a %1$s?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Probalbement el Mupen64 Plus AE no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>
+    <string name="invalidInstall_message">Probalbement el VictorLink64 no s\'ha instal·lat correctament. Si experimentes aquest errors reinstal·la la aplicació si us plau.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">nom de fitxer</string>
   <!--Asset Extractor-->

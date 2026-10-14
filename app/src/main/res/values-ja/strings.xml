@@ -39,7 +39,7 @@
   <string name="menuItem_helpForum">ヘルプフォーラム</string>
   <string name="menuItem_controllerDiagnostics">コントローラ診断</string>
   <string name="menuItem_reportBug">バグレポート</string>
-  <string name="menuItem_about">Mupen64Plus AEについて</string>
+  <string name="menuItem_about">VictorLink64について</string>
   <string name="menuItem_credits">クレジット</string>
   <string name="menuItem_appVersion">アプリバージョン</string>
   <string name="menuItem_hardwareInfo">ハードウェア情報</string>
@@ -236,7 +236,7 @@
   <string name="confirmDeleteProfile_message">プロファイル \"%1$s\"? を削除しますか?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64Plus AEは正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
+    <string name="invalidInstall_message">VictorLink64は正しくインストールしていない可能性。 任意のプログラムのクラッシュが発生した場合アプリケーションを再インストールしてください。</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">ファイル名</string>
   <!--Asset Extractor-->
