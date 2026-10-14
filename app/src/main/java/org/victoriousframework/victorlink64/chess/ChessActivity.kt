@@ -27,9 +27,15 @@ import org.victoriousframework.victorlink64.ui.*
 import kotlin.math.abs
 
 class ChessActivity : ComponentActivity() {
+    companion object {
+        const val EXTRA_ONLINE = "online"
+        const val EXTRA_HOST_WHITE = "host_white"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { VictorTheme { ChessScreen(onBack = { finish() }) } }
+        val online = intent.getBooleanExtra(EXTRA_ONLINE, false)
+        val hostWhite = intent.getBooleanExtra(EXTRA_HOST_WHITE, true)
+        setContent { VictorTheme { ChessScreen(onBack = { finish() }, online = online, hostWhiteInit = hostWhite) } }
     }
 }
 
@@ -38,21 +44,23 @@ private const val CHESS_PREFS = "victorlink64_chess"
 private val LIGHT_SQ = Color(0xFF1C3A6E)
 private val DARK_SQ = Color(0xFF0E1D40)
 
-enum class ChessMode { VS_PHONE, PASS_AND_PLAY }
+enum class ChessMode { VS_PHONE, PASS_AND_PLAY, ONLINE }
 
 private fun glyph(v: Int): String = when (abs(v)) {
     KING -> "♚"; QUEEN -> "♛"; ROOK -> "♜"; BISHOP -> "♝"; KNIGHT -> "♞"; PAWN -> "♟"; else -> ""
 }
 
 @Composable
-fun ChessScreen(onBack: () -> Unit) {
+fun ChessScreen(onBack: () -> Unit, online: Boolean = false, hostWhiteInit: Boolean = true) {
     val ctx = LocalContext.current
     val prefs = remember { ctx.getSharedPreferences(CHESS_PREFS, Context.MODE_PRIVATE) }
-    var mode by remember { mutableStateOf(ChessMode.valueOf(prefs.getString("mode", ChessMode.VS_PHONE.name)!!)) }
+    var mode by remember { mutableStateOf(if (online) ChessMode.ONLINE else ChessMode.valueOf(prefs.getString("mode", ChessMode.VS_PHONE.name)!!)) }
+    val peer by org.victoriousframework.victorlink64.connect.ConnectSession.status.collectAsState()
+    var hostWhite by remember { mutableStateOf(hostWhiteInit) }
     var difficulty by remember { mutableStateOf(Difficulty.valueOf(prefs.getString("difficulty", Difficulty.MEDIUM.name)!!)) }
     var humanColor by remember { mutableIntStateOf(prefs.getInt("human", WHITE)) }
     var game by remember {
-        mutableStateOf(prefs.getString("game", null)?.let { runCatching { ChessGame.deserialize(it) }.getOrNull() } ?: ChessGame())
+        mutableStateOf(if (online) ChessGame() else prefs.getString("game", null)?.let { runCatching { ChessGame.deserialize(it) }.getOrNull() } ?: ChessGame())
     }
     var version by remember { mutableIntStateOf(0) } // bump to recompose after mutating game
     var selected by remember { mutableIntStateOf(-1) }
@@ -61,16 +69,41 @@ fun ChessScreen(onBack: () -> Unit) {
     var showSetup by remember { mutableStateOf(false) }
 
     fun save() {
+        if (mode == ChessMode.ONLINE) return
         prefs.edit().putString("game", game.serialize()).putString("mode", mode.name)
             .putString("difficulty", difficulty.name).putInt("human", humanColor).apply()
     }
-    fun commit(uci: String) { if (game.play(uci)) { selected = -1; version++; save() } }
+    val net = org.victoriousframework.victorlink64.connect.ConnectSession
+    if (mode == ChessMode.ONLINE) humanColor = if (net.isHost == hostWhite) WHITE else BLACK
+    fun commit(uci: String, remote: Boolean = false) {
+        if (game.play(uci)) {
+            selected = -1; version++; save()
+            if (mode == ChessMode.ONLINE && !remote) net.send("move") { put("uci", uci); put("ply", game.uciMoves.size) }
+        }
+    }
+    if (mode == ChessMode.ONLINE) LaunchedEffect(Unit) {
+        net.messages.collect { m ->
+            when (m.optString("t")) {
+                "move" -> {
+                    val ply = m.optInt("ply")
+                    if (ply == game.uciMoves.size + 1 && game.play(m.optString("uci"))) { selected = -1; version++ }
+                    else if (ply > game.uciMoves.size) net.send("sync_req")
+                }
+                "resign" -> { game.resign(m.optInt("color")); version++ }
+                "rematch", "chess_invite" -> { hostWhite = m.optBoolean("hostWhite", true); game = ChessGame(); selected = -1; version++ }
+                "sync_req" -> net.send("sync") { put("game", game.serialize()); put("hostWhite", hostWhite) }
+                "sync" -> runCatching { ChessGame.deserialize(m.optString("game")) }.onSuccess {
+                    game = it; hostWhite = m.optBoolean("hostWhite", hostWhite); selected = -1; version++
+                }
+            }
+        }
+    }
 
     val pos = remember(version, game) { game.position }
     val result = remember(version, game) { game.result() }
     val legal = remember(version, game) { game.legalMoves() }
     val aiTurn = mode == ChessMode.VS_PHONE && pos.side != humanColor && result == GameResult.ONGOING
-    val flipped = if (mode == ChessMode.VS_PHONE) humanColor == BLACK else false
+    val flipped = if (mode == ChessMode.VS_PHONE || mode == ChessMode.ONLINE) humanColor == BLACK else false
 
     LaunchedEffect(version, aiTurn, game) {
         if (aiTurn) {
@@ -83,6 +116,7 @@ fun ChessScreen(onBack: () -> Unit) {
 
     fun onTap(sq: Int) {
         if (aiTurn || result != GameResult.ONGOING) return
+        if (mode == ChessMode.ONLINE && pos.side != humanColor) return
         val v = pos.board[sq]
         if (selected >= 0) {
             val cands = legal.filter { it.from == selected && it.to == sq }
@@ -103,16 +137,21 @@ fun ChessScreen(onBack: () -> Unit) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = onBack) { Text("‹ Back", color = NeonBlue) }
             Text("Chess", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Black, modifier = Modifier.weight(1f))
-            TextButton(onClick = { showSetup = true }) { Text("New game", color = NeonRed) }
+            if (mode != ChessMode.ONLINE) TextButton(onClick = { showSetup = true }) { Text("New game", color = NeonRed) }
         }
         Text(
-            when (mode) { ChessMode.VS_PHONE -> "vs Phone · ${difficulty.label}"; ChessMode.PASS_AND_PLAY -> "Pass & play" },
+            when (mode) {
+                ChessMode.VS_PHONE -> "vs Phone · ${difficulty.label}"; ChessMode.PASS_AND_PLAY -> "Pass & play"
+                ChessMode.ONLINE -> "vs ${peer.peerName ?: "friend"} · ${peer.kind?.label ?: ""} · you play ${if (humanColor == WHITE) "White" else "Black"}" +
+                    if (peer.state != org.victoriousframework.victorlink64.connect.PeerState.CONNECTED) " · ${peer.text}" else ""
+            },
             color = Muted, fontSize = 13.sp
         )
         Spacer(Modifier.height(8.dp))
         val status = when {
             result != GameResult.ONGOING -> result.text
             thinking -> "Phone is thinking…"
+            mode == ChessMode.ONLINE -> (if (pos.side == humanColor) "Your move" else "Waiting for friend…") + (if (pos.inCheck()) " — CHECK" else "")
             else -> (if (pos.side == WHITE) "White" else "Black") + " to move" + if (pos.inCheck()) " — CHECK" else ""
         }
         Text(status, color = if (result != GameResult.ONGOING || pos.inCheck()) NeonRed else Color.White,
@@ -150,14 +189,20 @@ fun ChessScreen(onBack: () -> Unit) {
         }
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(enabled = !thinking && game.uciMoves.isNotEmpty(), onClick = {
+            if (mode != ChessMode.ONLINE) OutlinedButton(enabled = !thinking && game.uciMoves.isNotEmpty(), onClick = {
                 game.undo()
                 if (mode == ChessMode.VS_PHONE && game.position.side != humanColor) game.undo()
                 selected = -1; version++; save()
             }) { Text("Undo") }
             OutlinedButton(enabled = result == GameResult.ONGOING && !thinking, onClick = {
-                game.resign(if (mode == ChessMode.VS_PHONE) humanColor else pos.side); version++
+                val c = if (mode == ChessMode.VS_PHONE || mode == ChessMode.ONLINE) humanColor else pos.side
+                game.resign(c); version++
+                if (mode == ChessMode.ONLINE) net.send("resign") { put("color", c) }
             }) { Text("Resign") }
+            if (mode == ChessMode.ONLINE && result != GameResult.ONGOING) Button(onClick = {
+                hostWhite = !hostWhite; game = ChessGame(); selected = -1; version++
+                net.send("rematch") { put("hostWhite", hostWhite) }
+            }, colors = ButtonDefaults.buttonColors(containerColor = NeonRed)) { Text("Rematch") }
         }
         Spacer(Modifier.height(8.dp))
         Text(game.uciMoves.chunked(2).mapIndexed { i, p -> "${i + 1}. ${p.joinToString(" ")}" }.joinToString("  "),
