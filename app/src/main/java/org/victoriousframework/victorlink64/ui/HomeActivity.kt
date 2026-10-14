@@ -113,7 +113,7 @@ fun VictorApp() {
         Box(Modifier.padding(pad).fillMaxSize()) {
             when (tab) {
                 Tab.Library -> LibraryScreen()
-                Tab.Connect -> ComingSoon("Connect", "Online rooms: host or join a game with friends.", Icons.Filled.Groups)
+                Tab.Connect -> org.victoriousframework.victorlink64.connect.ConnectScreen()
                 Tab.Cast -> ComingSoon("Cast", "Stream your game to a TV or another screen.", Icons.Filled.Cast)
                 Tab.Settings -> SettingsScreen()
                 Tab.About -> AboutScreen()
