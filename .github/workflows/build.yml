@@ -64,3 +64,4 @@ jobs:
         name: VictorLink64-debug-${{ github.sha }}
         path: app/build/outputs/apk/debug/VictorLink64-debug.apk
         if-no-files-found: error
+        retention-days: 7
