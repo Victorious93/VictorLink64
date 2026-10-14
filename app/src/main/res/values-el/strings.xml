@@ -196,7 +196,7 @@
   <string name="confirmUnmapAll_message">Διαγρ. αντιστοιχίσεων όλων των εισόδων για %1$s;</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Το Mupen64 Plus AE μπορεί να μην εγκαταστάθηκε σωστά. Παρακαλώ δοκιμάστε την επανεγκατάσταση της εφαρμογής αν βιώσετε κρασαρίσματα.</string>
+    <string name="invalidInstall_message">Το VictorLink64 μπορεί να μην εγκαταστάθηκε σωστά. Παρακαλώ δοκιμάστε την επανεγκατάσταση της εφαρμογής αν βιώσετε κρασαρίσματα.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">διαδρομή αρχείου</string>
   <!--Asset Extractor-->

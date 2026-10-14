@@ -166,7 +166,7 @@
     <string name="playShowCheats_title">启用作弊</string>
     <string name="playerMapPreference_popupTitle">玩家 %1$d</string>
     <string name="playerMap_deviceWithoutName">设备 %1$d</string>
-    <string name="popup_faq">Mupen64Plus 由志愿者开发和维护。<small>"
+    <string name="popup_faq">VictorLink64 由志愿者开发和维护。<small>"
 
 若要修复图形故障，请尝试更改 "<i>〖视频插件〗</i>"。
 
@@ -267,7 +267,7 @@
     <string name="inputMapActivity_popupUnmap">取消映射</string>
     <string name="inputMapActivity_simulateBack">返回键</string>
     <string name="inputShareController_summary">允许单个设备同时控制多个玩家</string>
-    <string name="invalidInstall_message">Mupen64 Plus AE 可能未正确安装。如果你遇到任何崩溃，请尝试重新安装该应用程序。</string>
+    <string name="invalidInstall_message">VictorLink64 可能未正确安装。如果你遇到任何崩溃，请尝试重新安装该应用程序。</string>
     <string name="navigationMode_entryAuto">从设备配置中自动选择</string>
     <string name="navigationMode_entryBigScreen">大屏模式（无触摸屏;仅限游戏手柄/键盘输入）</string>
     <string name="navigationMode_summary">菜单导航模式：%1$s</string>
@@ -343,7 +343,7 @@
     <string name="actionStart_title">开始</string>
     <string name="assetExtractor_error">错误</string>
     <string name="assetExtractor_failed_permissions">如果没有这些权限，此应用程序无法继续</string>
-    <string name="assetExtractor_permissions_rationale">"Mupen64Plus AE 需要能够：
+    <string name="assetExtractor_permissions_rationale">"VictorLink64 需要能够：
 读取您的存储来读取 ROM 文件，保存状态和配置。
 写入到您的存储来写入配置和保存数据。"</string>
     <string name="assetExtractor_permissions_title">权限</string>

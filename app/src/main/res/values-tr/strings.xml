@@ -233,7 +233,7 @@
   <string name="confirmDeleteProfile_message">\"%1$s\" profili silinsin mi?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE düzgün yüklenmiş olmayabilir. Herhangi bir hata ile karşılaşıyorsanız lütfen uygulamayı tekrardan yükleyiniz.</string>
+    <string name="invalidInstall_message">VictorLink64 düzgün yüklenmiş olmayabilir. Herhangi bir hata ile karşılaşıyorsanız lütfen uygulamayı tekrardan yükleyiniz.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">dosya adı</string>
   <!--Asset Extractor-->

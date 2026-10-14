@@ -78,7 +78,7 @@
     <string name="profile_name_must_be_unique">El nombre tiene que ser único</string>
     <string name="profile_manage_profiles">Administrar perfiles</string>
     <!--Popup Dialogs-->
-    <string name="popup_faq">Mupen64Plus es programado y mantenido por voluntarios.<small>\n\nPara corregir errores gráficos, prueba cambiando el <i>plugin de vídeo</i>.\n\nPara corregir el lag, intenta cambiando el <i>frameskip de vídeo</i> o el <i>plugin de vídeo</i>.\n\nPara ROMS que no se ejecutan, intenta descomprimiendo el ROM antes o intentando con una versión distinta del ROM.\n\nPara corregir problemas con la pantalla táctil, intenta cambiando el <i>tamaño de los botones</i> o la <i>disposición de botones</i>.\n\nPara otros problemas, o si todavía estás atascado, por favor toca el boton <i>FAQ</i> ubicado en la parte baja. Para errores que no se relacionan con algún juego, toca el botón <i>Reportar error</i> ubicado en la parte baja. Respondemos a la gran mayoría de las consultas dentro de las 24 horas siguientes. Sinceramente.\n\n</small>¡Gracias por ayudarnos a mejorar la aplicación!</string>
+    <string name="popup_faq">VictorLink64 es programado y mantenido por voluntarios.<small>\n\nPara corregir errores gráficos, prueba cambiando el <i>plugin de vídeo</i>.\n\nPara corregir el lag, intenta cambiando el <i>frameskip de vídeo</i> o el <i>plugin de vídeo</i>.\n\nPara ROMS que no se ejecutan, intenta descomprimiendo el ROM antes o intentando con una versión distinta del ROM.\n\nPara corregir problemas con la pantalla táctil, intenta cambiando el <i>tamaño de los botones</i> o la <i>disposición de botones</i>.\n\nPara otros problemas, o si todavía estás atascado, por favor toca el boton <i>FAQ</i> ubicado en la parte baja. Para errores que no se relacionan con algún juego, toca el botón <i>Reportar error</i> ubicado en la parte baja. Respondemos a la gran mayoría de las consultas dentro de las 24 horas siguientes. Sinceramente.\n\n</small>¡Gracias por ayudarnos a mejorar la aplicación!</string>
     <string name="popup_version">Versión: %1$s\nCódigo de versión: %2$d</string>
     <!--Lists-->
     <string name="listItem_edit">Editar</string>
@@ -581,7 +581,7 @@
 
     <!--Change Log-->
     <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE no se ha instalado correctamente. Por favor pruebe reinstalando la aplicación.</string>
+    <string name="invalidInstall_message">VictorLink64 no se ha instalado correctamente. Por favor pruebe reinstalando la aplicación.</string>
     <!--Text Editor Hints (start lower-case)-->
     <string name="hintFileSave">Nombre de archivo</string>
     <!--Asset Extractor-->
@@ -592,8 +592,8 @@
     <string name="assetExtractor_error">Error</string>
     <string name="assetExtractor_failed_permissions">Esta aplicación no puede proceder sin estos permisos</string>
     <string name="assetExtractor_permissions_title">Permisos</string>
-    <string name="assetExtractor_permissions_rationale">Mupen64Plus AE debe ser capaz de: \n Leer su almacenamiento para cargar archivos ROM, los estados de guardar, y la configuración también. \n Escribir a su almacenamiento para guardar los datos.</string>
-    <string name="assetExtractor_permissions_rationale_notifications">Mupen64Plus AE necesita poder mostrar notificaciones para mostrar el estado de los servicios corriendos actualmente.</string>
+    <string name="assetExtractor_permissions_rationale">VictorLink64 debe ser capaz de: \n Leer su almacenamiento para cargar archivos ROM, los estados de guardar, y la configuración también. \n Escribir a su almacenamiento para guardar los datos.</string>
+    <string name="assetExtractor_permissions_rationale_notifications">VictorLink64 necesita poder mostrar notificaciones para mostrar el estado de los servicios corriendos actualmente.</string>
 
     <!--Cheats Configuration-->
     <string name="cheats_defaultName">Truco %1$d</string>

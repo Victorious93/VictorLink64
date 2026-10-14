@@ -217,7 +217,7 @@
   <string name="confirmUnmapAll_message">Avtilldela alla kommandon för %1$s?</string>
   <!--Change Log-->
   <!--Corrupt Installation Warning-->
-    <string name="invalidInstall_message">Mupen64 Plus AE kanske inte har installerats korrekt. Försök att installera om appen om du upplever några krascher.</string>
+    <string name="invalidInstall_message">VictorLink64 kanske inte har installerats korrekt. Försök att installera om appen om du upplever några krascher.</string>
   <!--Text Editor Hints (start lower-case)-->
   <string name="hintFileSave">filnamn</string>
   <!--Asset Extractor-->

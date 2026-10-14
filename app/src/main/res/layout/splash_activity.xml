@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:ignore="UseCompoundDrawables" >
-    
+    android:gravity="center"
+    android:background="#0A1128"
+    android:padding="24dp">
+    <ImageView
+        android:id="@+id/mainImage"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/vl64_logo" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/vl64_tagline"
+        android:textColor="#1EA0FF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2"
+        android:shadowColor="#FF3B3B"
+        android:shadowRadius="12" />
     <TextView
         android:id="@+id/mainText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="center_vertical"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
         android:minLines="2"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:textColor="#8FA3C8"
         android:text="@string/assetExtractor_initializing" />
-    
-    <ImageView
-        android:id="@+id/mainImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/publisherlogo" />
-    
 </LinearLayout>
