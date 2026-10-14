@@ -54,9 +54,11 @@ val Muted = Color(0xFF8FA3C8)
 
 private const val PREFS = "victorlink64_prefs"
 private const val KEY_FOLDER = "rom_folder"
-private val ROM_EXT = setOf("z64", "n64", "v64")
+private val N64_EXT = setOf("z64", "n64", "v64")
+private val SNES_EXT = setOf("sfc", "smc")
+private val ROM_EXT = N64_EXT + SNES_EXT
 
-data class Game(val name: String, val uri: Uri, val size: Long)
+data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "")
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,7 +151,7 @@ fun scanFolder(c: Context, tree: Uri): List<Game> {
             else {
                 val n = f.name ?: continue
                 if (n.substringAfterLast('.', "").lowercase() in ROM_EXT)
-                    out += Game(n.substringBeforeLast('.'), f.uri, f.length())
+                    out += Game(n.substringBeforeLast('.'), f.uri, f.length(), n.substringAfterLast('.').lowercase() in SNES_EXT, n)
             }
         }
     }
@@ -232,15 +234,20 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         when {
-            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 games live.")
+            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 / .sfc / .smc games live.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
-            games.isEmpty() -> EmptyState("No games found", "No .z64 / .n64 / .v64 files in that folder.")
+            games.isEmpty() -> EmptyState("No games found", "No .z64 / .n64 / .v64 / .sfc / .smc files in that folder.")
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(games) { g ->
                     Row(
                         Modifier.fillMaxWidth().clip16().background(NavyCard)
                             .border(1.dp, NeonBlue.copy(alpha = .35f), RoundedCornerShape(16.dp))
-                            .clickable { Thread { launchRom(ctx, g.uri, g.name) }.start() }
+                            .clickable {
+                                if (g.snes) ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.snes.SnesActivity::class.java)
+                                    .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_URI, g.uri.toString())
+                                    .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_NAME, g.fileName))
+                                else Thread { launchRom(ctx, g.uri, g.name) }.start()
+                            }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -250,7 +257,7 @@ fun LibraryScreen() {
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
                             Text(g.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-                            Text("%.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
+                            Text((if (g.snes) "SNES" else "N64") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
                         }
                         Icon(Icons.Filled.PlayArrow, "Play", tint = NeonBlue)
                     }
@@ -342,6 +349,9 @@ fun AboutScreen() {
             "(https://github.com/mupen64plus-ae/mupen64plus-ae), including its core, RSP, audio, input " +
             "and video plugins (GLideN64, Glide64mk2, Rice, gln64, Angrylion-Plus, paraLLEl). " +
             "Copyright © their respective authors and contributors.\n\n" +
+            "SNES emulation uses bsnes by byuu and contributors (libretro port, https://github.com/libretro/bsnes), " +
+            "licensed under the GNU GPL v3; its bundled Game Boy core (SameBoy, © Lior Halphon) is MIT licensed.\n\n" +
+            "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +
             "https://github.com/Victorious93/VictorLink64",
