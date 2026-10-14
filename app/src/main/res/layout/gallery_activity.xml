@@ -41,7 +41,7 @@
             android:paddingBottom="154dip"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:background="@color/mupen_black"
+            android:background="@color/vl_navy"
             />
 
         <ImageView
@@ -50,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/ic_n64_controller"
+            android:alpha="0.35"
             tools:ignore="ContentDescription" />
 
         <com.google.android.material.appbar.AppBarLayout
@@ -122,7 +123,8 @@
             android:layout_marginBottom="24dp"
             android:nextFocusUp="@id/gridview"
             android:nextFocusLeft="@id/gridview"
-            android:background="@color/blue1"
+            app:backgroundTint="@color/vl_red"
+            app:tint="@color/vl_on_navy"
             app:elevation="5dp"
             android:elevation="5dp"
             app:srcCompat="@drawable/ic_fab_refresh_roms"
