@@ -215,6 +215,22 @@ fun LibraryScreen() {
             }
         }
         Spacer(Modifier.height(12.dp))
+        Row(
+            Modifier.fillMaxWidth().clip16().background(NeonRed.copy(alpha = .15f))
+                .border(1.dp, NeonRed, RoundedCornerShape(16.dp))
+                .clickable { ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.chess.ChessActivity::class.java)) }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("♞", fontSize = 30.sp, color = NeonRed)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text("Chess", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Built-in · vs phone or pass & play", color = Muted, fontSize = 12.sp)
+            }
+            Icon(Icons.Filled.PlayArrow, "Play chess", tint = NeonRed)
+        }
+        Spacer(Modifier.height(12.dp))
         when {
             folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 games live.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }

@@ -68,6 +68,12 @@
         android:fullBackupContent="@xml/backup_descriptor">
 
         <activity
+            android:name="org.victoriousframework.victorlink64.chess.ChessActivity"
+            android:exported="false"
+            android:label="Chess"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
             android:name="org.victoriousframework.victorlink64.ui.HomeActivity"
             android:exported="false"
             android:label="@string/app_name"
