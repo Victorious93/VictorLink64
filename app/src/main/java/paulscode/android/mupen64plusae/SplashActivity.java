@@ -261,7 +261,7 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS))
+                if (false)
                 {
                     //Show dialog asking for permissions
                     //Show dialog stating that the app can't continue without proper permissions
@@ -351,6 +351,9 @@ public class SplashActivity extends AppCompatActivity implements ExtractAssetsLi
                     break;
                 }
             }
+
+            // Notifications (Android 13+) are optional: never block the app on them.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) good = true;
 
             if (!good)
             {
