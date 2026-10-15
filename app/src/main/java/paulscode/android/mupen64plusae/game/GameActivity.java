@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
+import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -88,6 +89,7 @@ import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.input.AbstractController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -667,11 +669,25 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         mGameSurface.startGlContext();
     }
 
+    /** Clears held buttons/sticks when a controller is unplugged so input cannot stay stuck. */
+    private final InputManager.InputDeviceListener mDeviceListener = new InputManager.InputDeviceListener()
+    {
+        @Override public void onInputDeviceAdded(int deviceId) {}
+        @Override public void onInputDeviceChanged(int deviceId) {}
+        @Override public void onInputDeviceRemoved(int deviceId)
+        {
+            Log.i(TAG, "Input device removed (" + deviceId + "), releasing all controller input");
+            AbstractController.releaseAll(mCoreFragment);
+        }
+    };
+
     @Override
     public void onResume()
     {
         super.onResume();
         Log.i(TAG, "onResume");
+        final InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
+        if (inputManager != null) inputManager.registerInputDeviceListener(mDeviceListener, new Handler(Looper.getMainLooper()));
         RetroAchievementsManager.setGameLoadListener(this);
 
         if (mSensorController != null) {
@@ -699,6 +715,8 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     public void onPause() {
         super.onPause();
         Log.i(TAG, "onPause");
+        final InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
+        if (inputManager != null) inputManager.unregisterInputDeviceListener(mDeviceListener);
         RetroAchievementsManager.setGameLoadListener(null);
         if (mTrackerContainer != null) {
             mTrackerContainer.removeAllViews();

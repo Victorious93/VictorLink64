@@ -25,8 +25,9 @@
   <sub>Grab the newest <code>.apk</code> from the Releases page.</sub>
 </p>
 
-> **Heads up — this is an early beta.** Everything below is brand new. Some features have only been
-> tried on a computer, not yet on many real phones, so expect a few rough edges. Feedback is very welcome!
+> **Heads up — this is an early beta.** Everything below is brand new. The app builds and its chess and
+> multiplayer logic has automated tests, but gameplay, controllers and saves have **not yet been verified on real
+> devices** (see [`docs/Victorious-Framework-Status.md`](docs/Victorious-Framework-Status.md)), so expect rough edges. Feedback is very welcome!
 
 ---
 

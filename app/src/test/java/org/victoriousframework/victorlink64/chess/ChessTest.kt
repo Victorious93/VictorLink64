@@ -64,4 +64,28 @@ class ChessTest {
         val p = Position.fromFen("6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1")
         assertEquals("a1a8", ChessAi.bestMove(p, Difficulty.MEDIUM)!!.uci())
     }
+
+    @Test fun expertReturnsLegalMoveWithinBudget() {
+        val p = Position.fromFen("r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4")
+        val t0 = System.nanoTime()
+        val m = ChessAi.bestMove(p, Difficulty.EXPERT)!!
+        val ms = (System.nanoTime() - t0) / 1_000_000
+        assertTrue("took ${ms}ms", ms < 6000)
+        assertTrue(m in p.legalMoves())
+    }
+
+    @Test fun expertFindsMateInOneAndSkipsDeeperSearch() {
+        val p = Position.fromFen("6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1")
+        assertEquals("a1a8", ChessAi.bestMove(p, Difficulty.EXPERT)!!.uci())
+    }
+
+    @Test fun aiDoesNotHangQueen() {
+        // Qxd5?? loses the queen to the pawn on c6; any sane Hard search avoids it.
+        val p = Position.fromFen("4k3/8/2p5/3p4/8/8/3Q4/4K3 w - - 0 1")
+        assertNotEquals("d2d5", ChessAi.bestMove(p, Difficulty.HARD)!!.uci())
+    }
+
+    @Test fun aiReturnsNullWhenNoMoves() {
+        assertNull(ChessAi.bestMove(Position.fromFen("7k/5Q2/6K1/8/8/8/8/8 b - - 0 1"), Difficulty.EXPERT))
+    }
 }

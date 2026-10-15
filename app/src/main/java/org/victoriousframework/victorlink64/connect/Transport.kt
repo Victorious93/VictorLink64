@@ -53,6 +53,9 @@ abstract class StreamTransport : Transport {
     @Volatile protected var out: OutputStream? = null
     @Volatile protected var closed = false
     protected lateinit var listener: TransportListener
+    // One writer thread keeps messages in order (a thread per send could reorder moves).
+    private val sender = java.util.concurrent.Executors.newSingleThreadExecutor { r -> Thread(r, "vl64-send").apply { isDaemon = true } }
+    protected fun shutdownSender() { sender.shutdownNow() }
 
     protected fun pump(input: InputStream, output: OutputStream, peer: String?) {
         out = output
@@ -72,7 +75,9 @@ abstract class StreamTransport : Transport {
 
     override fun send(msg: String) {
         val o = out ?: return
-        thread { try { synchronized(o) { o.write((msg.replace("\n", " ") + "\n").toByteArray()); o.flush() } } catch (e: Exception) { Log.w(TAG, "send", e) } }
+        try {
+            sender.execute { try { o.write((msg.replace("\n", " ") + "\n").toByteArray()); o.flush() } catch (e: Exception) { Log.w(TAG, "send", e) } }
+        } catch (_: java.util.concurrent.RejectedExecutionException) { /* closed */ }
     }
 }
 
@@ -147,6 +152,7 @@ class LanTransport(private val ctx: Context, override val isHost: Boolean, priva
 
     override fun close() {
         closed = true
+        shutdownSender()
         unregister(); stopDiscovery()
         runCatching { socket?.close() }; runCatching { server?.close() }
     }
@@ -194,7 +200,7 @@ class BluetoothTransport(
         }
     }
 
-    override fun close() { closed = true; runCatching { socket?.close() }; runCatching { server?.close() } }
+    override fun close() { closed = true; shutdownSender(); runCatching { socket?.close() }; runCatching { server?.close() } }
 }
 
 /** Far away: WebSocket to the VictorLink64 Cloudflare relay; peers share a 6-character room code. */
@@ -207,6 +213,7 @@ class OnlineTransport(private val relayUrl: String, val roomCode: String, privat
     private val client = OkHttpClient.Builder().pingInterval(20, TimeUnit.SECONDS).build()
 
     companion object {
+        private const val MAX_RETRIES = 4
         private val CODE_RE = Regex("^[A-Z0-9]{6}$")
         fun normalize(code: String) = code.trim().uppercase().filter { it.isLetterOrDigit() }
         fun isValidCode(code: String) = CODE_RE.matches(normalize(code))
@@ -220,11 +227,36 @@ class OnlineTransport(private val relayUrl: String, val roomCode: String, privat
         }
     }
 
+    private var listener: TransportListener? = null
+    @Volatile private var attempts = 0
+    private val retryExec = java.util.concurrent.Executors.newSingleThreadScheduledExecutor { r -> Thread(r, "vl64-retry").apply { isDaemon = true } }
+
     override fun start(listener: TransportListener) {
+        this.listener = listener
         listener.onStatus("Connecting to room $roomCode…")
+        connect()
+    }
+
+    /** Transient drops (network blip, 1001/1006) are retried with backoff; rejections (4xx) are final. */
+    private fun retryOrFail(text: String) {
+        val l = listener ?: return
+        if (closed) return
+        if (attempts >= MAX_RETRIES) { l.onError(text); return }
+        val delay = 1000L shl attempts
+        attempts++
+        l.onStatus("Connection lost — reconnecting ($attempts/$MAX_RETRIES)…")
+        try {
+            retryExec.schedule({ if (!closed) connect() }, delay, TimeUnit.MILLISECONDS)
+        } catch (_: java.util.concurrent.RejectedExecutionException) { /* closed */ }
+    }
+
+    private fun connect() {
+        val listener = listener ?: return
         val url = "$relayUrl/room/$roomCode?name=" + java.net.URLEncoder.encode(nick, "UTF-8")
         ws = client.newWebSocket(Request.Builder().url(url).build(), object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) { attempts = 0 }
             override fun onMessage(webSocket: WebSocket, text: String) {
+                if (webSocket !== ws) return
                 if (text == "pong") return
                 val o = runCatching { JSONObject(text) }.getOrNull()
                 when (o?.optString("t")) {
@@ -240,12 +272,23 @@ class OnlineTransport(private val relayUrl: String, val roomCode: String, privat
                 }
             }
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                if (!closed) listener.onError("Connection failed: ${t.message ?: response?.code}")
+                if (closed || webSocket !== ws) return
+                val code = response?.code
+                val text = "Connection failed: ${t.message ?: code}"
+                if (code != null && code in 400..499) listener.onError(text) else retryOrFail(text)
             }
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) { if (!closed) listener.onPeerDisconnected() }
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                if (closed || webSocket !== ws) return
+                if (code == 1001 || code == 1006) retryOrFail("Connection closed") else listener.onPeerDisconnected()
+            }
         })
     }
 
     override fun send(msg: String) { ws?.send(msg) }
-    override fun close() { closed = true; ws?.close(1000, "bye"); client.dispatcher.executorService.shutdown() }
+    override fun close() {
+        closed = true
+        retryExec.shutdownNow()
+        ws?.close(1000, "bye")
+        client.dispatcher.executorService.shutdown()
+    }
 }

@@ -26,6 +26,14 @@ Legend: ☑ done and evidenced · ◐ partly done · ☐ not started
 ### Phase 4 — Wired and compatibility
 ☐ external display · ☐ USB network routes · ☐ capability gating
 
+## Changes pending CI/device evidence (2026-10-15)
+
+Compiled and tested only by CI (no Android SDK or device in the authoring sandbox); **device-unverified**:
+- CI now runs `:app:testDebugUnitTest` (chess engine, online codes).
+- Chess AI: iterative deepening with a 2 s budget (Expert, depth ≤ 6); new AI unit tests.
+- Connect: LAN/Bluetooth messages are sent in order by one writer thread; Online relay auto-reconnects (4 tries, backoff) on transient drops, not on 4xx rejections.
+- Phase 2 (partial): all controller input is released when any input device is removed (`AbstractController.releaseAll`).
+
 ## Tally
 
 Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and CI confirmation. Deferred / abandoned: none.

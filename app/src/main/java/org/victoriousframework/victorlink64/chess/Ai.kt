@@ -3,14 +3,25 @@ package org.victoriousframework.victorlink64.chess
 import kotlin.math.abs
 import kotlin.random.Random
 
-/** Original alpha-beta (negamax) searcher with material + piece-square evaluation. */
-enum class Difficulty(val label: String, val depth: Int, val noise: Int) {
-    EASY("Easy", 1, 120), MEDIUM("Medium", 2, 30), HARD("Hard", 3, 0), EXPERT("Expert", 4, 0)
+/**
+ * Original alpha-beta (negamax) searcher with material + piece-square evaluation.
+ * [timeMs] > 0 turns on iterative deepening up to [depth], stopping early when the time budget is spent.
+ */
+enum class Difficulty(val label: String, val depth: Int, val noise: Int, val timeMs: Long = 0) {
+    EASY("Easy", 1, 120), MEDIUM("Medium", 2, 30), HARD("Hard", 3, 0), EXPERT("Expert", 6, 0, 2000)
 }
 
 object ChessAi {
     private val VALUE = intArrayOf(0, 100, 320, 330, 500, 900, 0)
     private const val MATE = 100000
+
+    // Search budget state; bestMove is synchronized so one search runs at a time.
+    private var deadline = Long.MAX_VALUE
+    private var aborted = false
+    private fun outOfTime(): Boolean {
+        if (!aborted && System.nanoTime() > deadline) aborted = true
+        return aborted
+    }
 
     // Simple centralisation table (from white's view), shared by minor pieces and used lightly for others.
     private val CENTER = IntArray(64) { sq ->
@@ -61,6 +72,7 @@ object ChessAi {
         val moves = p.legalMoves()
         if (moves.isEmpty()) return if (p.inCheck()) -MATE + ply else 0
         if (p.halfmove >= 100) return 0
+        if (outOfTime()) return 0
         if (depth == 0) return quiesce(p, alpha, beta, 4)
         var best = -MATE * 2
         for (m in order(p, moves)) {
@@ -72,17 +84,29 @@ object ChessAi {
         return best
     }
 
+    @Synchronized
     fun bestMove(p: Position, d: Difficulty, rnd: Random = Random.Default): Move? {
-        val moves = p.legalMoves()
-        if (moves.isEmpty()) return null
-        var best: Move? = null; var bestScore = Int.MIN_VALUE
-        var alpha = -MATE * 2
-        for (m in order(p, moves)) {
-            var sc = -search(p.play(m), d.depth - 1, -MATE * 2, if (d.noise > 0) MATE * 2 else -alpha, 1)
-            if (d.noise > 0) sc += rnd.nextInt(d.noise)
-            if (sc > bestScore) { bestScore = sc; best = m }
-            if (sc > alpha) alpha = sc
+        val legal = p.legalMoves()
+        if (legal.isEmpty()) return null
+        aborted = false
+        deadline = if (d.timeMs > 0) System.nanoTime() + d.timeMs * 1_000_000 else Long.MAX_VALUE
+        var ordered = order(p, legal)
+        var result: Move = ordered[0]
+        for (depth in (if (d.timeMs > 0) 1 else d.depth)..d.depth) {
+            var best: Move? = null; var bestScore = Int.MIN_VALUE
+            var alpha = -MATE * 2
+            for (m in ordered) {
+                var sc = -search(p.play(m), depth - 1, -MATE * 2, if (d.noise > 0) MATE * 2 else -alpha, 1)
+                if (aborted) break
+                if (d.noise > 0) sc += rnd.nextInt(d.noise)
+                if (sc > bestScore) { bestScore = sc; best = m }
+                if (sc > alpha) alpha = sc
+            }
+            if (aborted || best == null) break // keep the last fully searched depth
+            result = best
+            if (bestScore >= MATE - 100) break // forced mate found; deeper search cannot improve it
+            ordered = listOf(best) + ordered.filter { it != best } // search the previous best first next time
         }
-        return best
+        return result
     }
 }

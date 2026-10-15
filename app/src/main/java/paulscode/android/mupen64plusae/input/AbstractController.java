@@ -146,6 +146,23 @@ public abstract class AbstractController
     }
     
     /**
+     * Releases every button and centers every stick for all four players, e.g. when a controller
+     * disconnects mid-press so no input stays stuck. Victorious Framework addition.
+     */
+    public static void releaseAll(CoreFragment coreFragment)
+    {
+        for( int i = 0; i < sStates.size(); i++ )
+        {
+            final State s = sStates.get( i );
+            java.util.Arrays.fill( s.buttons, false );
+            s.axisFractionX = 0;
+            s.axisFractionY = 0;
+            if( coreFragment != null )
+                coreFragment.setControllerState( i, s.buttons, 0, 0, true );
+        }
+    }
+
+    /**
      * Notifies the core that the N64 controller state has changed.
      */
     void notifyChanged(boolean isDigital)
