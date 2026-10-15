@@ -58,7 +58,10 @@ private val N64_EXT = setOf("z64", "n64", "v64")
 private val SNES_EXT = setOf("sfc", "smc")
 private val ROM_EXT = N64_EXT + SNES_EXT
 
-data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "")
+data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "",
+    /** For .zip games: the ROM entry inside the archive. */ val zipEntry: String? = null)
+
+data class ScanResult(val games: List<Game>, val filesSeen: Int, val error: String? = null)
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,21 +145,86 @@ fun Header() {
 
 fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-fun scanFolder(c: Context, tree: Uri): List<Game> {
-    val root = DocumentFile.fromTreeUri(c, tree) ?: return emptyList()
+/** Finds the first ROM entry inside a zip (streamed; most ROM zips have a single entry). */
+fun findRomInZip(c: Context, uri: Uri): String? = runCatching {
+    c.contentResolver.openInputStream(uri)?.use { ins ->
+        java.util.zip.ZipInputStream(java.io.BufferedInputStream(ins)).use { z ->
+            var e = z.nextEntry
+            var guard = 0
+            while (e != null && guard++ < 64) {
+                if (!e.isDirectory && e.name.substringAfterLast('.', "").lowercase() in ROM_EXT) return@runCatching e.name
+                e = z.nextEntry
+            }
+            null
+        }
+    }
+}.getOrNull()
+
+fun scanFolder(c: Context, tree: Uri): ScanResult {
+    val root = DocumentFile.fromTreeUri(c, tree) ?: return ScanResult(emptyList(), 0, "Folder can't be opened")
+    if (!root.canRead()) return ScanResult(emptyList(), 0, "No permission to read this folder — pick it again")
+    val zipCache = c.getSharedPreferences("victorlink64_zipcache", Context.MODE_PRIVATE)
     val out = mutableListOf<Game>()
+    var seen = 0
     fun walk(d: DocumentFile, depth: Int) {
         for (f in d.listFiles()) {
-            if (f.isDirectory && depth < 3) walk(f, depth + 1)
-            else {
-                val n = f.name ?: continue
-                if (n.substringAfterLast('.', "").lowercase() in ROM_EXT)
-                    out += Game(n.substringBeforeLast('.'), f.uri, f.length(), n.substringAfterLast('.').lowercase() in SNES_EXT, n)
+            if (f.isDirectory) { if (depth < 4) walk(f, depth + 1); continue }
+            seen++
+            val n = f.name ?: continue
+            val ext = n.substringAfterLast('.', "").lowercase()
+            val base = n.substringBeforeLast('.')
+            when {
+                ext in ROM_EXT -> out += Game(base, f.uri, f.length(), ext in SNES_EXT, n)
+                ext == "zip" -> {
+                    val key = f.uri.toString() + "#" + f.length() + "#" + f.lastModified()
+                    val entry = if (zipCache.contains(key)) zipCache.getString(key, "") else findRomInZip(c, f.uri).also { zipCache.edit().putString(key, it ?: "").apply() }
+                    if (!entry.isNullOrEmpty()) {
+                        val inner = entry.substringAfterLast('.', "").lowercase()
+                        out += Game(base, f.uri, f.length(), inner in SNES_EXT, entry.substringAfterLast('/'), entry)
+                    }
+                }
             }
         }
     }
-    walk(root, 0)
-    return out.sortedBy { it.name.lowercase() }
+    return try {
+        walk(root, 0)
+        ScanResult(out.sortedBy { it.name.lowercase() }, seen)
+    } catch (e: Exception) {
+        ScanResult(out, seen, "Scan failed: ${e.message}")
+    }
+}
+
+/** Extracts a zipped ROM to the app cache (re-used if already extracted). Call off the main thread. */
+fun extractZipRom(c: Context, g: Game): java.io.File {
+    val dir = java.io.File(c.cacheDir, "roms").apply { mkdirs() }
+    val out = java.io.File(dir, g.fileName.replace(Regex("[^A-Za-z0-9._ -]"), "_"))
+    if (out.exists() && out.length() > 0) return out
+    // keep the cache small: only the most recent extracted ROM
+    dir.listFiles()?.forEach { it.delete() }
+    c.contentResolver.openInputStream(g.uri)!!.use { ins ->
+        java.util.zip.ZipInputStream(java.io.BufferedInputStream(ins)).use { z ->
+            var e = z.nextEntry
+            while (e != null) {
+                if (e.name == g.zipEntry) { val tmp = java.io.File(dir, out.name + ".part"); tmp.outputStream().use { z.copyTo(it) }; tmp.renameTo(out); return out }
+                e = z.nextEntry
+            }
+        }
+    }
+    throw java.io.FileNotFoundException("${g.zipEntry} not found in zip")
+}
+
+/** Launches any library game (N64 or SNES, plain or zipped). Call off the main thread. */
+fun launchGame(c: Context, g: Game) {
+    try {
+        val uri = if (g.zipEntry != null) { toast(c, "Unpacking ${g.name}…"); Uri.fromFile(extractZipRom(c, g)) } else g.uri
+        if (g.snes) c.startActivity(Intent(c, org.victoriousframework.victorlink64.snes.SnesActivity::class.java)
+            .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_URI, uri.toString())
+            .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_NAME, g.fileName)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        else launchRom(c, uri, g.name)
+    } catch (e: Exception) {
+        toast(c, "Could not open ${g.name}: ${e.message}")
+    }
 }
 
 /** Reads ROM header + md5 and hands off to the core's game activity. Call off the main thread. */
@@ -190,20 +258,27 @@ fun LibraryScreen() {
     var folder by remember { mutableStateOf(prefs(ctx).getString(KEY_FOLDER, null)) }
     var games by remember { mutableStateOf<List<Game>>(emptyList()) }
     var loading by remember { mutableStateOf(false) }
+    var scanInfo by remember { mutableStateOf<ScanResult?>(null) }
 
     fun refresh() {
         val f = folder ?: return
         loading = true
         scope.launch {
-            games = withContext(Dispatchers.IO) { runCatching { scanFolder(ctx, Uri.parse(f)) }.getOrDefault(emptyList()) }
+            val r = withContext(Dispatchers.IO) { runCatching { scanFolder(ctx, Uri.parse(f)) }.getOrElse { ScanResult(emptyList(), 0, it.message) } }
+            games = r.games; scanInfo = r
             loading = false
+            when {
+                r.error != null -> Toast.makeText(ctx, r.error, Toast.LENGTH_LONG).show()
+                r.games.isEmpty() -> Toast.makeText(ctx, "No games found (${r.filesSeen} files checked). Supported: .z64 .n64 .v64 .sfc .smc and .zip", Toast.LENGTH_LONG).show()
+            }
         }
     }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         if (uri != null) {
-            ctx.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            runCatching { ctx.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+                .onFailure { Toast.makeText(ctx, "Couldn't keep access to that folder: ${it.message}", Toast.LENGTH_LONG).show() }
             prefs(ctx).edit().putString(KEY_FOLDER, uri.toString()).apply()
-            folder = uri.toString(); refresh()
+            if (folder == uri.toString()) refresh() else folder = uri.toString() // LaunchedEffect(folder) rescans
         }
     }
     LaunchedEffect(folder) { refresh() }
@@ -234,20 +309,16 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         when {
-            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 / .sfc / .smc games live.")
+            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 / .sfc / .smc / .zip games live.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
-            games.isEmpty() -> EmptyState("No games found", "No .z64 / .n64 / .v64 / .sfc / .smc files in that folder.")
+            games.isEmpty() -> EmptyState(scanInfo?.error ?: "No games found",
+                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES) and .zip files containing them, up to 4 folders deep.")
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(games) { g ->
                     Row(
                         Modifier.fillMaxWidth().clip16().background(NavyCard)
                             .border(1.dp, NeonBlue.copy(alpha = .35f), RoundedCornerShape(16.dp))
-                            .clickable {
-                                if (g.snes) ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.snes.SnesActivity::class.java)
-                                    .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_URI, g.uri.toString())
-                                    .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_NAME, g.fileName))
-                                else Thread { launchRom(ctx, g.uri, g.name) }.start()
-                            }
+                            .clickable { Thread { launchGame(ctx, g) }.start() }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -257,7 +328,7 @@ fun LibraryScreen() {
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
                             Text(g.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-                            Text((if (g.snes) "SNES" else "N64") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
+                            Text((if (g.snes) "SNES" else "N64") + (if (g.zipEntry != null) " · ZIP" else "") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
                         }
                         Icon(Icons.Filled.PlayArrow, "Play", tint = NeonBlue)
                     }
