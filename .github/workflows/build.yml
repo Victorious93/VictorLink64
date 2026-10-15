@@ -60,6 +60,7 @@ jobs:
         sha256sum "$APK"
 
     - uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: VictorLink64-debug-${{ github.sha }}
         path: app/build/outputs/apk/debug/VictorLink64-debug.apk
