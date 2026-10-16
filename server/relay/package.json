@@ -1,0 +1,9 @@
+{
+  "name": "victorlink64-relay",
+  "private": true,
+  "type": "module",
+  "description": "VictorLink64 relay (Victorious Framework): Cloudflare Worker + Durable Object room relay.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

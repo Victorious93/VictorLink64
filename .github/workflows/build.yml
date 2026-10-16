@@ -49,6 +49,14 @@ jobs:
     - name: Verifier unit tests
       run: python3 -I -m unittest discover -s scripts/tests -v
 
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Relay unit tests
+      working-directory: server/relay
+      run: npm test
+
     - name: JVM unit tests
       run: ./gradlew :app:testDebugUnitTest
 

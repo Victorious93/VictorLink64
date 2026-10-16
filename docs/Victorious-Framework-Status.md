@@ -1,6 +1,6 @@
 # Victorious Framework — VictorLink64 Status
 
-Updated 2026-10-13 · Author: Victorious
+Updated 2026-10-16 · Author: Victorious
 
 ## Phase checklist
 
@@ -25,6 +25,21 @@ Legend: ☑ done and evidenced · ◐ partly done · ☐ not started
 
 ### Phase 4 — Wired and compatibility
 ☐ external display · ☐ USB network routes · ☐ capability gating
+
+## Bug sweep 2026-10-16
+
+Method: code read-through of the Kotlin app code, relay, and the zip-ROM change from v0.3.2; chess engine run locally. **No Android SDK in this environment, so the app was not built and nothing was run on a device.**
+
+| Area | Finding | Fix | Evidence |
+| --- | --- | --- | --- |
+| Chess UI | "New game" during an AI search cancelled the search before `thinking = false` ran, leaving "Phone is thinking…" with Resign/Undo disabled | `thinking` is derived from `aiTurn` instead of stored | reasoned from code; **not compiled for Android, not device-tested** |
+| LAN/Bluetooth | `send()` started one thread per message, so messages could be reordered | single ordered writer thread | reasoned from code; **not tested** |
+| Zip ROMs | extracted file was cached by inner filename only, so two zips both containing `game.z64` would launch the wrong ROM | cache name includes a hash of archive URI, entry and size | reasoned from code; **not tested** |
+| Relay | peers could forge `welcome`/`peer_join`/`peer_leave`; close never replied; leave count could be off by one | reserved types dropped; `ws.close()` on close; count excludes the leaving socket | **automated** (7 node tests; 2 fail on old code). Needs `npx wrangler deploy` to take effect |
+| Online codes | `newRoomCode` accepted any HTTP response | checks status and code format | reasoned from code |
+| Chess engine | looked for bugs | none found: perft matches published counts on 7 positions; `ChessTest` 10/10 | **automated, local only** |
+
+Known, not changed: a peer can send `resign` for the other side (trusted-friend model); the zip scan cache in SharedPreferences is never pruned; only the last extracted zip ROM is kept in cache.
 
 ## Tally
 
