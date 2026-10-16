@@ -3,6 +3,18 @@
 // GET /new returns a fresh 6-char room code. Messages are opaque JSON strings (max 16 KB).
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I
 const MAX_PEERS = 8;
+// Types only the relay may originate; clients treat them as control messages, so peers must not be able to forge them.
+const RESERVED = new Set(["welcome", "peer_join", "peer_leave"]);
+
+function isReserved(msg) {
+  if (!msg.includes('"t"')) return false;
+  try {
+    const o = JSON.parse(msg);
+    return o !== null && typeof o === "object" && RESERVED.has(o.t);
+  } catch (_) {
+    return false;
+  }
+}
 
 function newCode() {
   const b = new Uint8Array(6);
@@ -67,13 +79,17 @@ export class Room {
   webSocketMessage(ws, msg) {
     if (typeof msg !== "string" || msg.length > 16384) return;
     if (msg === "ping") { ws.send("pong"); return; }
+    if (isReserved(msg)) return;
     this.broadcast(msg, ws);
   }
 
-  webSocketClose(ws) {
+  webSocketClose(ws, code, reason) {
     const a = ws.deserializeAttachment() || {};
-    this.broadcast(JSON.stringify({ t: "peer_leave", id: a.id, name: a.name, count: this.peers().length - 1 }), ws);
+    try { ws.close(code >= 1000 && code <= 4999 && code !== 1005 && code !== 1006 ? code : 1000, reason || "closing"); } catch (_) {}
+    // Count peers other than the one leaving; the closing socket may or may not still be listed.
+    const count = this.peers().filter((w) => w !== ws).length;
+    this.broadcast(JSON.stringify({ t: "peer_leave", id: a.id, name: a.name, count }), ws);
   }
 
-  webSocketError(ws) { this.webSocketClose(ws); }
+  webSocketError(ws) { this.webSocketClose(ws, 1011, "error"); }
 }

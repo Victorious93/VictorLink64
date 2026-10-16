@@ -197,7 +197,9 @@ fun scanFolder(c: Context, tree: Uri): ScanResult {
 /** Extracts a zipped ROM to the app cache (re-used if already extracted). Call off the main thread. */
 fun extractZipRom(c: Context, g: Game): java.io.File {
     val dir = java.io.File(c.cacheDir, "roms").apply { mkdirs() }
-    val out = java.io.File(dir, g.fileName.replace(Regex("[^A-Za-z0-9._ -]"), "_"))
+    // Keyed by archive + entry + size so two different zips holding e.g. "game.z64" never share a cache file.
+    val tag = Integer.toHexString("${g.uri}#${g.zipEntry}#${g.size}".hashCode())
+    val out = java.io.File(dir, tag + "_" + g.fileName.replace(Regex("[^A-Za-z0-9._ -]"), "_"))
     if (out.exists() && out.length() > 0) return out
     // keep the cache small: only the most recent extracted ROM
     dir.listFiles()?.forEach { it.delete() }

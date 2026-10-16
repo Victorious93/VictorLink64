@@ -23,6 +23,7 @@ import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.UUID
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -70,10 +71,18 @@ abstract class StreamTransport : Transport {
         if (!closed) listener.onPeerDisconnected()
     }
 
+    /** One writer thread keeps messages in the order they were sent (a thread per message could reorder moves). */
+    private val sender = Executors.newSingleThreadExecutor { r -> Thread(r, "VL64Connect-send").apply { isDaemon = true } }
+
     override fun send(msg: String) {
         val o = out ?: return
-        thread { try { synchronized(o) { o.write((msg.replace("\n", " ") + "\n").toByteArray()); o.flush() } } catch (e: Exception) { Log.w(TAG, "send", e) } }
+        val bytes = (msg.replace("\n", " ") + "\n").toByteArray(Charsets.UTF_8)
+        try {
+            sender.execute { try { o.write(bytes); o.flush() } catch (e: Exception) { Log.w(TAG, "send", e) } }
+        } catch (_: java.util.concurrent.RejectedExecutionException) { /* closed */ }
     }
+
+    protected fun shutdownSender() { sender.shutdown() }
 }
 
 /** Same Wi-Fi: host advertises via NSD (mDNS) and accepts a TCP connection; joiner discovers and connects. */
@@ -147,7 +156,7 @@ class LanTransport(private val ctx: Context, override val isHost: Boolean, priva
 
     override fun close() {
         closed = true
-        unregister(); stopDiscovery()
+        unregister(); stopDiscovery(); shutdownSender()
         runCatching { socket?.close() }; runCatching { server?.close() }
     }
 }
@@ -194,7 +203,7 @@ class BluetoothTransport(
         }
     }
 
-    override fun close() { closed = true; runCatching { socket?.close() }; runCatching { server?.close() } }
+    override fun close() { closed = true; shutdownSender(); runCatching { socket?.close() }; runCatching { server?.close() } }
 }
 
 /** Far away: WebSocket to the VictorLink64 Cloudflare relay; peers share a 6-character room code. */
@@ -215,7 +224,10 @@ class OnlineTransport(private val relayUrl: String, val roomCode: String, privat
         fun newRoomCode(relayUrl: String): String {
             val http = relayUrl.replaceFirst("wss://", "https://").replaceFirst("ws://", "http://")
             OkHttpClient().newCall(Request.Builder().url("$http/new").build()).execute().use {
-                return JSONObject(it.body!!.string()).getString("code")
+                check(it.isSuccessful) { "relay returned HTTP ${it.code}" }
+                val code = JSONObject(it.body!!.string()).getString("code")
+                check(isValidCode(code)) { "relay returned a bad room code" }
+                return normalize(code)
             }
         }
     }

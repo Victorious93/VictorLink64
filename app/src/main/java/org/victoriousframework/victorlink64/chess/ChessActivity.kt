@@ -65,7 +65,6 @@ fun ChessScreen(onBack: () -> Unit, online: Boolean = false, hostWhiteInit: Bool
     var version by remember { mutableIntStateOf(0) } // bump to recompose after mutating game
     var selected by remember { mutableIntStateOf(-1) }
     var pendingPromo by remember { mutableStateOf<Pair<Int, Int>?>(null) }
-    var thinking by remember { mutableStateOf(false) }
     var showSetup by remember { mutableStateOf(false) }
 
     fun save() {
@@ -103,13 +102,13 @@ fun ChessScreen(onBack: () -> Unit, online: Boolean = false, hostWhiteInit: Bool
     val result = remember(version, game) { game.result() }
     val legal = remember(version, game) { game.legalMoves() }
     val aiTurn = mode == ChessMode.VS_PHONE && pos.side != humanColor && result == GameResult.ONGOING
+    // Derived rather than stored: a stored flag stuck at true when "New game" cancelled a running search.
+    val thinking = aiTurn
     val flipped = if (mode == ChessMode.VS_PHONE || mode == ChessMode.ONLINE) humanColor == BLACK else false
 
     LaunchedEffect(version, aiTurn, game) {
         if (aiTurn) {
-            thinking = true
             val m = withContext(Dispatchers.Default) { ChessAi.bestMove(pos, difficulty) }
-            thinking = false
             m?.let { commit(it.uci()) }
         }
     }
