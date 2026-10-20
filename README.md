@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="assets/logo.png" alt="VictorLink64 logo" width="200">
+</p>
+
+<p align="center">
   <img src="assets/logo.png" width="200" alt="VictorLink64 logo">
 </p>
 
