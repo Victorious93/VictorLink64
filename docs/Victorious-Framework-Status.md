@@ -41,6 +41,10 @@ Method: code read-through of the Kotlin app code, relay, and the zip-ROM change 
 
 Known, not changed: a peer can send `resign` for the other side (trusted-friend model); the zip scan cache in SharedPreferences is never pruned; only the last extracted zip ROM is kept in cache.
 
+## VictorOps Zombies integration 2026-10-21
+
+Built-in game (`:zombies` module + `ZombiesActivity`) with Bluetooth/Wi-Fi/online co-op through `ConnectSession`. Details, status table and device checklist: [`ZOMBIES.md`](ZOMBIES.md). **Co-op, touch controls and performance are unverified on devices.**
+
 ## Tally
 
 Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and CI confirmation. Deferred / abandoned: none.

@@ -1,6 +1,7 @@
 # VictorLink64 emulator netplay plan (N64 / SNES)
 
-Status: **design + stub**. Chess is the first fully working multiplayer game (any transport).
+Status: **design + stub**. Chess is the first working multiplayer game (any transport); VictorOps Zombies co-op also uses the same session
+(see `docs/ZOMBIES.md`; device-untested).
 All emulator netplay reuses the same `Transport` layer (Online relay, Wi-Fi LAN, Bluetooth).
 
 ## SNES (bsnes via libretro) — deterministic input lockstep with optional rollback
