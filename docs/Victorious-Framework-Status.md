@@ -45,6 +45,19 @@ Known, not changed: a peer can send `resign` for the other side (trusted-friend 
 
 Built-in game (`:zombies` module + `ZombiesActivity`) with Bluetooth/Wi-Fi/online co-op through `ConnectSession`. Details, status table and device checklist: [`ZOMBIES.md`](ZOMBIES.md). **Co-op, touch controls and performance are unverified on devices.**
 
+## SNES screen size and touch controls 2026-10-22
+
+Reported from a device screenshot: SNES picture far smaller than the screen, controls awkward. Items below are labelled by evidence level.
+
+| Area | Finding | Change | Evidence |
+| --- | --- | --- | --- |
+| Picture size | In a 1604×720 landscape window the picture was 720×540, 48 px from the top. 720 is the phone's portrait width and the 48 px margin exists only in the portrait branch. `SnesActivity` sized the picture once (`surface.post`) at launch from the portrait layout and kept it after rotating (the activity handles `configChanges`, so it is not recreated). | Picture is re-fitted on every layout pass (`fitVideo`); manifest locks `SnesActivity` to `sensorLandscape`, as `ZombiesActivity` already does. | Diagnosis **inferred** from screenshot geometry + code reading, not reproduced on a device. Fit math **automated-tested** (`SnesGeometryTest`, 12 JVM tests, run in a scratch JVM project against the repo files). Activity wiring **compiled by CI only, not device-tested**. |
+| Picture size | At correct 4:3 the largest picture on a 20:9 phone is full height (960×720 here); anything larger means stretching. | New SIZE chip cycles 4:3 → 16:9 → FILL (landscape only, remembered in preferences). | Not device-tested. 16:9 and FILL distort the picture by design. |
+| Touch D-pad | Four separate buttons with a dead gap in the middle: diagonals needed two fingers. | One 8-way touch surface; the finger that lands on the pad keeps control until it lifts. | Direction math **automated-tested**; Compose touch handler **not device-tested**. |
+| Touch buttons | Each button tracked its own finger, so a thumb could not slide or roll between A/B/X/Y. | One handler watches all fingers and hit-tests every event; neighbouring face buttons overlap at the seam so one thumb can press two. | **Not device-tested.** The hit reach values (14 dp face, 10 dp L/R, 6 dp Select/Start, 18 dp D-pad) are untuned guesses. |
+
+Not changed, no evidence either way yet: emulation speed of the prebuilt bsnes core on real devices; audio buffer of about 100 ms (audio likely trails video by that much); scaling filter used when the compositor enlarges the picture; no analog-stick handling beyond what Android synthesizes into D-pad keys. JVM unit tests under `app/src/test` are still not run in CI.
+
 ## Tally
 
 Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and CI confirmation. Deferred / abandoned: none.
