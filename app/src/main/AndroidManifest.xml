@@ -79,6 +79,13 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Material.NoActionBar" />
         <activity
+            android:name="org.victoriousframework.victorlink64.zombies.ZombiesActivity"
+            android:exported="false"
+            android:label="VictorOps Zombies"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|uiMode"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+        <activity
             android:name="org.victoriousframework.victorlink64.snes.SnesActivity"
             android:exported="false"
             android:label="SNES"

@@ -309,6 +309,22 @@ fun LibraryScreen() {
             }
             Icon(Icons.Filled.PlayArrow, "Play chess", tint = NeonBlue)
         }
+        Spacer(Modifier.height(10.dp))
+        Row(
+            Modifier.fillMaxWidth().clip16().background(NeonRed.copy(alpha = .12f))
+                .border(1.dp, NeonRed, RoundedCornerShape(16.dp))
+                .clickable { org.victoriousframework.victorlink64.zombies.ZombiesActivity.launch(ctx, org.victoriousframework.victorlink64.zombies.ZombiesRole.SOLO) }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("☠", fontSize = 30.sp, color = NeonRed)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text("VictorOps Zombies", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Built-in · solo offline · co-op from the Connect tab", color = Muted, fontSize = 12.sp)
+            }
+            Icon(Icons.Filled.PlayArrow, "Play zombies", tint = NeonRed)
+        }
         Spacer(Modifier.height(12.dp))
         when {
             folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 / .sfc / .smc / .zip games live.")

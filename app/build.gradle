@@ -102,6 +102,24 @@ android {
     }
 }
 
+// libGDX ships its Android natives as jars of .so files; unpack them per ABI into a jniLibs source dir.
+configurations { gdxNatives }
+def gdxNativesDir = layout.buildDirectory.dir('gdx-natives').get().asFile
+tasks.register('extractGdxNatives') {
+    inputs.files(configurations.gdxNatives)
+    outputs.dir(gdxNativesDir)
+    doLast {
+        def root = gdxNativesDir
+        root.deleteDir()
+        configurations.gdxNatives.files.each { jar ->
+            def abi = jar.name.substring(jar.name.indexOf('natives-') + 8, jar.name.length() - 4)
+            ant.unzip(src: jar, dest: new File(root, abi)) { patternset { include(name: '*.so') } }
+        }
+    }
+}
+android.sourceSets.main.jniLibs.srcDir(gdxNativesDir)
+tasks.named('preBuild') { dependsOn 'extractGdxNatives' }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.preference:preference:1.2.1'
@@ -160,6 +178,14 @@ dependencies {
     implementation 'androidx.compose.material:material-icons-extended'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     testImplementation 'junit:junit:4.13.2'
+    // org.json is stubbed in android.jar for JVM unit tests; use the real implementation there.
+    testImplementation 'org.json:json:20240303'
+
+    // Victorious Framework: VictorOps Zombies (libGDX). Game logic lives in :zombies; the Android backend and natives live here.
+    implementation project(':zombies')
+    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'].each { abi -> gdxNatives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-$abi" }
+
     implementation project(':ae-bridge')
     implementation project(':miniupnp-bridge')
     implementation project(':mupen64plus-audio-android')

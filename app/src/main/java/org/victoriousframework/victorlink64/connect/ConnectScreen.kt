@@ -41,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.victoriousframework.victorlink64.chess.ChessActivity
+import org.victoriousframework.victorlink64.zombies.ZombiesActivity
 import org.victoriousframework.victorlink64.ui.*
 import paulscode.android.mupen64plusae.BuildConfig
 
@@ -109,6 +110,9 @@ fun ConnectScreen() {
         StatusCard(status, onLeave = { ConnectSession.stop() }, onChess = {
             ConnectSession.send("chess_invite") { put("hostWhite", true) }
             openOnlineChess(ctx, true)
+        }, onZombies = {
+            // Either side can start; the host runs the world, the guest joins it (the guest retries JOIN until the host is up).
+            ZombiesActivity.launch(ctx, ZombiesActivity.roleForSession())
         })
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(nick, { nick = it.take(16) }, label = { Text("Your name") }, singleLine = true,
@@ -157,7 +161,7 @@ fun ConnectScreen() {
             }
         }
         Spacer(Modifier.height(8.dp))
-        Text("Games: Chess works over every connection. N64 / SNES netplay is coming soon.", color = Muted, fontSize = 12.sp)
+        Text("Games: Chess works over every connection. VictorOps Zombies co-op (2 players over Bluetooth) is new and not yet device-tested. N64 / SNES netplay is coming soon.", color = Muted, fontSize = 12.sp)
     }
 
     if (showBtPicker) {
@@ -176,8 +180,9 @@ fun ConnectScreen() {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun StatusCard(s: SessionStatus, onLeave: () -> Unit, onChess: () -> Unit) {
+private fun StatusCard(s: SessionStatus, onLeave: () -> Unit, onChess: () -> Unit, onZombies: () -> Unit) {
     val color = when (s.state) {
         PeerState.CONNECTED -> Color(0xFF3DDC84); PeerState.WAITING -> NeonBlue
         PeerState.ERROR, PeerState.DISCONNECTED -> NeonRed; PeerState.IDLE -> Muted
@@ -196,8 +201,9 @@ private fun StatusCard(s: SessionStatus, onLeave: () -> Unit, onChess: () -> Uni
         }
         if (s.state != PeerState.IDLE) {
             Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (s.state == PeerState.CONNECTED) Button(onClick = onChess, colors = ButtonDefaults.buttonColors(containerColor = NeonRed)) { Text("♞  Play chess") }
+                if (s.state == PeerState.CONNECTED) Button(onClick = onZombies, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)) { Text("☠  Play Zombies") }
                 OutlinedButton(onClick = onLeave) { Text("Leave") }
             }
         }

@@ -20,12 +20,12 @@
 ## Overview
 
 VictorLink64 plays Nintendo 64 games (Mupen64Plus) and Super Nintendo games (bsnes) from game files you provide,
-includes a chess game you can play against the phone or a friend, and lets you connect with other players online,
+includes a chess game and the VictorOps Zombies co-op shooter, and lets you connect with other players online,
 over Wi-Fi, or over Bluetooth.
 
 > **Early beta.** Releases are currently debug builds, and most features have not yet been tested on many real
 > devices, so expect rough edges. Casting to a TV and online play for N64/SNES games are not implemented yet;
-> online play currently covers chess.
+> online play currently covers chess and VictorOps Zombies (Zombies co-op has not been tested on real devices).
 
 Screenshots coming soon.
 
@@ -33,6 +33,7 @@ Screenshots coming soon.
 
 - **N64 and SNES emulation** — open your own game files and play.
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
+- **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.
 - **Nearby play** — over the same Wi-Fi, or over Bluetooth with no internet.
 - **Bluetooth controllers and touch controls** — pair a gamepad or use the on-screen buttons.
@@ -80,7 +81,8 @@ and takes several minutes. Run only one Gradle build per checkout at a time.
 Run the tests:
 
 ```bash
-./gradlew :app:testDebugUnitTest                      # chess engine and connect tests
+./gradlew :app:testDebugUnitTest                      # chess engine, connect and Zombies adapter tests
+./gradlew :zombies:test                                # VictorOps Zombies game tests (67 original + 2)
 python3 -I -m unittest discover -s scripts/tests -v   # APK payload verifier tests
 ```
 
@@ -88,7 +90,8 @@ Project layout:
 
 | Path | Contents |
 | --- | --- |
-| `app/src/main/java/org/victoriousframework/victorlink64/` | Kotlin and Compose UI: `ui/`, `chess/`, `connect/`, `snes/` |
+| `app/src/main/java/org/victoriousframework/victorlink64/` | Kotlin and Compose UI: `ui/`, `chess/`, `connect/`, `snes/`, `zombies/` |
+| `zombies/` | VictorOps Zombies game core (Kotlin + libGDX, JVM module) — see [`zombies/README.md`](zombies/README.md) |
 | `mupen64plus-*` | N64 emulator core and plugins (native modules) |
 | `app/src/main/jniLibs` | Prebuilt bsnes libretro core; rebuild with `scripts/build-bsnes.sh` |
 | `server/relay` | Cloudflare Worker and Durable Object for online rooms (`npx wrangler deploy`) |
@@ -110,8 +113,9 @@ open-source projects:
 
 - [Mupen64Plus](https://github.com/mupen64plus) and [Mupen64Plus-AE](https://github.com/mupen64plus-ae/mupen64plus-ae) — N64 emulation (GPL v3). Upstream's original README is kept in [`UPSTREAM-README.md`](UPSTREAM-README.md).
 - [bsnes](https://github.com/libretro/bsnes) by byuu and contributors — Super Nintendo emulation (GPL v3)
+- [libGDX](https://github.com/libgdx/libgdx) — game framework for VictorOps Zombies (Apache-2.0)
 
-The chess engine, multiplayer, and app screens are original VictorLink64 code.
+The chess engine, multiplayer, VictorOps Zombies and app screens are original VictorLink64 / Victorious Framework code.
 
 Licensed under the **GNU General Public License v3** — see [`gpl-license`](gpl-license).
 
