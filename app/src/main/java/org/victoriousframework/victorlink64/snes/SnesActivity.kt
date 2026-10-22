@@ -25,14 +25,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.PointerId
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import org.victoriousframework.victorlink64.ui.NeonBlue
 import org.victoriousframework.victorlink64.ui.NeonRed
 import java.io.File
@@ -47,6 +54,9 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     private var touchMask = 0
     private var keyMask = 0
     private lateinit var stateFile: File
+    private lateinit var surface: SurfaceView
+    private lateinit var frame: FrameLayout
+    private var aspect by mutableStateOf(Aspect.NORMAL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,24 +64,21 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
         val uri = Uri.parse(intent.getStringExtra(EXTRA_ROM_URI) ?: run { finish(); return })
         val name = intent.getStringExtra(EXTRA_ROM_NAME) ?: "game.sfc"
 
-        val surface = SurfaceView(this).apply { holder.addCallback(this@SnesActivity) }
-        val overlay = ComposeView(this).apply { setContent { Gamepad({ touchMask = it; push() }, ::saveState, ::loadState) } }
-        setContentView(FrameLayout(this).apply {
+        aspect = Aspect.fromName(getSharedPreferences("snes", MODE_PRIVATE).getString("aspect", null))
+        surface = SurfaceView(this).apply { holder.addCallback(this@SnesActivity) }
+        val overlay = ComposeView(this).apply {
+            setContent { Gamepad(aspect.label, { touchMask = it; push() }, ::cycleAspect, ::saveState, ::loadState) }
+        }
+        frame = FrameLayout(this).apply {
             setBackgroundColor(android.graphics.Color.BLACK)
             addView(surface, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT).apply {
                 gravity = android.view.Gravity.CENTER
             })
             addView(overlay)
-        })
-        surface.post { // keep 8:7 SNES-ish 4:3 display aspect
-            val w = surface.width; val h = surface.height
-            val tw: Int; val th: Int
-            if (w * 3 > h * 4) { th = h; tw = h * 4 / 3 } else { tw = w; th = w * 3 / 4 }
-            surface.layoutParams = (surface.layoutParams as FrameLayout.LayoutParams).apply {
-                width = tw; height = th; gravity = if (w > h) android.view.Gravity.CENTER else android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL
-                topMargin = if (w > h) 0 else 48
-            }
+            // Fit on every layout pass, not once: the window changes shape on rotation, split-screen and folding.
+            addOnLayoutChangeListener { _, l, t, r, b, _, _, _, _ -> fitVideo(r - l, b - t) }
         }
+        setContentView(frame)
 
         val base = File(filesDir, "snes").apply { mkdirs() }
         val sys = File(base, "system").apply { mkdirs() }
@@ -120,6 +127,25 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
 
     private fun push() = SnesCore.nativeSetButtons(touchMask or keyMask)
 
+    /** Sizes and places the picture inside a [frameW] x [frameH] window; a no-op when nothing changed. */
+    private fun fitVideo(frameW: Int, frameH: Int) {
+        val (w, h) = fitPicture(frameW, frameH, aspect)
+        if (w <= 0 || h <= 0) return
+        val landscape = frameW > frameH
+        val gravity = if (landscape) android.view.Gravity.CENTER else android.view.Gravity.TOP or android.view.Gravity.CENTER_HORIZONTAL
+        val top = if (landscape) 0 else 48
+        val lp = surface.layoutParams as FrameLayout.LayoutParams
+        if (lp.width == w && lp.height == h && lp.gravity == gravity && lp.topMargin == top) return
+        lp.width = w; lp.height = h; lp.gravity = gravity; lp.topMargin = top
+        surface.layoutParams = lp
+    }
+
+    private fun cycleAspect() {
+        aspect = aspect.next()
+        getSharedPreferences("snes", MODE_PRIVATE).edit().putString("aspect", aspect.name).apply()
+        fitVideo(frame.width, frame.height)
+    }
+
     private fun saveState() {
         paused = true
         thread { SnesCore.nativeSaveState()?.let { stateFile.writeBytes(it) }; paused = false
@@ -162,47 +188,106 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     }
 }
 
+
+/** Touch target registered by a visible control, in window coordinates. */
+private class Zone(val rect: Rect, val round: Boolean, val slop: Float) {
+    fun hit(p: Offset) =
+        if (round) (p - rect.center).getDistance() <= rect.width / 2 + slop else rect.inflate(slop).contains(p)
+}
+
+/** Where each control currently is; written by layout callbacks, read by the touch handler (both on the main thread). */
+private class PadLayout {
+    var origin = Offset.Zero
+    val zones = HashMap<Int, Zone>()
+}
+
+private const val DPAD = -1
+
+private fun dpadBits(z: Zone?, p: Offset): Int {
+    if (z == null) return 0
+    val d = dpadDirection(p.x - z.rect.center.x, p.y - z.rect.center.y, z.rect.width)
+    var m = 0
+    if (d and DIR_UP != 0) m = m or (1 shl SnesCore.UP)
+    if (d and DIR_DOWN != 0) m = m or (1 shl SnesCore.DOWN)
+    if (d and DIR_LEFT != 0) m = m or (1 shl SnesCore.LEFT)
+    if (d and DIR_RIGHT != 0) m = m or (1 shl SnesCore.RIGHT)
+    return m
+}
+
+/**
+ * On-screen controller. One touch handler watches every finger and derives the button mask from where each
+ * finger is, so a thumb can roll between face buttons (A+B at the seam) and the D-pad reads 8 directions.
+ * A finger that lands on the D-pad stays the D-pad finger until it lifts, so drifting off the pad doesn't drop it.
+ */
 @Composable
-private fun Gamepad(onMask: (Int) -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
-    val pressed = remember { mutableStateMapOf<Int, Boolean>() }
-    fun set(bit: Int, down: Boolean) {
-        pressed[bit] = down
-        onMask(pressed.filterValues { it }.keys.fold(0) { m, b -> m or (1 shl b) })
-    }
+private fun Gamepad(aspectLabel: String, onMask: (Int) -> Unit, onAspect: () -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
+    var mask by remember { mutableIntStateOf(0) }
+    val sendMask by rememberUpdatedState(onMask)
+    val pad = remember { PadLayout() }
+    val dp1 = with(LocalDensity.current) { 1.dp.toPx() }
+
     @Composable
-    fun Btn(label: String, bit: Int, size: Dp, color: Color, shape: Shape = CircleShape, w: Dp = size) {
-        val down = pressed[bit] == true
+    fun Btn(label: String, bit: Int, size: Dp, color: Color, shape: Shape = CircleShape, w: Dp = size, slopDp: Int = 6, touch: Boolean = true) {
+        val down = (mask shr bit) and 1 == 1
         Box(
             Modifier.size(w, size).clip(shape).background(color.copy(alpha = if (down) .7f else .28f))
                 .border(2.dp, color, shape)
-                .pointerInput(bit) {
-                    awaitEachGesture {
-                        awaitFirstDown(requireUnconsumed = false); set(bit, true)
-                        do { val e = awaitPointerEvent() } while (e.changes.any { it.pressed })
-                        set(bit, false)
-                    }
+                .onGloballyPositioned {
+                    if (touch) pad.zones[bit] = Zone(Rect(it.positionInRoot(), it.size.toSize()), shape === CircleShape, slopDp * dp1)
                 }, contentAlignment = Alignment.Center
         ) { Text(label, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
     }
-    Box(Modifier.fillMaxSize().navigationBarsPadding().padding(12.dp)) {
+
+    @Composable
+    fun Chip(label: String, onTap: () -> Unit) =
+        Text(label, color = NeonBlue, modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0x66000000))
+            .pointerInput(Unit) { awaitEachGesture { awaitFirstDown(); onTap() } }.padding(8.dp, 4.dp), fontSize = 12.sp)
+
+    Box(
+        Modifier.fillMaxSize()
+            .onGloballyPositioned { pad.origin = it.positionInRoot() }
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    var dpadId: PointerId? = null
+                    while (true) {
+                        val ev = awaitPointerEvent()
+                        var m = 0
+                        for (c in ev.changes) {
+                            val p = pad.origin + c.position
+                            if (dpadId == null && c.pressed && !c.previousPressed && pad.zones[DPAD]?.hit(p) == true) dpadId = c.id
+                            if (!c.pressed) { if (c.id == dpadId) dpadId = null; continue }
+                            if (c.id == dpadId) m = m or dpadBits(pad.zones[DPAD], p)
+                            else for ((bit, z) in pad.zones) if (bit != DPAD && z.hit(p)) m = m or (1 shl bit)
+                        }
+                        if (m != mask) { mask = m; sendMask(m) }
+                    }
+                }
+            }
+            .navigationBarsPadding().padding(12.dp)
+    ) {
         Row(Modifier.align(Alignment.TopCenter).padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("SAVE", color = NeonBlue, modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0x66000000))
-                .pointerInput(Unit) { awaitEachGesture { awaitFirstDown(); onSave() } }.padding(8.dp, 4.dp), fontSize = 12.sp)
-            Text("LOAD", color = NeonBlue, modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0x66000000))
-                .pointerInput(Unit) { awaitEachGesture { awaitFirstDown(); onLoad() } }.padding(8.dp, 4.dp), fontSize = 12.sp)
+            Chip("SAVE", onSave); Chip("LOAD", onLoad); Chip("SIZE $aspectLabel", onAspect)
         }
-        Box(Modifier.align(Alignment.BottomStart).padding(bottom = 70.dp)) {
+        Box(
+            Modifier.align(Alignment.BottomStart).padding(bottom = 70.dp)
+                .onGloballyPositioned { pad.zones[DPAD] = Zone(Rect(it.positionInRoot(), it.size.toSize()), false, 18 * dp1) }
+        ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Btn("▲", SnesCore.UP, 56.dp, NeonBlue, RoundedCornerShape(10.dp))
-                Row { Btn("◀", SnesCore.LEFT, 56.dp, NeonBlue, RoundedCornerShape(10.dp)); Spacer(Modifier.width(56.dp)); Btn("▶", SnesCore.RIGHT, 56.dp, NeonBlue, RoundedCornerShape(10.dp)) }
-                Btn("▼", SnesCore.DOWN, 56.dp, NeonBlue, RoundedCornerShape(10.dp))
+                Btn("▲", SnesCore.UP, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
+                Row {
+                    Btn("◀", SnesCore.LEFT, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
+                    Spacer(Modifier.width(56.dp))
+                    Btn("▶", SnesCore.RIGHT, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
+                }
+                Btn("▼", SnesCore.DOWN, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
             }
         }
         Box(Modifier.align(Alignment.BottomEnd).padding(bottom = 70.dp)) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Btn("X", SnesCore.X, 58.dp, NeonBlue)
-                Row { Btn("Y", SnesCore.Y, 58.dp, NeonBlue); Spacer(Modifier.width(50.dp)); Btn("A", SnesCore.A, 58.dp, NeonRed) }
-                Btn("B", SnesCore.B, 58.dp, NeonRed)
+                // 14 dp of reach on each round button makes neighbours overlap at the seam, so one thumb can press two.
+                Btn("X", SnesCore.X, 58.dp, NeonBlue, slopDp = 14)
+                Row { Btn("Y", SnesCore.Y, 58.dp, NeonBlue, slopDp = 14); Spacer(Modifier.width(50.dp)); Btn("A", SnesCore.A, 58.dp, NeonRed, slopDp = 14) }
+                Btn("B", SnesCore.B, 58.dp, NeonRed, slopDp = 14)
             }
         }
         Row(Modifier.align(Alignment.BottomCenter), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -210,8 +295,8 @@ private fun Gamepad(onMask: (Int) -> Unit, onSave: () -> Unit, onLoad: () -> Uni
             Btn("START", SnesCore.START, 34.dp, Color.Gray, RoundedCornerShape(17.dp), 84.dp)
         }
         Row(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(bottom = 290.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Btn("L", SnesCore.L, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp)
-            Btn("R", SnesCore.R, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp)
+            Btn("L", SnesCore.L, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp, slopDp = 10)
+            Btn("R", SnesCore.R, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp, slopDp = 10)
         }
     }
 }
