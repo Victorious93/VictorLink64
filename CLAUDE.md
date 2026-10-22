@@ -22,7 +22,7 @@ VictorLink64 is an Android app (fork-derived from Mupen64Plus-AE, GPL-3.0) that 
 
 ## Commands
 Full toolchain and setup in `BUILDING.md` (JDK 21, Gradle wrapper, Android SDK platform 36, build-tools 36.0.0, NDK 26.1.10909125, CMake 3.22.1, host `gawk` + `file`, untracked `local.properties` with `sdk.dir`).
-- Verifier tests: `python3 -I -m unittest discover -s scripts/tests -v` (17 tests).
+- Script tests: `python3 -I -m unittest discover -s scripts/tests -v` (21 tests: 17 APK verifier, 4 SNES colour conversion; the colour tests need a host C compiler and skip without one).
 - Build: `./gradlew assembleDebug` → `app/build/outputs/apk/debug/VictorLink64-debug.apk`.
 - Verify APK: see the `Verify APK payload` step in `.github/workflows/build.yml` / `BUILDING.md`. The verifier checks structure only, not that the app runs.
 - JVM unit tests exist in `app/src/test` (`chess/ChessTest.kt`, `chess/OnlineCodeTest.kt`, upstream `ExampleUnitTest.java`). They are **not run in CI**; `./gradlew :app:testDebugUnitTest` should run them but was not verified here.

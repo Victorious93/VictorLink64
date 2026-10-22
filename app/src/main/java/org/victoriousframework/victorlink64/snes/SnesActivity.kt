@@ -57,6 +57,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     private lateinit var surface: SurfaceView
     private lateinit var frame: FrameLayout
     private var aspect by mutableStateOf(Aspect.NORMAL)
+    private val coreTasks = java.util.concurrent.ConcurrentLinkedQueue<() -> Unit>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +117,8 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
         var next = System.nanoTime()
         running = true
         while (running) {
+            // Core calls queued by the UI run here, between frames, never concurrently with nativeRunFrame.
+            while (true) { val task = coreTasks.poll() ?: break; task() }
             if (paused) { Thread.sleep(30); next = System.nanoTime(); continue }
             val n = SnesCore.nativeRunFrame(buf)
             if (n > 0) track.write(buf, 0, n) // blocking write paces to audio clock
@@ -146,17 +149,30 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
         fitVideo(frame.width, frame.height)
     }
 
+    private fun toast(msg: String) = runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
+
+    // libretro forbids calling into the core while retro_run is executing. A host test of the real core crashed within
+    // a few dozen save/load presses when they ran on another thread, so both go through the emulation thread.
     private fun saveState() {
-        paused = true
-        thread { SnesCore.nativeSaveState()?.let { stateFile.writeBytes(it) }; paused = false
-            runOnUiThread { Toast.makeText(this, "State saved", Toast.LENGTH_SHORT).show() } }
+        coreTasks.add {
+            val data = SnesCore.nativeSaveState()
+            toast(if (data != null && writeStateFile(data)) "State saved" else "Save failed")
+        }
     }
     private fun loadState() {
         if (!stateFile.exists()) { Toast.makeText(this, "No saved state", Toast.LENGTH_SHORT).show(); return }
-        paused = true
-        thread { val ok = SnesCore.nativeLoadState(stateFile.readBytes()); paused = false
-            runOnUiThread { Toast.makeText(this, if (ok) "State loaded" else "Load failed", Toast.LENGTH_SHORT).show() } }
+        coreTasks.add {
+            val ok = try { SnesCore.nativeLoadState(stateFile.readBytes()) } catch (e: java.io.IOException) { Log.e("VL64Snes", "read state", e); false }
+            toast(if (ok) "State loaded" else "Load failed")
+        }
     }
+
+    /** Writes via a temp file and rename so a kill mid-write cannot destroy the previous good state. */
+    private fun writeStateFile(data: ByteArray): Boolean = try {
+        val tmp = File(stateFile.parentFile, stateFile.name + ".tmp")
+        tmp.writeBytes(data)
+        tmp.renameTo(stateFile)
+    } catch (e: java.io.IOException) { Log.e("VL64Snes", "write state", e); false }
 
     private fun keyBit(code: Int) = when (code) {
         KeyEvent.KEYCODE_DPAD_UP -> SnesCore.UP; KeyEvent.KEYCODE_DPAD_DOWN -> SnesCore.DOWN
