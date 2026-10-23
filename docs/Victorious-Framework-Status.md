@@ -58,6 +58,21 @@ Reported from a device screenshot: SNES picture far smaller than the screen, con
 
 Not changed, no evidence either way yet: emulation speed of the prebuilt bsnes core on real devices; audio buffer of about 100 ms (audio likely trails video by that much); scaling filter used when the compositor enlarges the picture; no analog-stick handling beyond what Android synthesizes into D-pad keys.
 
+## SNES native sweep 2026-10-22
+
+Method: ran the repo's real `snesfront.c` against the real prebuilt x86_64 bsnes core on this Linux host, using stubbed Android headers, a fake JNI environment and a hand-assembled homebrew test ROM (no commercial data). The core binary was patched in a scratch copy only so glibc can load it. The harness is **not committed**. Limits: x86_64 Linux, not an Android device; the Kotlin layer is not exercised by it.
+
+| Area | Finding | Change | Evidence |
+| --- | --- | --- | --- |
+| Save/Load state | `SnesActivity` called `nativeSaveState`/`nativeLoadState` on a spare thread while the emulation thread could be inside `retro_run`. The `paused` flag does not stop a frame already running. libretro forbids concurrent core calls. | Both now run on the emulation thread between frames (task queue). State files are written via temp file + rename; a failed save no longer toasts "State saved". | Crash **reproduced on host**: with the emulator running flat out 5/5 runs segfaulted; at a 15% duty cycle, 16/16 trials crashed within 4–45 presses (load-only and save-only each 8/8). Same-thread design: 8/8 trials survived 150 presses; 600 sequential save+load pairs clean. Kotlin change **compiled by CI only, not device-tested**. |
+| Colour | Pixel conversion shifted without bit replication, so full white rendered as 248/248/248. | New `snes_color.h` with bit replication. | **Reproduced on host** (white backdrop read 248, now 255). `scripts/tests/test_snes_color.py` (4 tests, run in CI) fails on the old code. |
+
+Checked and found correct on the real core: all 12 buttons map to the right SNES registers, including simultaneous presses; state load replays identically from the second frame on (the first frame after a load differs in pixels, probably because the framebuffer is not part of the state); empty and garbage state data is rejected without a crash; repeated load/unload in one process works; audio is 48000 Hz at 60.0988 fps with about 800 sample pairs per frame; battery RAM persists across clean exits.
+
+**Open, not changed (needs a decision):** the core writes battery RAM (`<save dir>/<rom name>.srm`) only when the game is unloaded, and exposes no memory to the frontend (all `retro_get_memory_*` ids report size 0). Reproduced on host: three runs killed without unload saved nothing. In the app, a process kill while backgrounded loses in-game saves made since the last clean exit; the SAVE chip state files are written immediately and are not affected. Options: auto-save a resume state when the app is stopped and offer it at next launch; or rebuild the core to flush or expose save RAM (needs the NDK).
+
+Seen but not tested: `AudioTrack.write` return codes are ignored, so an audio error would let the loop run unthrottled; ROMs with the same file name share their `.srm` and `.state` files; the core accepts any file as a ROM, so a corrupt file runs as noise instead of failing to load.
+
 ## Tally
 
 Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and CI confirmation. Deferred / abandoned: none.

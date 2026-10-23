@@ -9,6 +9,7 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include "libretro.h"
+#include "snes_color.h"
 
 #define LOG(...) __android_log_print(ANDROID_LOG_INFO, "VL64Snes", __VA_ARGS__)
 
@@ -73,18 +74,9 @@ static void video_cb(const void *data, unsigned w, unsigned h, size_t pitch) {
                 uint32_t *dst = (uint32_t *)b.bits + (size_t)y * b.stride;
                 const uint8_t *row = (const uint8_t *)data + y * pitch;
                 for (unsigned x = 0; x < w && x < (unsigned)b.width; x++) {
-                    uint32_t r, g, bl;
-                    if (pixfmt == RETRO_PIXEL_FORMAT_XRGB8888) {
-                        uint32_t p = ((const uint32_t *)row)[x];
-                        r = (p >> 16) & 0xff; g = (p >> 8) & 0xff; bl = p & 0xff;
-                    } else if (pixfmt == RETRO_PIXEL_FORMAT_RGB565) {
-                        uint16_t p = ((const uint16_t *)row)[x];
-                        r = ((p >> 11) & 0x1f) << 3; g = ((p >> 5) & 0x3f) << 2; bl = (p & 0x1f) << 3;
-                    } else {
-                        uint16_t p = ((const uint16_t *)row)[x];
-                        r = ((p >> 10) & 0x1f) << 3; g = ((p >> 5) & 0x1f) << 3; bl = (p & 0x1f) << 3;
-                    }
-                    dst[x] = 0xff000000u | (bl << 16) | (g << 8) | r;
+                    if (pixfmt == RETRO_PIXEL_FORMAT_XRGB8888) dst[x] = vl_from_xrgb8888(((const uint32_t *)row)[x]);
+                    else if (pixfmt == RETRO_PIXEL_FORMAT_RGB565) dst[x] = vl_from_rgb565(((const uint16_t *)row)[x]);
+                    else dst[x] = vl_from_0rgb1555(((const uint16_t *)row)[x]);
                 }
             }
             ANativeWindow_unlockAndPost(window);
