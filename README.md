@@ -1,6 +1,30 @@
+<!-- victorious-fleet-readme-refresh:start -->
 <p align="center">
   <img src="assets/logo.png" alt="VictorLink64 logo" width="200">
 </p>
+
+# VictorLink64
+
+Multi-game emulator + play hub (N64/SNES, chess, multiplayer) — not remote-control fleet.
+
+**Package id:** `org.victoriousframework.victorlink64`
+
+> **Package note:** applicationId from `app/build.gradle` (namespace differs: `paulscode.android.mupen64plusae`).
+
+**Status:** early beta / public *(from [fleet-manifest ROADMAP](https://github.com/Victorious93/fleet-manifest/blob/main/ROADMAP.md))*
+
+## Install / build
+
+Gradle Android app with NDK pieces. Typical: `./gradlew :app:assembleDebug` (NDK required). See `app/build.gradle`.
+
+_Steps above are taken from this repo’s build files / existing docs; anything not exercised in this refresh is unlabeled as verified on a device._
+
+## Victorious fleet
+
+- Monorepo: [https://github.com/Victorious93/victorious-fleet](https://github.com/Victorious93/victorious-fleet)
+- Fleet site: [https://victorious-framework.pages.dev](https://victorious-framework.pages.dev)
+
+<!-- victorious-fleet-readme-refresh:end -->
 
 <p align="center">
   <img src="assets/logo.png" width="200" alt="VictorLink64 logo">
