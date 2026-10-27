@@ -55,7 +55,7 @@ Screenshots coming soon.
 
 ## Features
 
-- **N64 and SNES emulation** — open your own game files and play.
+- **N64 and SNES emulation** — open your own game files and play. SNES (bsnes): size modes, multi-touch controls, save/load state on the emulation thread, colour fixes (Oct 21–22 Claude work).
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
 - **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.
