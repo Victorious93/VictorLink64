@@ -239,7 +239,7 @@ fun launchRom(c: Context, uri: Uri, display: String) {
     try {
         val header = RomHeader(c, uri)
         if (!header.isValid) { toast(c, "Not a valid N64 ROM"); return }
-        val md5 = c.contentResolver.openInputStream(uri)!!.use { FileUtil.computeMd5(it) }
+        val md5 = c.contentResolver.openInputStream(uri)!!.use { FileUtil.computeMd5(java.io.BufferedInputStream(it)) }
         ActivityHelper.startGameActivity(
             c, uri.toString(), null, md5, header.crc, header.name,
             header.countryCode.value, null, header.name, display, false
