@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import org.victoriousframework.victorlink64.hw.HwSystem
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -59,7 +60,10 @@ private val SNES_EXT = setOf("sfc", "smc")
 private val ROM_EXT = N64_EXT + SNES_EXT
 
 data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "",
-    /** For .zip games: the ROM entry inside the archive. */ val zipEntry: String? = null)
+    /** For .zip games: the ROM entry inside the archive. */ val zipEntry: String? = null,
+    /** PSP / GameCube disc images (never zipped). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null) {
+    val systemLabel get() = hw?.label ?: if (snes) "SNES" else "N64"
+}
 
 data class ScanResult(val games: List<Game>, val filesSeen: Int, val error: String? = null)
 
@@ -160,6 +164,11 @@ fun findRomInZip(c: Context, uri: Uri): String? = runCatching {
     }
 }.getOrNull()
 
+/** First 64 bytes of a document, used to tell GameCube and PSP .iso images apart. */
+private fun readHeader(c: Context, uri: Uri): ByteArray? = runCatching {
+    c.contentResolver.openInputStream(uri)?.use { i -> ByteArray(64).also { b -> var n = 0; while (n < 64) { val k = i.read(b, n, 64 - n); if (k < 0) break; n += k } } }
+}.getOrNull()
+
 fun scanFolder(c: Context, tree: Uri): ScanResult {
     val root = DocumentFile.fromTreeUri(c, tree) ?: return ScanResult(emptyList(), 0, "Folder can't be opened")
     if (!root.canRead()) return ScanResult(emptyList(), 0, "No permission to read this folder — pick it again")
@@ -175,6 +184,8 @@ fun scanFolder(c: Context, tree: Uri): ScanResult {
             val base = n.substringBeforeLast('.')
             when {
                 ext in ROM_EXT -> out += Game(base, f.uri, f.length(), ext in SNES_EXT, n)
+                ext in HwSystem.ALL_EXTENSIONS -> HwSystem.detect(ext, if (ext == "iso") readHeader(c, f.uri) else null)
+                    ?.let { out += Game(base, f.uri, f.length(), false, n, hw = it) }
                 ext == "zip" -> {
                     val key = f.uri.toString() + "#" + f.length() + "#" + f.lastModified()
                     val entry = if (zipCache.contains(key)) zipCache.getString(key, "") else findRomInZip(c, f.uri).also { zipCache.edit().putString(key, it ?: "").apply() }
@@ -215,11 +226,16 @@ fun extractZipRom(c: Context, g: Game): java.io.File {
     throw java.io.FileNotFoundException("${g.zipEntry} not found in zip")
 }
 
-/** Launches any library game (N64 or SNES, plain or zipped). Call off the main thread. */
+/** Launches any library game (N64, SNES, PSP or GameCube; N64/SNES may be zipped). Call off the main thread. */
 fun launchGame(c: Context, g: Game) {
     try {
         val uri = if (g.zipEntry != null) { toast(c, "Unpacking ${g.name}…"); Uri.fromFile(extractZipRom(c, g)) } else g.uri
-        if (g.snes) c.startActivity(Intent(c, org.victoriousframework.victorlink64.snes.SnesActivity::class.java)
+        if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
+            .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_URI, uri.toString())
+            .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_NAME, g.fileName)
+            .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_SYSTEM, g.hw.name)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        else if (g.snes) c.startActivity(Intent(c, org.victoriousframework.victorlink64.snes.SnesActivity::class.java)
             .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_URI, uri.toString())
             .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_NAME, g.fileName)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
@@ -271,7 +287,7 @@ fun LibraryScreen() {
             loading = false
             when {
                 r.error != null -> Toast.makeText(ctx, r.error, Toast.LENGTH_LONG).show()
-                r.games.isEmpty() -> Toast.makeText(ctx, "No games found (${r.filesSeen} files checked). Supported: .z64 .n64 .v64 .sfc .smc and .zip", Toast.LENGTH_LONG).show()
+                r.games.isEmpty() -> Toast.makeText(ctx, "No games found (${r.filesSeen} files checked). Supported: .z64 .n64 .v64 .sfc .smc .zip, PSP .iso .cso .pbp, GameCube .iso .gcm .rvz .ciso", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -327,10 +343,10 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         when {
-            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your .z64 / .n64 / .v64 / .sfc / .smc / .zip games live.")
+            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your N64, SNES, PSP and GameCube games live.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
             games.isEmpty() -> EmptyState(scanInfo?.error ?: "No games found",
-                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES) and .zip files containing them, up to 4 folders deep.")
+                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES), .zip files containing them, .iso .cso .pbp (PSP) and .iso .gcm .rvz .ciso (GameCube), up to 4 folders deep.")
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(games) { g ->
                     Row(
@@ -346,7 +362,7 @@ fun LibraryScreen() {
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
                             Text(g.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-                            Text((if (g.snes) "SNES" else "N64") + (if (g.zipEntry != null) " · ZIP" else "") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
+                            Text(g.systemLabel + (if (g.zipEntry != null) " · ZIP" else "") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
                         }
                         Icon(Icons.Filled.PlayArrow, "Play", tint = NeonBlue)
                     }
@@ -440,6 +456,10 @@ fun AboutScreen() {
             "Copyright © their respective authors and contributors.\n\n" +
             "SNES emulation uses bsnes by byuu and contributors (libretro port, https://github.com/libretro/bsnes), " +
             "licensed under the GNU GPL v3; its bundled Game Boy core (SameBoy, © Lior Halphon) is MIT licensed.\n\n" +
+            "PSP emulation uses PPSSPP by Henrik Rydgård and contributors (libretro core, https://github.com/hrydgard/ppsspp), " +
+            "licensed under the GNU GPL v2.0 or later.\n\n" +
+            "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
+            "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +
