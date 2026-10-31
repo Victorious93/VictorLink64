@@ -394,6 +394,9 @@ fun SettingsScreen() {
         Spacer(Modifier.height(12.dp))
         SettingRow("Touch controls layout", "Adjust on-screen buttons") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
+        SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
+        }
         SettingRow("Forget ROM folder", "Clear the selected library folder") {
             p.edit().remove(KEY_FOLDER).apply(); Toast.makeText(ctx, "Library folder cleared", Toast.LENGTH_SHORT).show()
         }
