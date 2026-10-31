@@ -64,7 +64,7 @@
         mupen64:units="%" />
 
     <androidx.preference.CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="touchscreenFeedback"
         android:summary="@string/touchscreenFeedback_summary"
         android:title="@string/touchscreenFeedback_title" />

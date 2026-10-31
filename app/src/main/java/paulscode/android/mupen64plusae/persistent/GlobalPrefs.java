@@ -501,7 +501,7 @@ public class GlobalPrefs
         fillAllowedCountryCodes();
 
         // Touchscreen prefs
-        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", false );
+        isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", true );
         touchscreenScale = ( mPreferences.getInt( "touchscreenScaleV2", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
         touchscreenAutoHold = getSafeInt( mPreferences, "touchscreenAutoHoldV2", 0 );

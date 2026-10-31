@@ -40,8 +40,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import org.victoriousframework.victorlink64.ui.NeonBlue
-import org.victoriousframework.victorlink64.ui.NeonRed
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalView
+import org.victoriousframework.victorlink64.ui.*
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -68,7 +69,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
         aspect = Aspect.fromName(getSharedPreferences("snes", MODE_PRIVATE).getString("aspect", null))
         surface = SurfaceView(this).apply { holder.addCallback(this@SnesActivity) }
         val overlay = ComposeView(this).apply {
-            setContent { Gamepad(aspect.label, { touchMask = it; push() }, ::cycleAspect, ::saveState, ::loadState) }
+            setContent { Gamepad(PadPrefs(this@SnesActivity), aspect.label, { touchMask = it; push() }, ::cycleAspect, ::saveState, ::loadState) }
         }
         frame = FrameLayout(this).apply {
             setBackgroundColor(android.graphics.Color.BLACK)
@@ -236,28 +237,25 @@ private fun dpadBits(z: Zone?, p: Offset): Int {
  * A finger that lands on the D-pad stays the D-pad finger until it lifts, so drifting off the pad doesn't drop it.
  */
 @Composable
-private fun Gamepad(aspectLabel: String, onMask: (Int) -> Unit, onAspect: () -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
+private fun Gamepad(prefs: PadPrefs, aspectLabel: String, onMask: (Int) -> Unit, onAspect: () -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
     var mask by remember { mutableIntStateOf(0) }
     val sendMask by rememberUpdatedState(onMask)
     val pad = remember { PadLayout() }
     val dp1 = with(LocalDensity.current) { 1.dp.toPx() }
+    val view = LocalView.current
+    var opacity by remember { mutableFloatStateOf(prefs.opacity) }
+    var scale by remember { mutableFloatStateOf(prefs.scale) }
+    val u = { d: Int -> (d * scale).dp }
 
+    /** A visible control; [touch] = false for D-pad arms, which share one zone that reads 8 directions. */
     @Composable
-    fun Btn(label: String, bit: Int, size: Dp, color: Color, shape: Shape = CircleShape, w: Dp = size, slopDp: Int = 6, touch: Boolean = true) {
-        val down = (mask shr bit) and 1 == 1
-        Box(
-            Modifier.size(w, size).clip(shape).background(color.copy(alpha = if (down) .7f else .28f))
-                .border(2.dp, color, shape)
-                .onGloballyPositioned {
-                    if (touch) pad.zones[bit] = Zone(Rect(it.positionInRoot(), it.size.toSize()), shape === CircleShape, slopDp * dp1)
-                }, contentAlignment = Alignment.Center
-        ) { Text(label, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+    fun Btn(label: String, bit: Int, size: Dp, shape: Shape = CircleShape, w: Dp = size, slopDp: Int = 6, touch: Boolean = true,
+            accent: Color = PadCyan, font: Int = 16, modifier: Modifier = Modifier) {
+        PadFace(label, (mask shr bit) and 1 == 1, size,
+            modifier.onGloballyPositioned {
+                if (touch) pad.zones[bit] = Zone(Rect(it.positionInRoot(), it.size.toSize()), shape === CircleShape, slopDp * dp1)
+            }, shape, w, accent, font)
     }
-
-    @Composable
-    fun Chip(label: String, onTap: () -> Unit) =
-        Text(label, color = NeonBlue, modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0x66000000))
-            .pointerInput(Unit) { awaitEachGesture { awaitFirstDown(); onTap() } }.padding(8.dp, 4.dp), fontSize = 12.sp)
 
     Box(
         Modifier.fillMaxSize()
@@ -275,44 +273,48 @@ private fun Gamepad(aspectLabel: String, onMask: (Int) -> Unit, onAspect: () -> 
                             if (c.id == dpadId) m = m or dpadBits(pad.zones[DPAD], p)
                             else for ((bit, z) in pad.zones) if (bit != DPAD && z.hit(p)) m = m or (1 shl bit)
                         }
-                        if (m != mask) { mask = m; sendMask(m) }
+                        if (m != mask) {
+                            if (newlyPressed(mask, m) != 0) padHaptic(view)
+                            mask = m; sendMask(m)
+                        }
                     }
                 }
             }
-            .navigationBarsPadding().padding(12.dp)
+            .windowInsetsPadding(WindowInsets.safeDrawing).padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
-        Row(Modifier.align(Alignment.TopCenter).padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Chip("SAVE", onSave); Chip("LOAD", onLoad); Chip("SIZE $aspectLabel", onAspect)
+        Row(Modifier.align(Alignment.TopCenter), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PadChip("SAVE", onSave); PadChip("LOAD", onLoad); PadChip("SCREEN $aspectLabel", onAspect)
+            PadChip("PAD ${PadPrefs.scaleLabel(scale)}") { scale = PadPrefs.next(PadPrefs.SCALES, scale); prefs.scale = scale }
+            PadChip("${(opacity * 100).toInt()}%") { opacity = PadPrefs.next(PadPrefs.OPACITIES, opacity); prefs.opacity = opacity }
         }
-        Box(
-            Modifier.align(Alignment.BottomStart).padding(bottom = 70.dp)
-                .onGloballyPositioned { pad.zones[DPAD] = Zone(Rect(it.positionInRoot(), it.size.toSize()), false, 18 * dp1) }
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Btn("▲", SnesCore.UP, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
-                Row {
-                    Btn("◀", SnesCore.LEFT, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
-                    Spacer(Modifier.width(56.dp))
-                    Btn("▶", SnesCore.RIGHT, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
+        Box(Modifier.fillMaxSize().alpha(opacity)) {
+            // Shoulders sit in the top corners where index fingers rest in landscape.
+            Btn("L", SnesCore.L, u(44), RoundedCornerShape(topStart = 22.dp, topEnd = 8.dp, bottomEnd = 8.dp, bottomStart = 8.dp), u(104),
+                slopDp = 12, modifier = Modifier.align(Alignment.TopStart))
+            Btn("R", SnesCore.R, u(44), RoundedCornerShape(topStart = 8.dp, topEnd = 22.dp, bottomEnd = 8.dp, bottomStart = 8.dp), u(104),
+                slopDp = 12, modifier = Modifier.align(Alignment.TopEnd))
+            Box(
+                Modifier.align(Alignment.BottomStart).padding(bottom = 24.dp)
+                    .onGloballyPositioned { pad.zones[DPAD] = Zone(Rect(it.positionInRoot(), it.size.toSize()), false, 18 * dp1) }
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val arm = RoundedCornerShape(12.dp)
+                    Btn("▲", SnesCore.UP, u(54), arm, touch = false)
+                    Row { Btn("◀", SnesCore.LEFT, u(54), arm, touch = false); Spacer(Modifier.size(u(54))); Btn("▶", SnesCore.RIGHT, u(54), arm, touch = false) }
+                    Btn("▼", SnesCore.DOWN, u(54), arm, touch = false)
                 }
-                Btn("▼", SnesCore.DOWN, 56.dp, NeonBlue, RoundedCornerShape(10.dp), touch = false)
             }
-        }
-        Box(Modifier.align(Alignment.BottomEnd).padding(bottom = 70.dp)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // 14 dp of reach on each round button makes neighbours overlap at the seam, so one thumb can press two.
-                Btn("X", SnesCore.X, 58.dp, NeonBlue, slopDp = 14)
-                Row { Btn("Y", SnesCore.Y, 58.dp, NeonBlue, slopDp = 14); Spacer(Modifier.width(50.dp)); Btn("A", SnesCore.A, 58.dp, NeonRed, slopDp = 14) }
-                Btn("B", SnesCore.B, 58.dp, NeonRed, slopDp = 14)
+            // Console-accurate diamond: X top, Y left, A right, B bottom. 14 dp reach lets one thumb press two at a seam.
+            Column(Modifier.align(Alignment.BottomEnd).padding(bottom = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Btn("X", SnesCore.X, u(60), slopDp = 14)
+                Row { Btn("Y", SnesCore.Y, u(60), slopDp = 14); Spacer(Modifier.size(u(48))); Btn("A", SnesCore.A, u(60), slopDp = 14) }
+                Btn("B", SnesCore.B, u(60), slopDp = 14)
             }
-        }
-        Row(Modifier.align(Alignment.BottomCenter), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Btn("SELECT", SnesCore.SELECT, 34.dp, Color.Gray, RoundedCornerShape(17.dp), 84.dp)
-            Btn("START", SnesCore.START, 34.dp, Color.Gray, RoundedCornerShape(17.dp), 84.dp)
-        }
-        Row(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(bottom = 290.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Btn("L", SnesCore.L, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp, slopDp = 10)
-            Btn("R", SnesCore.R, 40.dp, NeonBlue, RoundedCornerShape(10.dp), 90.dp, slopDp = 10)
+            Row(Modifier.align(Alignment.BottomCenter), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                val pill = RoundedCornerShape(50)
+                Btn("SELECT", SnesCore.SELECT, u(30), pill, u(82), accent = PadSteel, font = 11)
+                Btn("START", SnesCore.START, u(30), pill, u(82), accent = PadSteel, font = 11)
+            }
         }
     }
 }
