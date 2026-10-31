@@ -41,7 +41,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import org.victoriousframework.victorlink64.ui.NeonBlue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalView
+import org.victoriousframework.victorlink64.ui.*
 import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -83,7 +85,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
 
         surface = SurfaceView(this).apply { holder.addCallback(this@HwActivity) }
         val overlay = ComposeView(this).apply {
-            setContent { HwGamepad(system, stick, { touchMask = it; push() }, { stick = !stick; push() }, ::saveState, ::loadState) }
+            setContent { HwGamepad(PadPrefs(this@HwActivity), system, stick, { touchMask = it; push() }, { stick = !stick; push() }, ::saveState, ::loadState) }
         }
         frame = FrameLayout(this).apply {
             setBackgroundColor(android.graphics.Color.BLACK)
@@ -239,30 +241,30 @@ private class HwZone(val rect: Rect, val slop: Float) {
     fun hit(p: Offset) = rect.inflate(slop).contains(p)
 }
 
-/** On-screen controller; labels follow the console (PSP: ✕ ○ □ △, GameCube: A B X Y Z). Brand blue only. */
+/**
+ * On-screen controller; labels follow the console (PSP: ✕ ○ □ △, GameCube: big A with B, X, Y around it, plus Z).
+ * Brand navy + cyan only; no red on action buttons.
+ */
 @Composable
-private fun HwGamepad(system: HwSystem, stick: Boolean, onMask: (Int) -> Unit, onStick: () -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
+private fun HwGamepad(prefs: PadPrefs, system: HwSystem, stick: Boolean, onMask: (Int) -> Unit, onStick: () -> Unit, onSave: () -> Unit, onLoad: () -> Unit) {
     var mask by remember { mutableIntStateOf(0) }
     val sendMask by rememberUpdatedState(onMask)
     val zones = remember { HashMap<Int, HwZone>() }
     var origin by remember { mutableStateOf(Offset.Zero) }
     val dp1 = with(LocalDensity.current) { 1.dp.toPx() }
+    val view = LocalView.current
     val psp = system == HwSystem.PSP
+    var opacity by remember { mutableFloatStateOf(prefs.opacity) }
+    var scale by remember { mutableFloatStateOf(prefs.scale) }
+    val u = { d: Int -> (d * scale).dp }
 
     @Composable
-    fun Btn(label: String, bit: Int, size: Dp, shape: Shape = CircleShape, w: Dp = size, color: Color = NeonBlue) {
-        val down = (mask shr bit) and 1 == 1
-        Box(
-            Modifier.size(w, size).clip(shape).background(color.copy(alpha = if (down) .7f else .28f)).border(2.dp, color, shape)
-                .onGloballyPositioned { zones[bit] = HwZone(Rect(it.positionInRoot(), it.size.toSize()), 10 * dp1) },
-            contentAlignment = Alignment.Center
-        ) { Text(label, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+    fun Btn(label: String, bit: Int, size: Dp, shape: Shape = CircleShape, w: Dp = size, accent: Color = PadCyan,
+            font: Int = 16, modifier: Modifier = Modifier) {
+        PadFace(label, (mask shr bit) and 1 == 1, size,
+            modifier.onGloballyPositioned { zones[bit] = HwZone(Rect(it.positionInRoot(), it.size.toSize()), 10 * dp1) },
+            shape, w, accent, font)
     }
-
-    @Composable
-    fun Chip(label: String, onTap: () -> Unit) =
-        Text(label, color = NeonBlue, modifier = Modifier.clip(RoundedCornerShape(8.dp)).background(Color(0x66000000))
-            .pointerInput(Unit) { awaitEachGesture { awaitFirstDown(); onTap() } }.padding(8.dp, 4.dp), fontSize = 12.sp)
 
     Box(
         Modifier.fillMaxSize()
@@ -276,34 +278,57 @@ private fun HwGamepad(system: HwSystem, stick: Boolean, onMask: (Int) -> Unit, o
                             val p = origin + c.position
                             for ((bit, z) in zones) if (z.hit(p)) m = m or (1 shl bit)
                         }
-                        if (m != mask) { mask = m; sendMask(m) }
+                        if (m != mask) {
+                            if (newlyPressed(mask, m) != 0) padHaptic(view)
+                            mask = m; sendMask(m)
+                        }
                     }
                 }
             }
-            .navigationBarsPadding().padding(12.dp)
+            .windowInsetsPadding(WindowInsets.safeDrawing).padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
-        Row(Modifier.align(Alignment.TopCenter).padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Chip("SAVE", onSave); Chip("LOAD", onLoad); Chip(if (stick) "STICK ON" else "STICK OFF", onStick)
+        Row(Modifier.align(Alignment.TopCenter), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            PadChip("SAVE", onSave); PadChip("LOAD", onLoad); PadChip(if (stick) "STICK ON" else "STICK OFF", onStick)
+            PadChip("PAD ${PadPrefs.scaleLabel(scale)}") { scale = PadPrefs.next(PadPrefs.SCALES, scale); prefs.scale = scale }
+            PadChip("${(opacity * 100).toInt()}%") { opacity = PadPrefs.next(PadPrefs.OPACITIES, opacity); prefs.opacity = opacity }
         }
-        Column(Modifier.align(Alignment.BottomStart).padding(bottom = 60.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            val sq = RoundedCornerShape(10.dp)
-            Btn("▲", HwCore.UP, 54.dp, sq)
-            Row { Btn("◀", HwCore.LEFT, 54.dp, sq); Spacer(Modifier.width(54.dp)); Btn("▶", HwCore.RIGHT, 54.dp, sq) }
-            Btn("▼", HwCore.DOWN, 54.dp, sq)
-        }
-        Column(Modifier.align(Alignment.BottomEnd).padding(bottom = 60.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Btn(if (psp) "△" else "Y", HwCore.X, 56.dp)
-            Row { Btn(if (psp) "□" else "X", HwCore.Y, 56.dp); Spacer(Modifier.width(48.dp)); Btn(if (psp) "○" else "B", HwCore.A, 56.dp) }
-            Btn(if (psp) "✕" else "A", HwCore.B, 56.dp)
-        }
-        Row(Modifier.align(Alignment.BottomCenter), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            if (psp) Btn("SELECT", HwCore.SELECT, 34.dp, RoundedCornerShape(17.dp), 84.dp, Color.Gray)
-            else Btn("Z", HwCore.R2, 34.dp, RoundedCornerShape(17.dp), 64.dp)
-            Btn("START", HwCore.START, 34.dp, RoundedCornerShape(17.dp), 84.dp, Color.Gray)
-        }
-        Row(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(bottom = 280.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Btn("L", HwCore.L, 40.dp, RoundedCornerShape(10.dp), 90.dp)
-            Btn("R", HwCore.R, 40.dp, RoundedCornerShape(10.dp), 90.dp)
+        Box(Modifier.fillMaxSize().alpha(opacity)) {
+            val lShape = RoundedCornerShape(topStart = 22.dp, topEnd = 8.dp, bottomEnd = 8.dp, bottomStart = 8.dp)
+            val rShape = RoundedCornerShape(topStart = 8.dp, topEnd = 22.dp, bottomEnd = 8.dp, bottomStart = 8.dp)
+            Btn("L", HwCore.L, u(44), lShape, u(104), modifier = Modifier.align(Alignment.TopStart))
+            if (psp) Btn("R", HwCore.R, u(44), rShape, u(104), modifier = Modifier.align(Alignment.TopEnd))
+            else Column(Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Btn("R", HwCore.R, u(44), rShape, u(104))
+                // GameCube Z sits just in front of R on the right shoulder.
+                Btn("Z", HwCore.R2, u(32), RoundedCornerShape(50), u(72), font = 13)
+            }
+            Column(Modifier.align(Alignment.BottomStart).padding(bottom = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                val arm = RoundedCornerShape(12.dp)
+                Btn("▲", HwCore.UP, u(54), arm)
+                Row { Btn("◀", HwCore.LEFT, u(54), arm); Spacer(Modifier.size(u(54))); Btn("▶", HwCore.RIGHT, u(54), arm) }
+                Btn("▼", HwCore.DOWN, u(54), arm)
+            }
+            if (psp) {
+                // PSP diamond: △ top, □ left, ○ right, ✕ bottom.
+                Column(Modifier.align(Alignment.BottomEnd).padding(bottom = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Btn("△", HwCore.X, u(58), font = 20)
+                    Row { Btn("□", HwCore.Y, u(58), font = 20); Spacer(Modifier.size(u(48))); Btn("○", HwCore.A, u(58), font = 20) }
+                    Btn("✕", HwCore.B, u(58), font = 20)
+                }
+            } else {
+                // GameCube cluster: big A in the middle, small B lower-left, X to the right, Y on top.
+                Box(Modifier.align(Alignment.BottomEnd).padding(bottom = 16.dp).size(u(200), u(200))) {
+                    Btn("A", HwCore.B, u(78), modifier = Modifier.align(Alignment.Center), font = 22)
+                    Btn("B", HwCore.A, u(46), modifier = Modifier.align(Alignment.BottomStart))
+                    Btn("X", HwCore.Y, u(70), RoundedCornerShape(50), u(40), modifier = Modifier.align(Alignment.CenterEnd))
+                    Btn("Y", HwCore.X, u(40), RoundedCornerShape(50), u(70), modifier = Modifier.align(Alignment.TopCenter))
+                }
+            }
+            Row(Modifier.align(Alignment.BottomCenter), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                val pill = RoundedCornerShape(50)
+                if (psp) Btn("SELECT", HwCore.SELECT, u(30), pill, u(82), PadSteel, 11)
+                Btn("START", HwCore.START, u(30), pill, u(82), PadSteel, 11)
+            }
         }
     }
 }
