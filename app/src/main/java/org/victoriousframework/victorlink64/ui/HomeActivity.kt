@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -323,12 +324,12 @@ fun LibraryScreen() {
                 Text("Chess", color = Color.White, fontWeight = FontWeight.Bold)
                 Text("Built-in · vs phone or pass & play", color = Muted, fontSize = 12.sp)
             }
-            Icon(Icons.Filled.PlayArrow, "Play chess", tint = NeonBlue)
+            PlayBadge("Play chess")
         }
         Spacer(Modifier.height(10.dp))
         Row(
-            Modifier.fillMaxWidth().clip16().background(NeonRed.copy(alpha = .12f))
-                .border(1.dp, NeonRed, RoundedCornerShape(16.dp))
+            Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .12f))
+                .border(1.dp, NeonBlue, RoundedCornerShape(16.dp))
                 .clickable { org.victoriousframework.victorlink64.zombies.ZombiesActivity.launch(ctx, org.victoriousframework.victorlink64.zombies.ZombiesRole.SOLO) }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -339,7 +340,7 @@ fun LibraryScreen() {
                 Text("VictorOps Zombies", color = Color.White, fontWeight = FontWeight.Bold)
                 Text("Built-in · solo offline · co-op from the Connect tab", color = Muted, fontSize = 12.sp)
             }
-            Icon(Icons.Filled.PlayArrow, "Play zombies", tint = NeonRed)
+            PlayBadge("Play zombies")
         }
         Spacer(Modifier.height(12.dp))
         when {
@@ -356,15 +357,15 @@ fun LibraryScreen() {
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(Modifier.size(44.dp).clip16().background(NeonRed.copy(alpha = .18f)), Alignment.Center) {
-                            Icon(Icons.Filled.SportsEsports, null, tint = NeonRed)
+                        Box(Modifier.size(44.dp).clip16().background(NeonBlue.copy(alpha = .18f)), Alignment.Center) {
+                            Icon(Icons.Filled.SportsEsports, null, tint = NeonBlue)
                         }
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
                             Text(g.name, color = Color.White, fontWeight = FontWeight.SemiBold)
                             Text(g.systemLabel + (if (g.zipEntry != null) " · ZIP" else "") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
                         }
-                        Icon(Icons.Filled.PlayArrow, "Play", tint = NeonBlue)
+                        PlayBadge("Play")
                     }
                 }
             }
@@ -373,6 +374,14 @@ fun LibraryScreen() {
 }
 
 fun Modifier.clip16() = this.clip(RoundedCornerShape(16.dp))
+
+/** Consistent play affordance for every launchable row: filled brand-blue circle (never red). */
+@Composable
+fun PlayBadge(description: String) {
+    Box(Modifier.size(40.dp).clip(CircleShape).background(NeonBlue), Alignment.Center) {
+        Icon(Icons.Filled.PlayArrow, description, tint = Navy, modifier = Modifier.size(26.dp))
+    }
+}
 
 @Composable
 fun EmptyState(title: String, body: String) {
@@ -391,7 +400,7 @@ fun ComingSoon(title: String, body: String, icon: ImageVector) {
         Spacer(Modifier.height(12.dp))
         Text(title, color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
-        Surface(color = NeonRed, shape = RoundedCornerShape(50)) {
+        Surface(color = NeonBlue, shape = RoundedCornerShape(50)) {
             Text("COMING SOON", color = Color.White, fontWeight = FontWeight.Bold, modifier = Modifier.padding(14.dp, 4.dp), letterSpacing = 2.sp)
         }
         Spacer(Modifier.height(12.dp))
