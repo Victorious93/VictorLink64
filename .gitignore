@@ -58,3 +58,11 @@ tx.exe
 __pycache__/
 *.pyc
 local.properties
+
+# Victorious Framework: never commit disc images
+*.iso
+*.cso
+*.pbp
+*.gcm
+*.rvz
+*.ciso

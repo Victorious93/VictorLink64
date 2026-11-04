@@ -66,8 +66,12 @@ jobs:
     - name: Verify APK payload
       run: |
         APK=app/build/outputs/apk/debug/VictorLink64-debug.apk
-        LIBS=$(unzip -l "$APK" | awk '{print $4}' | grep '^lib/arm64-v8a/' | xargs -n1 basename | sort | paste -sd,)
+        # PSP (PPSSPP) and GameCube (Dolphin) cores ship for arm64-v8a only; check them separately.
+        ARM64_ONLY='^(libppsspp_libretro|libdolphin_libretro)\.so$'
+        LIBS=$(unzip -l "$APK" | awk '{print $4}' | grep '^lib/arm64-v8a/' | xargs -n1 basename | grep -Ev "$ARM64_ONLY" | sort | paste -sd,)
         python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a,armeabi-v7a,x86,x86_64 --libs "$LIBS"
+        python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a --libs libppsspp_libretro.so,libdolphin_libretro.so,libvl64hw.so
+        ls -l "$APK"
         sha256sum "$APK"
 
     - uses: actions/upload-artifact@v4

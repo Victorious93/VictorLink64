@@ -23,7 +23,7 @@ import sys
 import zipfile
 from collections import Counter
 
-ROM_EXTENSIONS = (".z64", ".n64", ".v64")
+ROM_EXTENSIONS = (".z64", ".n64", ".v64", ".sfc", ".smc", ".iso", ".cso", ".pbp", ".gcm", ".rvz", ".ciso")
 
 # Upstream Mupen64Plus-AE ships this diagnostic asset; CoreService uses it for
 # disk-only games. It is allowed only at this exact path with this exact digest.
