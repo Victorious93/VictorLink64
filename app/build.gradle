@@ -93,6 +93,8 @@ android {
         }
         resources {
             excludes += ['META-INF/AL2.0', 'META-INF/LGPL2.1', 'META-INF/beans.xml']
+            // BouncyCastle (PC Streaming / Moonlight) ships duplicate LICENSE.md files.
+            excludes += ['/META-INF/*.md']
         }
     }
 
@@ -228,6 +230,8 @@ dependencies {
 
     // Victorious Framework: VictorOps Zombies (libGDX). Game logic lives in :zombies; the Android backend and natives live here.
     implementation project(':zombies')
+    // PC Streaming streaming core (vendored Moonlight, GPL-3.0). See moonlight/README.md.
+    implementation project(':moonlight')
     implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
     ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'].each { abi -> gdxNatives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-$abi" }
 

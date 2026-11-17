@@ -104,6 +104,18 @@
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard|navigation|screenLayout"
             android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
         <activity
+            android:name="org.victoriousframework.victorlink64.pc.PcStreamingActivity"
+            android:exported="false"
+            android:label="PC Streaming"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
+            android:name="org.victoriousframework.victorlink64.pc.PcStreamActivity"
+            android:exported="false"
+            android:label="PC Streaming"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden|keyboard|navigation|screenLayout|uiMode"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+        <activity
             android:name="org.victoriousframework.victorlink64.controls.ControllerMapActivity"
             android:exported="false"
             android:label="Controller buttons"

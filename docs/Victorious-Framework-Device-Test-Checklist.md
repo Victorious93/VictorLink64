@@ -106,3 +106,20 @@ Legend: ✔ pass · ✘ fail · — not run
 After testing, copy results into `docs/Victorious-Framework-Status.md` (bug sweep table) and change "reasoned from code; not device-tested" to what you observed.
 
 — Victorious
+
+## PC Streaming (added 2026-11-17)
+
+Needs a real PC with [Sunshine](https://github.com/LizardByte/Sunshine) (or NVIDIA GameStream) and a phone on the same Wi-Fi. Nothing here has been run against a real PC yet.
+
+1. Library tab, tap the **PC Streaming** card. Expect: the screen opens with the PC list and a "Looking for PCs on your Wi-Fi" line.
+2. Your PC should appear on its own within about 10 seconds. If not, tap **Add PC by address**, type its IP, tap **Add**. Expect the PC's name to appear.
+3. Tap the PC. Expect a 4-digit PIN. On the PC open Sunshine (https://localhost:47990), PIN page, enter the PIN and a name. Expect "Paired" and the app list. Also try **Cancel** while it waits.
+4. Wrong PIN: pair again and type a wrong PIN. Expect "The PIN didn't match."
+5. Settings (sliders icon): pick 720p / 60 FPS / Auto quality. Tap an app (for example Desktop). Expect the picture and sound within a few seconds, in landscape.
+6. Touch: use the on-screen controller in a game; try the **...** menu for controller size and opacity. Hide the controller and check the touch pad (drag moves the mouse, tap clicks, two-finger tap right-clicks).
+7. Real controller (Bluetooth or USB): buttons, sticks, triggers and D-pad respond. Turn on **Nintendo-style buttons** and check A/B and X/Y swap.
+8. Back button: expect "Stop streaming?". After **Stop**, the game keeps running on the PC until closed from the app list (**Close the running game on my PC**).
+9. Turn the PC's Wi-Fi off mid-stream. Expect a clear message, not a crash.
+10. Try 1080p / 60 FPS and HEVC. Note stutter, lag and your Wi-Fi band.
+
+Record: phone model, Android version, PC OS, Sunshine version, Wi-Fi band, result per step.

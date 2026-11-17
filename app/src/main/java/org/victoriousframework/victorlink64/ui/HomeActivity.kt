@@ -302,6 +302,8 @@ fun LibraryScreen() {
             PlayBadge("Play zombies")
         }
         Spacer(Modifier.height(10.dp))
+        org.victoriousframework.victorlink64.pc.PcStreamingCard()
+        Spacer(Modifier.height(10.dp))
         Row(
             Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .12f))
                 .border(1.dp, NeonBlue, RoundedCornerShape(16.dp))
@@ -490,6 +492,10 @@ fun AboutScreen() {
             "PlayStation 2 emulation uses LRPS2, the libretro PlayStation 2 core (https://github.com/libretro/ps2), " +
             "derived from PCSX2 by the PCSX2 Team and contributors and licensed under the GNU GPL v3. " +
             "VictorLink64 does not include a PS2 BIOS; you add your own.\n\n" +
+            "PC game streaming uses Moonlight by Cameron Gutman and the Moonlight contributors " +
+            "(https://github.com/moonlight-stream/moonlight-android, with moonlight-common-c, ENet and nanors), " +
+            "licensed under the GNU GPL v3; it bundles OpenSSL (Apache-2.0) and Opus (BSD). Full credits are in the " +
+            "NOTICE file in the source repository.\n\n" +
             "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
             "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
             "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +

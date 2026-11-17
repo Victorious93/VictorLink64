@@ -45,6 +45,37 @@ Apache-2.0 code may be combined into a GPL-3.0 work (the combined work is distri
 allowed, which is why the helper's engine was chosen from Apache-2.0 sources. See docs/APK-Player-Design.md.
 
 ------------------------------------------------------------------------------
+PC Streaming (the "PC Streaming" screen and the :moonlight module)
+------------------------------------------------------------------------------
+The streaming core is a trimmed copy of Moonlight for Android and its native libraries.
+VictorLink64's own screens (discovery, pairing, app list, settings, player, controller
+overlay) are original code; the protocol, pairing, video/audio decode and network code
+are Moonlight's.
+
+  Moonlight for Android            GPL-3.0   (c) Cameron Gutman and the Moonlight contributors
+    https://github.com/moonlight-stream/moonlight-android   (commit b48494cb96bf)
+  moonlight-common-c               GPL-3.0   (c) Cameron Gutman and the Moonlight contributors
+    https://github.com/moonlight-stream/moonlight-common-c  (commit 874ac9548f1b)
+  ENet                             MIT       (c) Lee Salzman (Moonlight fork by Cameron Gutman)
+    https://github.com/cgutman/enet                         (commit aca87840b57f)
+  nanors                           MIT       (c) Joseph Calderon (sleepybishop)
+    https://github.com/sleepybishop/nanors                  (commit b1e3c22ca0cd)
+  OpenSSL (libcrypto.a)            Apache-2.0  (c) The OpenSSL Project Authors
+  Opus (libopus.a)                 BSD-3-Clause (c) Xiph.Org Foundation, Skype Limited and contributors
+    prebuilt static libraries from https://github.com/cgutman/moonlight-mobile-deps
+  Bouncy Castle (bcprov, bcpkix)   MIT-style  (c) The Legion of the Bouncy Castle Inc.
+  JCodec                           BSD-2-Clause
+  OkHttp                           Apache-2.0  (c) Square, Inc.
+  JmDNS                            Apache-2.0
+
+Moonlight's GPL-3.0 licence text is kept at moonlight/LICENSE.txt; the vendoring record
+(what was kept and what was changed) is moonlight/README.md.
+
+This program is distributed WITHOUT ANY WARRANTY. VictorLink64 is not affiliated with or
+endorsed by the Moonlight project, NVIDIA, or LizardByte. "Sunshine" and "GeForce" are
+trademarks of their respective owners.
+
+------------------------------------------------------------------------------
 Game import: archive and game-file reading
 ------------------------------------------------------------------------------
 Used by the main app (Library tab) to read games straight from archives and disc images. All are compatible with GPL-3.0.
