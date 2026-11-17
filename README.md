@@ -22,6 +22,7 @@ Works on its own; fleet integration (droidcommand-AI) is optional
 
 - **N64 and Super Nintendo** — open your own game files and play. N64 uses Mupen64Plus; Super Nintendo uses bsnes, with size modes, multi-touch controls, and save/load states.
 - **PSP and GameCube** — library support for PSP (`.iso`, `.cso`, `.pbp`) and GameCube (`.iso`, `.gcm`, `.rvz`, `.ciso`) files, using PPSSPP and Dolphin. These consoles are new and **have not yet been tested on a real phone**, so a game may fail to start until that work is finished.
+- **Import games as they are** — add single files or a whole folder; zip, 7z, RAR, tar, gz and xz archives are read directly (no unzipping), and N64, SNES, PSP and GameCube formats are recognised automatically. Details and test status: [`docs/IMPORT.md`](docs/IMPORT.md).
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
 - **VictorOps Zombies** — a built-in top-down wave shooter. Play solo from the Library tab, or co-op with a friend from the Connect tab (2 players over Bluetooth). Co-op is new and **has not yet been tested on real devices**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.

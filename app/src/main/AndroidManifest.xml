@@ -118,6 +118,11 @@
             android:exported="false"
             android:label="Classic Android check"
             android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
+            android:name="org.victoriousframework.victorlink64.library.StorageActivity"
+            android:exported="false"
+            android:label="Game storage"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
         <service
             android:name="org.victoriousframework.victorlink64.classic.Classic32Service"
             android:exported="false"
