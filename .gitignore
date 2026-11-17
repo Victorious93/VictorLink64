@@ -79,3 +79,7 @@ erom.bin
 *.mec
 *.nvm
 ps2/system/
+
+# Victorious Framework: vendored BlackBox core needs these two small binaries (see third_party/blackbox/UPSTREAM.md)
+!third_party/blackbox/Bcore/src/main/cpp/Dobby/*/libdobby.a
+!third_party/blackbox/Bcore/src/main/assets/empty.jar

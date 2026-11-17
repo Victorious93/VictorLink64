@@ -1,1 +1,7 @@
 include ':app', ':mupen64plus-audio-android', ':mupen64plus-core', ':mupen64plus-video-gliden64', ':mupen64plus-video-glide64mk2', ':ae-bridge', ':mupen64plus-video-gln64', ':mupen64plus-rsp-parallel', ':mupen64plus-rsp-cxd4', ':mupen64plus-rsp-hle', ':mupen64plus-input-android', ':mupen64plus-input-raphnet', ':mupen64plus-video-rice', ':mupen64plus-video-angrylion-plus', ':mupen64plus-video-parallel', ':miniupnp-bridge', ':zombies'
+
+// Victorious Framework: 32-bit helper app and the vendored BlackBox container core (third_party/blackbox).
+include ':box32', ':bb-core', ':bb-reflection', ':bb-compiler'
+project(':bb-core').projectDir = file('third_party/blackbox/Bcore')
+project(':bb-reflection').projectDir = file('third_party/blackbox/black-reflection')
+project(':bb-compiler').projectDir = file('third_party/blackbox/compiler')
