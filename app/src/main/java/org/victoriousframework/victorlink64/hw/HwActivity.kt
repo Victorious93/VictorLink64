@@ -57,6 +57,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
     private val extraFds = mutableListOf<ParcelFileDescriptor>()
     private val surfaceReady = CountDownLatch(1)
     private val coreTasks = java.util.concurrent.ConcurrentLinkedQueue<() -> Unit>()
+    @Volatile private var gfx: org.victoriousframework.victorlink64.graphics.GraphicsSession? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +111,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
             try {
                 if (!core.exists()) { fail("${system.label} needs a 64-bit ARM (arm64-v8a) device"); return@thread }
                 val romPath = openRom(uri, name)
+                gfx = org.victoriousframework.victorlink64.graphics.GraphicsHooks.forHw(this, system, name, frame)
                 if (!surfaceReady.await(10, TimeUnit.SECONDS)) { fail("No display surface"); return@thread }
                 HwCore.nativeClearOptions()
                 for ((k, v) in coreOptions) HwCore.nativeSetOption(k, v)
@@ -179,6 +181,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
             val n = HwCore.nativeRunFrame(buf)
             if (n > 0) track.write(buf, 0, n)
             else { next += frameNs; val d = next - System.nanoTime(); if (d > 0) Thread.sleep(d / 1_000_000, (d % 1_000_000).toInt()) }
+            gfx?.onFrame()
         }
         track.stop(); track.release()
         HwCore.nativeUnload()
@@ -232,6 +235,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
     override fun onDestroy() {
         running = false
         loop?.join(3000)
+        gfx?.close()
         romFd?.close()
         extraFds.forEach { it.close() }
         super.onDestroy()

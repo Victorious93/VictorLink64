@@ -5,7 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import org.victoriousframework.victorlink64.graphics.GraphicsSettingsActivity
+import org.victoriousframework.victorlink64.graphics.N64Graphics
 import org.victoriousframework.victorlink64.hw.HwSystem
+import org.victoriousframework.victorlink64.shizuku.ShizukuController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -77,6 +80,11 @@ class HomeActivity : ComponentActivity() {
             Thread { launchRom(this, Uri.parse(path), path.substringAfterLast('/')) }.start()
         }
         setContent { VictorTheme { VictorApp() } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ShizukuController.revertIfIdle(this)
     }
 }
 
@@ -260,6 +268,7 @@ fun launchRom(c: Context, uri: Uri, display: String) {
         val header = RomHeader(c, uri)
         if (!header.isValid) { toast(c, "Not a valid N64 ROM"); return }
         val md5 = c.contentResolver.openInputStream(uri)!!.use { FileUtil.computeMd5(java.io.BufferedInputStream(it)) }
+        N64Graphics.prepareLaunch(c, md5, header.name)
         ActivityHelper.startGameActivity(
             c, uri.toString(), null, md5, header.crc, header.name,
             header.countryCode.value, null, header.name, display, false
@@ -433,6 +442,9 @@ fun SettingsScreen() {
         SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
         }
+        SettingRow("Graphics & performance", "Auto Best Settings, quality per emulator, FPS counter, Shizuku boosts") {
+            ctx.startActivity(Intent(ctx, GraphicsSettingsActivity::class.java))
+        }
         SettingRow("Forget ROM folder", "Clear the selected library folder") {
             p.edit().remove(KEY_FOLDER).apply(); Toast.makeText(ctx, "Library folder cleared", Toast.LENGTH_SHORT).show()
         }
@@ -494,6 +506,12 @@ fun AboutScreen() {
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +
             "https://github.com/Victorious93/VictorLink64",
+            color = Muted, fontSize = 13.sp
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "Optional Shizuku support uses the Shizuku API by RikkaApps (https://github.com/RikkaApps/Shizuku-API), " +
+            "licensed under the Apache License 2.0. Shizuku itself is a separate app and is never required.",
             color = Muted, fontSize = 13.sp
         )
     }
