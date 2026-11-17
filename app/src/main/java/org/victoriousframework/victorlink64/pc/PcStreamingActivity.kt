@@ -157,7 +157,7 @@ private fun HostsScreen(onOpen: (String) -> Unit, onSettings: () -> Unit, onHelp
             Text("Play games from your own PC on this phone over Wi-Fi.", color = Muted)
             Spacer(Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(onClick = { showAdd = true }, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)) {
+                Button(onClick = { showAdd = true }, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue, contentColor = Navy)) {
                     Icon(Icons.Filled.Add, null); Spacer(Modifier.width(6.dp)); Text("Add PC by address")
                 }
                 Spacer(Modifier.width(10.dp))
@@ -262,7 +262,7 @@ private fun AddHostDialog(repo: PcRepo, onDone: (PcHost?) -> Unit) {
             }
         },
         confirmButton = {
-            Button(enabled = !busy, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue), onClick = {
+            Button(enabled = !busy, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue, contentColor = Navy), onClick = {
                 val parsed = parseHostInput(text)
                 if (parsed == null) { err = "That doesn't look like an address. Example: 192.168.1.20"; return@Button }
                 busy = true
@@ -289,7 +289,7 @@ private fun PairDialog(repo: PcRepo, h: PcHost, onDone: (Boolean) -> Unit) {
         if (r == PcRepo.PairResult.PAIRED) onDone(true)
     }
     AlertDialog(
-        onDismissRequest = { if (!running) onDone(false) }, containerColor = NavyCard,
+        onDismissRequest = { onDone(false) }, containerColor = NavyCard,
         title = { Text("Pair with ${h.name}") },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
@@ -304,7 +304,8 @@ private fun PairDialog(repo: PcRepo, h: PcHost, onDone: (Boolean) -> Unit) {
                 } else Text(result?.message ?: "", color = Color.White)
             }
         },
-        confirmButton = { if (!running) TextButton({ onDone(result == PcRepo.PairResult.PAIRED) }) { Text("OK", color = NeonBlue) } }
+        confirmButton = { if (!running) TextButton({ onDone(result == PcRepo.PairResult.PAIRED) }) { Text("OK", color = NeonBlue) } },
+        dismissButton = { if (running) TextButton({ onDone(false) }) { Text("Cancel", color = Muted) } }
     )
 }
 
@@ -409,7 +410,7 @@ private fun SettingsScreen(onBack: () -> Unit) {
                     color = Color.White, modifier = Modifier.weight(1f))
                 Text("Auto", color = Muted); Spacer(Modifier.width(6.dp))
                 Switch(s.bitrateKbps == 0, { auto -> set(s.copy(bitrateKbps = if (auto) 0 else s.effectiveBitrateKbps)) },
-                    colors = SwitchDefaults.colors(checkedTrackColor = NeonBlue))
+                    colors = SwitchDefaults.colors(checkedTrackColor = NeonBlue, checkedThumbColor = Color.White))
             }
             if (s.bitrateKbps != 0) Slider(
                 value = s.bitrateKbps.toFloat(), onValueChange = { set(s.copy(bitrateKbps = (it / 1000).toInt() * 1000)) },
@@ -446,7 +447,7 @@ private fun Radio(title: String, sub: String?, sel: Boolean, onPick: () -> Unit)
 private fun Toggle(title: String, sub: String?, v: Boolean, on: (Boolean) -> Unit) {
     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) { Text(title, color = Color.White); sub?.let { Text(it, color = Muted, fontSize = 12.sp) } }
-        Switch(v, on, colors = SwitchDefaults.colors(checkedTrackColor = NeonBlue))
+        Switch(v, on, colors = SwitchDefaults.colors(checkedTrackColor = NeonBlue, checkedThumbColor = Color.White))
     }
 }
 

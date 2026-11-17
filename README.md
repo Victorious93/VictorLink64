@@ -57,6 +57,7 @@ Screenshots coming soon.
 
 - **N64 and SNES emulation** — open your own game files and play. SNES (bsnes): size modes, multi-touch controls, save/load state on the emulation thread, colour fixes (Oct 21–22 Claude work).
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
+- **PC Streaming** — play games from your own PC on the phone over Wi-Fi: finds PCs running Sunshine (or GeForce GameStream) on your network or takes an IP address, pairs with a PIN, lists the PC's apps and streams them with resolution / frame rate / quality settings, an on-screen controller, and real-controller passthrough. Streaming core is Moonlight (GPL-3.0, see [`NOTICE`](NOTICE) and [`moonlight/README.md`](moonlight/README.md)). **Compiled and run on an emulator against a fake host only; not yet tested against a real PC.**
 - **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.
 - **Nearby play** — over the same Wi-Fi, or over Bluetooth with no internet.
