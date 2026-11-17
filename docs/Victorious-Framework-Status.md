@@ -77,6 +77,19 @@ Checked and found correct on the real core: all 12 buttons map to the right SNES
 
 Seen but not tested: `AudioTrack.write` return codes are ignored, so an audio error would let the loop run unthrottled; ROMs with the same file name share their `.srm` and `.state` files; the core accepts any file as a ROM, so a corrupt file runs as noise instead of failing to load.
 
+## PC Streaming 2026-11-17
+
+Library-tab card opens **PC Streaming**: host discovery (mDNS) and add-by-IP, PIN pairing, app list, stream settings (480p/720p/1080p, 30/60 FPS, bitrate, codec, frame pacing, on-screen controller, Nintendo-style A/B X/Y swap), and a full-screen player. The streaming core is the vendored `:moonlight` module (Moonlight, GPL-3.0; credits in `NOTICE` and the About screen); the screens are original VictorLink64 code.
+
+| Area | Finding / change | Evidence |
+| --- | --- | --- |
+| Build | The earlier branch attempt failed CI: `NvHTTP` used OkHttp 5's `fastFallback`, the app builds on OkHttp 4.12. The call was removed (4.x connects to addresses one at a time anyway). | `./gradlew :app:testDebugUnitTest assembleDebug` succeeded locally; APK payload verifier passed (structure only) |
+| LAN HTTP | `network_security_config.xml` only allowed cleartext for a few domains, but Sunshine discovery and pairing use plain HTTP (port 47989) at any LAN address. Now cleartext is allowed app-wide. | Add-by-IP reached a fake host over HTTP on an x86_64 API 34 emulator. That the old config would have blocked it is **inferred from Android's default policy, not reproduced** |
+| Controls | On-screen controller uses the shared size/opacity (`PadPrefs`) and haptics; real controllers pass through with an optional A/B X/Y swap. | Swap mapping **automated-tested** (`PcModelTest`); touch handling and real controllers **not device-tested** |
+| Pairing, app list, video/audio/input streaming | Moonlight protocol code, unchanged apart from the OkHttp line. | **Untested against a real Sunshine/GeForce host.** The emulator test only used a fake host that answers `/serverinfo`, so crypto pairing, app list, decoding, audio and latency are unverified |
+
+Known gaps: no Wake-on-LAN or remote (internet) streaming UI, no per-game remapping screen (only the A/B X/Y swap), keyboard/mouse only through the touch pad, HDR and surround are off.
+
 ## Tally
 
 Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and CI confirmation. Deferred / abandoned: none.
