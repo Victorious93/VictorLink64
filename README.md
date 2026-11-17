@@ -9,10 +9,11 @@
 Works on its own; fleet integration (droidcommand-AI) is optional
 
 <p>
-  <a href="https://github.com/Victorious93/VictorLink64/releases"><img src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&label=Release&labelColor=0B0F1A&color=00E5FF" alt="Latest release" /></a>
-  <a href="gpl-license"><img src="https://img.shields.io/badge/License-GPL--3.0-FF2BD6?style=flat-square&labelColor=0B0F1A" alt="License: GPL-3.0" /></a>
-  <a href="https://github.com/Victorious93/VictorLink64/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Victorious93/VictorLink64/build.yml?style=flat-square&label=CI&labelColor=0B0F1A&color=00E5FF" alt="CI" /></a>
-  <a href="https://victorious-framework.pages.dev"><img src="https://img.shields.io/badge/Fleet-Victorious_Framework-FF2BD6?style=flat-square&labelColor=0B0F1A" alt="Victorious Framework fleet" /></a>
+  <a href="https://github.com/Victorious93/VictorLink64/releases"><img src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&label=Release&labelColor=041125&color=19C2FC" alt="Latest release" /></a>
+  <a href="gpl-license"><img src="https://img.shields.io/badge/License-GPL--3.0-1E78FF?style=flat-square&labelColor=041125" alt="License: GPL-3.0" /></a>
+  <a href="https://github.com/Victorious93/VictorLink64/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Victorious93/VictorLink64/build.yml?style=flat-square&label=CI&labelColor=041125&color=19C2FC" alt="CI" /></a>
+  <a href="https://victorious-framework.pages.dev"><img src="https://img.shields.io/badge/Fleet-Victorious_Framework-19C2FC?style=flat-square&labelColor=041125" alt="Victorious Framework fleet" /></a>
+  <a href="#coming-soon"><img src="https://img.shields.io/badge/Roadmap-Coming_soon-FC3640?style=flat-square&labelColor=041125" alt="Roadmap: coming soon" /></a>
 </p>
 
 </div>
@@ -30,6 +31,23 @@ Works on its own; fleet integration (droidcommand-AI) is optional
 - **Classic Android check** — a Settings screen that reports whether this phone can run old 32-bit Android apps. It is a diagnostic only; the player for those apps is not built yet.
 
 > **Early beta.** Most features have not yet been tested on many real devices, so expect rough edges. Casting to a TV and online play for console games are not implemented yet; online play currently covers chess and VictorOps Zombies.
+
+## Coming soon
+
+> **These are plans, not finished features.** None of the items below are done yet, and you cannot use them today. The first one is being reviewed by Don; the rest are planned.
+
+| Coming soon | What it means for you | Where it stands |
+| --- | --- | --- |
+| **Top-quality touch controls for every console** | Better on-screen buttons, sticks, and triggers for every console, so playing on a touchscreen feels right. | In review ([PR #29](https://github.com/Victorious93/VictorLink64/pull/29)) — not released |
+| **Sharper graphics, up to 1080p** | Games drawn at up to 1080p, with optional filters and shaders for a different look, plus **Auto Best Settings** that picks good settings for your phone. | Planned |
+| **Optional Shizuku tweaks** | If you already use the Shizuku app, extra phone-level tweaks to help games run better. You will never need it to play. | Planned |
+| **Stream games from your own PC** | Play games from your own computer on your phone over your home network, using Moonlight and Sunshine. | Planned |
+| **Play PC games on your phone** | Run Windows PC games on the phone, in the style of Winlator. | Planned |
+| **Add games in any format** | Open games stored as zip, 7z, rar, iso, cso, chd, rvz, and more, read straight from the file with no unpacking first. | Planned |
+| **Universal APK player** | Run Android APK files without installing them, including old ones. | Planned |
+| **PS2 and PS Vita** | Emulators for PlayStation 2 and PlayStation Vita games. | Planned |
+
+When something here is finished and tested on a real phone, it moves up into **Features** and shows up in a new release. Until then, treat this list as a wish list, not a promise.
 
 ## Screenshots
 
@@ -124,4 +142,4 @@ Upstream trademarks and product names remain their owners'.
 
 **Something doesn't work?** Please [open an issue](https://github.com/Victorious93/VictorLink64/issues) with your phone model and what happened.
 
-<sub>Nintendo 64, Super Nintendo, and GameCube are trademarks of Nintendo. PlayStation Portable (PSP) is a trademark of Sony. VictorLink64 is not affiliated with or endorsed by Nintendo or Sony.</sub>
+<sub>Nintendo 64, Super Nintendo, and GameCube are trademarks of Nintendo. PlayStation Portable (PSP), PlayStation 2, and PlayStation Vita are trademarks of Sony. VictorLink64 is not affiliated with or endorsed by Nintendo or Sony.</sub>
