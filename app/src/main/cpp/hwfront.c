@@ -1,6 +1,6 @@
 /*
  * VictorLink64 hardware-rendered libretro frontend (original code, GPLv3) — Victorious Framework.
- * Drives OpenGL ES libretro cores (PPSSPP for PSP, Dolphin for GameCube). The core renders into an
+ * Drives OpenGL ES libretro cores (PPSSPP for PSP, Dolphin for GameCube, LRPS2 for PlayStation 2). The core renders into an
  * offscreen FBO that is blitted to the window surface; audio and input mirror snesfront.c.
  */
 #include <jni.h>
@@ -55,6 +55,19 @@ struct pad_state { int buttons; int16_t ax[4]; int16_t trig[2]; };
 static struct pad_state live, snap;
 static pthread_mutex_t pad_lock = PTHREAD_MUTEX_INITIALIZER;
 
+/*
+ * Core options (libretro GET_VARIABLE), supplied by HwActivity before nativeLoad. The LRPS2 (PlayStation 2) core needs
+ * at least its BIOS file name this way; it also carries the internal-resolution choice. Cores that read no options
+ * (PPSSPP, Dolphin) never look here.
+ */
+#define MAX_OPTS 32
+static char opt_key[MAX_OPTS][64], opt_val[MAX_OPTS][256];
+static int opt_count;
+static const char *option_lookup(const char *key) {
+    for (int i = 0; i < opt_count; i++) if (!strcmp(opt_key[i], key)) return opt_val[i];
+    return NULL;
+}
+
 #define AUDIO_CAP 65536
 static int16_t audio_buf[AUDIO_CAP];
 static size_t audio_len;
@@ -83,7 +96,13 @@ static bool env_cb(unsigned cmd, void *data) {
         return true;
     }
     case 51: /* GET_INPUT_BITMASKS */ return true;
-    case RETRO_ENVIRONMENT_GET_VARIABLE: return false;
+    case RETRO_ENVIRONMENT_GET_VARIABLE: {
+        struct retro_variable *var = data;
+        const char *v = var && var->key ? option_lookup(var->key) : NULL;
+        if (!v) return false;
+        var->value = v;
+        return true;
+    }
     case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: *(bool *)data = false; return true;
     case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
     case RETRO_ENVIRONMENT_SET_GEOMETRY:
@@ -264,6 +283,22 @@ JNIEXPORT void JNICALL JNI(nativeSetPad)(JNIEnv *env, jclass cls, jint b, jint l
     live.trig[0] = clamp16(lt < 0 ? 0 : lt); live.trig[1] = clamp16(rt < 0 ? 0 : rt);
     pthread_mutex_unlock(&pad_lock);
 }
+/** Sets one core option for the next nativeLoad (replaces an earlier value for the same key). */
+JNIEXPORT void JNICALL JNI(nativeSetOption)(JNIEnv *env, jclass cls, jstring jkey, jstring jval) {
+    const char *k = (*env)->GetStringUTFChars(env, jkey, 0);
+    const char *v = (*env)->GetStringUTFChars(env, jval, 0);
+    int slot = -1;
+    for (int i = 0; i < opt_count; i++) if (!strcmp(opt_key[i], k)) slot = i;
+    if (slot < 0 && opt_count < MAX_OPTS) slot = opt_count++;
+    if (slot >= 0) {
+        strncpy(opt_key[slot], k, sizeof opt_key[slot] - 1); opt_key[slot][sizeof opt_key[slot] - 1] = 0;
+        strncpy(opt_val[slot], v, sizeof opt_val[slot] - 1); opt_val[slot][sizeof opt_val[slot] - 1] = 0;
+    }
+    (*env)->ReleaseStringUTFChars(env, jkey, k);
+    (*env)->ReleaseStringUTFChars(env, jval, v);
+}
+JNIEXPORT void JNICALL JNI(nativeClearOptions)(JNIEnv *env, jclass cls) { opt_count = 0; }
+
 JNIEXPORT void JNICALL JNI(nativeReset)(JNIEnv *env, jclass cls) { if (p_reset) p_reset(); }
 
 JNIEXPORT jbyteArray JNICALL JNI(nativeSaveState)(JNIEnv *env, jclass cls) {
@@ -306,5 +341,6 @@ JNIEXPORT void JNICALL JNI(nativeUnload)(JNIEnv *env, jclass cls) {
     if (window) { ANativeWindow_release(window); window = NULL; }
     pthread_mutex_unlock(&win_lock);
     memset(&hw, 0, sizeof hw);
+    opt_count = 0;
     dlclose(core); core = NULL;
 }

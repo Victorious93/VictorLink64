@@ -234,6 +234,8 @@ class TouchOverlayView(
         "dpad" -> "D-pad"
         "stick" -> if (console == Console.GAMECUBE || console == Console.N64) "Control stick" else "Analog stick"
         "cstick" -> "C-stick"
+        "rstick" -> "Right analog stick"
+        "l3" -> "L3 (left stick click)"; "r3" -> "R3 (right stick click)"
         "lt" -> "L trigger"
         "rt" -> "R trigger"
         "cu", "cd", "cl", "cr" -> "C button"

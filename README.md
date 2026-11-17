@@ -56,6 +56,7 @@ Screenshots coming soon.
 ## Features
 
 - **N64 and SNES emulation** — open your own game files and play. SNES (bsnes): size modes, multi-touch controls, save/load state on the emulation thread, colour fixes (Oct 21–22 Claude work).
+- **PlayStation 2 (new, not yet device-tested)** — plays PS2 discs (`.iso`, `.chd`, `.cso`, `.bin`/`.cue`) with the LRPS2 core on 64-bit ARM phones. You supply your own PS2 BIOS (Settings → PlayStation 2); DualShock 2 touch controls; picture size from Native to about 1080p. PS2 is very heavy: expect it to be slow on entry-level phones. See [`docs/PS2.md`](docs/PS2.md).
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
 - **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.

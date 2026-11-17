@@ -7,14 +7,15 @@ enum class Console(val id: String, val label: String, val shortLabel: String) {
     N64("n64", "Nintendo 64", "N64"),
     SNES("snes", "Super Nintendo", "SNES"),
     PSP("psp", "PSP", "PSP"),
-    GAMECUBE("gc", "GameCube", "GameCube");
+    GAMECUBE("gc", "GameCube", "GameCube"),
+    PS2("ps2", "PlayStation 2", "PS2");
 
     companion object {
         fun fromId(id: String?): Console? = entries.firstOrNull { it.id == id }
     }
 }
 
-/** libretro RetroPad bit ids (RETRO_DEVICE_ID_JOYPAD_*), used by the SNES, PSP and GameCube cores. */
+/** libretro RetroPad bit ids (RETRO_DEVICE_ID_JOYPAD_*), used by the SNES, PSP, GameCube and PS2 cores. */
 object RetroPad {
     const val B = 0; const val Y = 1; const val SELECT = 2; const val START = 3
     const val UP = 4; const val DOWN = 5; const val LEFT = 6; const val RIGHT = 7

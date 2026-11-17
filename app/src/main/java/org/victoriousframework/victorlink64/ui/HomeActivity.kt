@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import org.victoriousframework.victorlink64.hw.DiscDetect
 import org.victoriousframework.victorlink64.hw.HwSystem
+import org.victoriousframework.victorlink64.hw.Ps2SetupActivity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -62,7 +64,8 @@ private val ROM_EXT = N64_EXT + SNES_EXT
 
 data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "",
     /** For .zip games: the ROM entry inside the archive. */ val zipEntry: String? = null,
-    /** PSP / GameCube disc images (never zipped). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null) {
+    /** PSP / GameCube / PS2 disc images (never zipped). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null,
+    /** For PS2 .cue sheets: the track files named by the sheet. */ val tracks: List<Pair<String, Uri>> = emptyList()) {
     val systemLabel get() = hw?.label ?: if (snes) "SNES" else "N64"
 }
 
@@ -177,7 +180,8 @@ fun scanFolder(c: Context, tree: Uri): ScanResult {
     val out = mutableListOf<Game>()
     var seen = 0
     fun walk(d: DocumentFile, depth: Int) {
-        for (f in d.listFiles()) {
+        val files = d.listFiles().toList()
+        for (f in files) {
             if (f.isDirectory) { if (depth < 4) walk(f, depth + 1); continue }
             seen++
             val n = f.name ?: continue
@@ -185,8 +189,8 @@ fun scanFolder(c: Context, tree: Uri): ScanResult {
             val base = n.substringBeforeLast('.')
             when {
                 ext in ROM_EXT -> out += Game(base, f.uri, f.length(), ext in SNES_EXT, n)
-                ext in HwSystem.ALL_EXTENSIONS -> HwSystem.detect(ext, if (ext == "iso") readHeader(c, f.uri) else null)
-                    ?.let { out += Game(base, f.uri, f.length(), false, n, hw = it) }
+                ext in HwSystem.ALL_EXTENSIONS -> DiscDetect.detect(c, f, ext, files)
+                    ?.let { out += Game(base, f.uri, f.length(), false, n, hw = it.system, tracks = it.companions) }
                 ext == "zip" -> {
                     val key = f.uri.toString() + "#" + f.length() + "#" + f.lastModified()
                     val entry = if (zipCache.contains(key)) zipCache.getString(key, "") else findRomInZip(c, f.uri).also { zipCache.edit().putString(key, it ?: "").apply() }
@@ -231,7 +235,8 @@ fun extractZipRom(c: Context, g: Game): java.io.File {
 fun launchGame(c: Context, g: Game) {
     try {
         val uri = if (g.zipEntry != null) { toast(c, "Unpacking ${g.name}…"); Uri.fromFile(extractZipRom(c, g)) } else g.uri
-        if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
+        if (g.hw == HwSystem.PS2) Ps2SetupActivity.open(c, uri, g.fileName, g.name, g.tracks)
+        else if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_URI, uri.toString())
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_NAME, g.fileName)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_SYSTEM, g.hw.name)
@@ -344,10 +349,10 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         when {
-            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your N64, SNES, PSP and GameCube games live.")
+            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your N64, SNES, PSP, GameCube and PS2 games live.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
             games.isEmpty() -> EmptyState(scanInfo?.error ?: "No games found",
-                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES), .zip files containing them, .iso .cso .pbp (PSP) and .iso .gcm .rvz .ciso (GameCube), up to 4 folders deep.")
+                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES), .zip files containing them, .iso .cso .pbp (PSP), .iso .gcm .rvz .ciso (GameCube) and .iso .cso .chd .cue (PlayStation 2), up to 4 folders deep.")
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(games) { g ->
                     Row(
@@ -419,8 +424,11 @@ fun SettingsScreen() {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Text("Settings", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(Modifier.height(12.dp))
-        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP and GameCube") {
+        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP, GameCube and PS2") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.controls.ControllerMapActivity::class.java))
+        }
+        SettingRow("PlayStation 2", "Add your BIOS, choose picture size, read the speed note") {
+            ctx.startActivity(Intent(ctx, Ps2SetupActivity::class.java))
         }
         SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
@@ -478,6 +486,9 @@ fun AboutScreen() {
             "licensed under the GNU GPL v2.0 or later.\n\n" +
             "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
             "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
+            "PlayStation 2 emulation uses LRPS2, the libretro PlayStation 2 core (https://github.com/libretro/ps2), " +
+            "derived from PCSX2 by the PCSX2 Team and contributors and licensed under the GNU GPL v3. " +
+            "VictorLink64 does not include a PS2 BIOS; you add your own.\n\n" +
             "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
             "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
             "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +
