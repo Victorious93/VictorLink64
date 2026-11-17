@@ -52,6 +52,8 @@
         </intent>
         <!-- APK Player: lets VictorLink64 see whether the 32-bit helper app is installed. -->
         <package android:name="${helperPackage}" />
+        <!-- Victorious Framework: lets Settings tell whether the optional Shizuku app is installed. -->
+        <package android:name="moe.shizuku.privileged.api" />
     </queries>
     
     <application
@@ -510,6 +512,19 @@
             android:resource="@drawable/hireslogo" />
         <meta-data android:name="android.max_aspect"
                    android:value="2.1"/>
+        <!-- Victorious Framework: Graphics & performance settings and the optional Shizuku bridge. -->
+        <activity
+            android:name="org.victoriousframework.victorlink64.graphics.GraphicsSettingsActivity"
+            android:exported="false"
+            android:label="Graphics &amp; performance"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 
 </manifest>

@@ -63,6 +63,7 @@ Screenshots coming soon.
 - **APK Player (early beta, new)** — pick an Android `.apk`, see in plain language whether your phone can run it, and launch it in a private sandbox without installing it. Old 32-bit apps run through a small companion app, *VictorLink64 32-bit Helper*. The file intake, status messages and helper hand-off were checked on emulators; the sandbox engine is **compiled only and not device-tested**, 64-bit-only phones are **not supported yet**, and the helper is sideload-only (not for Google Play). See [`docs/APK-Player-Design.md`](docs/APK-Player-Design.md) and the [device checklist](docs/APK-Player-Device-Test-Checklist.md).
 - **Bluetooth controllers and touch controls** — pair a gamepad (remap its buttons in Settings → Controller buttons) or use the on-screen controls: analog stick (fixed or floating), analog GameCube triggers, slide D-pad, console-accurate layouts for N64, SNES, PSP and GameCube, an in-game layout editor, haptics, and auto-hide when a controller connects. New and **not yet device-tested**; see [`docs/CONTROLS.md`](docs/CONTROLS.md).
 - **Save states** — save anywhere and resume later.
+- **Graphics & performance** — picture quality per emulator (resolution, filtering, anti-aliasing, widescreen, texture upscaling, screen effects), **Auto Best Settings** on by default that picks what your phone can run at full speed and remembers it per game, an FPS counter, and optional [Shizuku](https://shizuku.rikka.app/) boosts. New and **not yet device-tested**; see [`docs/GRAPHICS.md`](docs/GRAPHICS.md).
 
 ## Install
 
@@ -140,6 +141,7 @@ open-source projects:
 - [bsnes](https://github.com/libretro/bsnes) by byuu and contributors — Super Nintendo emulation (GPL v3)
 - [libGDX](https://github.com/libgdx/libgdx) — game framework for VictorOps Zombies (Apache-2.0)
 - [NewBlackbox / BlackBox](https://github.com/ALEX5402/NewBlackbox) — container core of the optional 32-bit helper (Apache-2.0, modified; see [`NOTICE`](NOTICE))
+- [Shizuku API](https://github.com/RikkaApps/Shizuku-API) by RikkaApps — optional performance boosts (Apache-2.0)
 
 The chess engine, multiplayer, VictorOps Zombies and app screens are original VictorLink64 / Victorious Framework code.
 

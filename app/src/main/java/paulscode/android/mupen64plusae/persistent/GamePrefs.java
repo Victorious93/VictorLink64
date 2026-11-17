@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.victoriousframework.victorlink64.graphics.CoreOptionMapping;
+import org.victoriousframework.victorlink64.graphics.N64Graphics;
+
 import paulscode.android.mupen64plusae.ActivityHelper;
 import paulscode.android.mupen64plusae.input.map.PlayerMap;
 import paulscode.android.mupen64plusae.jni.CoreTypes;
@@ -402,6 +405,9 @@ public class GamePrefs
 
         }
 
+        // Victorious Framework: graphics quality (Auto Best Settings / per-game choices) for GLideN64
+        N64Graphics.applyToProfile(context, md5, tempEmulationProfile);
+
         emulationProfile = tempEmulationProfile;
         
         Log.i("GamePrefs", "emulation profile found: " + emulationProfile.getName());
@@ -508,7 +514,8 @@ public class GamePrefs
                 scaling.equals("default") ? globalPrefs.displayScaling : GlobalPrefs.DisplayScaling.getScaling(scaling);
 
         //Angrylion only supports 640x480
-        verticalRenderResolution = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 : getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 );
+        verticalRenderResolution = videoPluginLib == AppData.VideoPlugin.ANGRYLION ? 480 :
+                emulationProfile.getInt( CoreOptionMapping.RENDER_HEIGHT_KEY, getSafeInt( mPreferences, DISPLAY_RESOLUTION, -1 ) );
 
         useDefaultZoom = mPreferences.getBoolean( "useDefaultZoom", true );
         videoSurfaceZoom = useDefaultZoom ? mGlobalPrefs.videoSurfaceZoom :

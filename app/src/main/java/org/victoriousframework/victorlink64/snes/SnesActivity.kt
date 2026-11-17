@@ -43,6 +43,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     private lateinit var frame: FrameLayout
     private var aspect by mutableStateOf(Aspect.NORMAL)
     private val coreTasks = java.util.concurrent.ConcurrentLinkedQueue<() -> Unit>()
+    @Volatile private var gfx: org.victoriousframework.victorlink64.graphics.GraphicsSession? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +85,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
             try {
                 contentResolver.openInputStream(uri)!!.use { i -> rom.outputStream().use { i.copyTo(it) } }
                 val core = applicationInfo.nativeLibraryDir + "/libbsnes_libretro.so"
+                gfx = org.victoriousframework.victorlink64.graphics.GraphicsHooks.forSnes(this, name, frame)
                 if (!SnesCore.nativeLoad(core, rom.absolutePath, sys.absolutePath, saves.absolutePath)) {
                     runOnUiThread { Toast.makeText(this, "Could not load SNES game", Toast.LENGTH_LONG).show(); finish() }
                     return@thread
@@ -116,6 +118,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
             val n = SnesCore.nativeRunFrame(buf)
             if (n > 0) track.write(buf, 0, n) // blocking write paces to audio clock
             else { next += frameNs; val d = next - System.nanoTime(); if (d > 0) Thread.sleep(d / 1_000_000, (d % 1_000_000).toInt()) }
+            gfx?.onFrame()
         }
         track.stop(); track.release()
         SnesCore.nativeUnload()
@@ -180,6 +183,7 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     override fun onDestroy() {
         running = false
         loop?.join(2000)
+        gfx?.close()
         super.onDestroy()
     }
 }
