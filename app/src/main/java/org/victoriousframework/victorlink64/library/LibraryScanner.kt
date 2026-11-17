@@ -83,7 +83,7 @@ object LibraryScanner {
                 problems += name to (e as? FriendlyException)?.message.orEmpty().ifEmpty { "This file couldn't be read. It may be damaged or still downloading." }
             }
         }
-        val sorted = out.sortedWith(compareBy<Game>({ it.name.lowercase() }, { it.disc ?: 0 }))
+        val sorted = out.sortedWith(compareBy<Game>({ it.name.lowercase() }, { it.disc ?: 0 }, { it.archiveName.lowercase() }, { it.fileName.lowercase() }))
         return ScanResult(sorted, seen, error, dedupeCdProblems(problems))
     }
 
@@ -101,7 +101,7 @@ object LibraryScanner {
                 out += Game(
                     name = GameFormats.baseTitle(leaf), uri = uri, size = g.size, snes = g.console == Console.SNES, fileName = leaf,
                     zipEntry = g.path, hw = g.console.hw, archive = kind, disc = GameFormats.discNumber(leaf),
-                    sourceSize = size, sourceModified = modified, format = g.format
+                    sourceSize = size, sourceModified = modified, format = g.format, archiveName = name
                 )
             }
             problems += listing.problems

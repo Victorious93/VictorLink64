@@ -63,7 +63,8 @@ data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolea
     /** Disc number for multi-disc sets ("(Disc 2)"), null for single-disc games. */ val disc: Int? = null,
     /** Size and date of the file on storage (the archive, for archived games); keys the unpack cache. */
     val sourceSize: Long = size, val sourceModified: Long = 0L,
-    /** Detected format, e.g. "z64", "iso", "rvz". */ val format: String = "") {
+    /** Detected format, e.g. "z64", "iso", "rvz". */ val format: String = "",
+    /** File name of the archive the game lives in (empty for plain files); tells apart same-titled games. */ val archiveName: String = "") {
     val systemLabel get() = hw?.label ?: if (snes) "SNES" else "N64"
 }
 

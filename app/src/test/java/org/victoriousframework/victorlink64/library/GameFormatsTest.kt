@@ -86,3 +86,17 @@ class GameFormatsTest {
         assertEquals("game.z64", GameFormats.innerNameOfCompressed("game.z64.gz"))
     }
 }
+
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner::class)
+@org.robolectric.annotation.Config(sdk = [34])
+class GameSubtitleTest {
+    private val uri = android.net.Uri.parse("content://test/doc")
+
+    @org.junit.Test fun showsConsoleFormatArchiveNameAndSize() {
+        val g = org.victoriousframework.victorlink64.ui.Game("Racer", uri, 4L shl 20, fileName = "Racer.z64", zipEntry = "Racer.z64",
+            archive = ArchiveKind.ZIP, format = "z64", archiveName = "pack.zip")
+        org.junit.Assert.assertEquals("N64 · Z64 · in pack.zip · 4.0 MB", gameSubtitle(g))
+        org.junit.Assert.assertEquals("N64 · Z64 · 4.0 MB", gameSubtitle(g.copy(archive = null, zipEntry = null, archiveName = "")))
+        org.junit.Assert.assertEquals("N64 · Z64 · in ZIP · 4.0 MB", gameSubtitle(g.copy(archiveName = "")))
+    }
+}

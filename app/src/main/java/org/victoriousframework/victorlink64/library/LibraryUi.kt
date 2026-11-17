@@ -35,7 +35,7 @@ import org.victoriousframework.victorlink64.ui.VictorTheme
 fun gameSubtitle(g: Game): String = buildList {
     add(g.systemLabel)
     if (g.format.isNotEmpty()) add(g.format.uppercase())
-    g.archive?.let { add("in ${it.label}") }
+    g.archive?.let { add(if (g.archiveName.isNotEmpty()) "in ${g.archiveName}" else "in ${it.label}") }
     add(formatBytes(g.size))
 }.joinToString(" · ")
 
