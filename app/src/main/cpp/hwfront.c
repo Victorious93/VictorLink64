@@ -14,6 +14,8 @@
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
 #include "libretro.h"
+#include "glpass.h"
+#include "gfxopts.h"
 
 #define LOG(...) __android_log_print(ANDROID_LOG_INFO, "VL64Hw", __VA_ARGS__)
 #ifndef RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER
@@ -37,6 +39,9 @@ static struct retro_hw_render_callback hw;
 static bool hw_requested;
 static unsigned fb_w = 1, fb_h = 1;
 static GLuint fbo, fbo_tex, fbo_depth;
+/* Largest picture the core has announced (SET_GEOMETRY / SET_SYSTEM_AV_INFO); the FBO grows to it before the next frame. */
+static unsigned want_w, want_h;
+static bool vars_changed;
 
 static EGLDisplay dpy = EGL_NO_DISPLAY;
 static EGLContext ctx = EGL_NO_CONTEXT;
@@ -59,6 +64,11 @@ static void log_cb(enum retro_log_level level, const char *fmt, ...) {
 static uintptr_t get_fb(void) { return fbo; }
 static retro_proc_address_t get_proc(const char *sym) { return (retro_proc_address_t)eglGetProcAddress(sym); }
 
+static void note_geometry(unsigned w, unsigned h) {
+    if (w > want_w) want_w = w;
+    if (h > want_h) want_h = h;
+}
+
 static bool env_cb(unsigned cmd, void *data) {
     switch (cmd & ~RETRO_ENVIRONMENT_EXPERIMENTAL) {
     case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY: *(const char **)data = sys_dir; return true;
@@ -77,10 +87,29 @@ static bool env_cb(unsigned cmd, void *data) {
         return true;
     }
     case 51: /* GET_INPUT_BITMASKS */ return true;
-    case RETRO_ENVIRONMENT_GET_VARIABLE: return false;
-    case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: *(bool *)data = false; return true;
-    case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
-    case RETRO_ENVIRONMENT_SET_GEOMETRY:
+    case RETRO_ENVIRONMENT_GET_VARIABLE: {
+        struct retro_variable *var = data;
+        const char *v = var && var->key ? gfx_get_var(var->key) : NULL;
+        if (!v) return false;
+        var->value = v;
+        return true;
+    }
+    case RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE: {
+        bool u = gfx_take_var_update();
+        if (u) vars_changed = true;
+        *(bool *)data = u;
+        return true;
+    }
+    case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: {
+        const struct retro_system_av_info *av = data;
+        note_geometry(av->geometry.max_width, av->geometry.max_height);
+        return true;
+    }
+    case RETRO_ENVIRONMENT_SET_GEOMETRY: {
+        const struct retro_game_geometry *g = data;
+        note_geometry(g->max_width, g->max_height);
+        return true;
+    }
     case RETRO_ENVIRONMENT_SET_VARIABLES:
     case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
     case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
@@ -141,13 +170,23 @@ static void video_cb(const void *data, unsigned w, unsigned h, size_t pitch) {
     if (data != RETRO_HW_FRAME_BUFFER_VALID || surf == EGL_NO_SURFACE) return; /* dupe or software frame */
     EGLint ww = 0, wh = 0;
     eglQuerySurface(dpy, surf, EGL_WIDTH, &ww); eglQuerySurface(dpy, surf, EGL_HEIGHT, &wh);
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glDisable(GL_SCISSOR_TEST);
-    glViewport(0, 0, ww, wh);
-    glClearColor(0, 0, 0, 1); glClear(GL_COLOR_BUFFER_BIT);
-    if (hw.bottom_left_origin) glBlitFramebuffer(0, 0, w, h, 0, 0, ww, wh, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-    else glBlitFramebuffer(0, 0, w, h, 0, wh, ww, 0, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    int fx = VL_FX_NONE;
+    gfx_get_post(&fx, NULL);
+    if (w > fb_w || h > fb_h) note_geometry(w, h); /* core drew larger than announced: grow the FBO next frame */
+    bool drawn = false;
+    if (fx != VL_FX_NONE) {
+        struct vl_pass_in in = { fbo_tex, (int)fb_w, (int)fb_h, (int)w, (int)h, hw.bottom_left_origin ? 0 : 1, ww, wh, fx, false };
+        drawn = vl_pass_draw(&in);
+    }
+    if (!drawn) {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glDisable(GL_SCISSOR_TEST);
+        glViewport(0, 0, ww, wh);
+        glClearColor(0, 0, 0, 1); glClear(GL_COLOR_BUFFER_BIT);
+        if (hw.bottom_left_origin) glBlitFramebuffer(0, 0, w, h, 0, 0, ww, wh, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        else glBlitFramebuffer(0, 0, w, h, 0, wh, ww, 0, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    }
     eglSwapBuffers(dpy, surf);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
@@ -225,8 +264,15 @@ JNIEXPORT jfloat JNICALL JNI(nativeAspect)(JNIEnv *env, jclass cls) {
 JNIEXPORT jint JNICALL JNI(nativeRunFrame)(JNIEnv *env, jclass cls, jshortArray out) {
     sync_window();
     audio_len = 0;
+    if (want_w > fb_w || want_h > fb_h) make_fbo(want_w > fb_w ? want_w : fb_w, want_h > fb_h ? want_h : fb_h);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     p_run();
+    if (vars_changed) {
+        /* A changed option (e.g. internal resolution) can enlarge the picture without any environment call. */
+        struct retro_system_av_info av; p_av(&av);
+        note_geometry(av.geometry.max_width, av.geometry.max_height);
+        vars_changed = false;
+    }
     jsize cap = (*env)->GetArrayLength(env, out);
     jsize n = audio_len < (size_t)cap ? (jsize)audio_len : cap;
     (*env)->SetShortArrayRegion(env, out, 0, n, audio_buf);
@@ -266,6 +312,8 @@ JNIEXPORT void JNICALL JNI(nativeUnload)(JNIEnv *env, jclass cls) {
     if (hw.context_destroy) hw.context_destroy();
     p_unload(); p_deinit();
     if (fbo) { glDeleteFramebuffers(1, &fbo); glDeleteTextures(1, &fbo_tex); glDeleteRenderbuffers(1, &fbo_depth); fbo = 0; }
+    vl_pass_release();
+    want_w = want_h = 0; vars_changed = false;
     if (dpy != EGL_NO_DISPLAY) {
         eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (surf != EGL_NO_SURFACE) eglDestroySurface(dpy, surf);
@@ -278,4 +326,21 @@ JNIEXPORT void JNICALL JNI(nativeUnload)(JNIEnv *env, jclass cls) {
     pthread_mutex_unlock(&win_lock);
     memset(&hw, 0, sizeof hw);
     dlclose(core); core = NULL;
+}
+
+/* Victorious Framework graphics options (see graphics/GfxNative.kt). Safe from any thread. */
+JNIEXPORT void JNICALL Java_org_victoriousframework_victorlink64_graphics_HwGfxNative_nativeSetVariable(JNIEnv *env, jclass cls, jstring jkey, jstring jval) {
+    const char *k = (*env)->GetStringUTFChars(env, jkey, 0);
+    const char *v = (*env)->GetStringUTFChars(env, jval, 0);
+    gfx_set_var(k, v);
+    (*env)->ReleaseStringUTFChars(env, jkey, k);
+    (*env)->ReleaseStringUTFChars(env, jval, v);
+}
+
+JNIEXPORT void JNICALL Java_org_victoriousframework_victorlink64_graphics_HwGfxNative_nativeSetPost(JNIEnv *env, jclass cls, jint mode, jboolean nearest) {
+    gfx_set_post(mode, nearest != JNI_FALSE);
+}
+
+JNIEXPORT void JNICALL Java_org_victoriousframework_victorlink64_graphics_HwGfxNative_nativeClear(JNIEnv *env, jclass cls) {
+    gfx_reset();
 }
