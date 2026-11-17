@@ -46,8 +46,14 @@ static ANativeWindow *window, *pending;
 static bool window_dirty;
 static pthread_mutex_t win_lock = PTHREAD_MUTEX_INITIALIZER;
 
-static volatile int buttons;
-static volatile int16_t ana_x, ana_y;
+/*
+ * Input from the on-screen pad / hardware controller. The UI thread writes `live`; poll_cb() snapshots it once per
+ * retro_run so every state_cb call in a frame sees one consistent controller state (libretro's polling contract).
+ * ax[] = left X, left Y, right X, right Y in -0x7FFF..0x7FFF (+Y down); trig[] = L2/R2 pressure 0..0x7FFF.
+ */
+struct pad_state { int buttons; int16_t ax[4]; int16_t trig[2]; };
+static struct pad_state live, snap;
+static pthread_mutex_t pad_lock = PTHREAD_MUTEX_INITIALIZER;
 
 #define AUDIO_CAP 65536
 static int16_t audio_buf[AUDIO_CAP];
@@ -160,15 +166,30 @@ static size_t audio_batch_cb(const int16_t *data, size_t frames) {
     return frames;
 }
 static void audio_cb(int16_t l, int16_t r) { int16_t s[2] = {l, r}; audio_batch_cb(s, 1); }
-static void poll_cb(void) {}
+static void poll_cb(void) {
+    pthread_mutex_lock(&pad_lock); snap = live; pthread_mutex_unlock(&pad_lock);
+}
+
 static int16_t state_cb(unsigned port, unsigned device, unsigned index, unsigned id) {
     if (port != 0) return 0;
     if (device == RETRO_DEVICE_JOYPAD) {
-        if (id == RETRO_DEVICE_ID_JOYPAD_MASK) return (int16_t)buttons;
-        return (buttons >> id) & 1;
+        if (id == RETRO_DEVICE_ID_JOYPAD_MASK) return (int16_t)snap.buttons;
+        return id < 16 ? (snap.buttons >> id) & 1 : 0;
     }
-    if (device == RETRO_DEVICE_ANALOG && index == RETRO_DEVICE_INDEX_ANALOG_LEFT)
-        return id == RETRO_DEVICE_ID_ANALOG_X ? ana_x : ana_y;
+    if (device == RETRO_DEVICE_ANALOG) {
+        if (index == RETRO_DEVICE_INDEX_ANALOG_LEFT || index == RETRO_DEVICE_INDEX_ANALOG_RIGHT) {
+            int base = index == RETRO_DEVICE_INDEX_ANALOG_LEFT ? 0 : 2;
+            if (id == RETRO_DEVICE_ID_ANALOG_X) return snap.ax[base];
+            if (id == RETRO_DEVICE_ID_ANALOG_Y) return snap.ax[base + 1];
+            return 0;
+        }
+        if (index == RETRO_DEVICE_INDEX_ANALOG_BUTTON && id < 16) {
+            /* Analog pressure for the triggers; any other pressed button reads as fully pressed, as RetroArch does. */
+            if (id == RETRO_DEVICE_ID_JOYPAD_L2 && snap.trig[0] > 0) return snap.trig[0];
+            if (id == RETRO_DEVICE_ID_JOYPAD_R2 && snap.trig[1] > 0) return snap.trig[1];
+            return (snap.buttons >> id) & 1 ? 0x7FFF : 0;
+        }
+    }
     return 0;
 }
 
@@ -233,8 +254,16 @@ JNIEXPORT jint JNICALL JNI(nativeRunFrame)(JNIEnv *env, jclass cls, jshortArray 
     return n;
 }
 
-JNIEXPORT void JNICALL JNI(nativeSetButtons)(JNIEnv *env, jclass cls, jint b) { buttons = b; }
-JNIEXPORT void JNICALL JNI(nativeSetAnalog)(JNIEnv *env, jclass cls, jint x, jint y) { ana_x = (int16_t)x; ana_y = (int16_t)y; }
+static int16_t clamp16(jint v) { return (int16_t)(v > 0x7FFF ? 0x7FFF : v < -0x7FFF ? -0x7FFF : v); }
+
+/* One call per input change: RetroPad bits, both sticks (+Y down) and the analog L2/R2 trigger pressure. */
+JNIEXPORT void JNICALL JNI(nativeSetPad)(JNIEnv *env, jclass cls, jint b, jint lx, jint ly, jint rx, jint ry, jint lt, jint rt) {
+    pthread_mutex_lock(&pad_lock);
+    live.buttons = b;
+    live.ax[0] = clamp16(lx); live.ax[1] = clamp16(ly); live.ax[2] = clamp16(rx); live.ax[3] = clamp16(ry);
+    live.trig[0] = clamp16(lt < 0 ? 0 : lt); live.trig[1] = clamp16(rt < 0 ? 0 : rt);
+    pthread_mutex_unlock(&pad_lock);
+}
 JNIEXPORT void JNICALL JNI(nativeReset)(JNIEnv *env, jclass cls) { if (p_reset) p_reset(); }
 
 JNIEXPORT jbyteArray JNICALL JNI(nativeSaveState)(JNIEnv *env, jclass cls) {

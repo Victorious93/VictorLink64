@@ -95,3 +95,17 @@ Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and C
 3. Read upstream `FileUtil`/`CacheRomInfoService` import paths against the hardening requirements; then start Phase 2.
 
 — Victorious
+
+## Controls overhaul 2026-11-17
+
+New shared overlay for N64, SNES, PSP and GameCube plus gamepad remapping. Full table and design notes: [`CONTROLS.md`](CONTROLS.md).
+
+| Area | Change | Evidence |
+| --- | --- | --- |
+| Overlay engine | Radial-dead-zone analog stick (fixed/floating), analog triggers, 8-way slide D-pad, multi-touch, per-console layouts, edit mode with per-console/per-orientation persistence | **Automated-tested**: 118 JVM tests pass locally (`./gradlew :app:testDebugUnitTest`), including Robolectric tests that drive the real view with MotionEvents. **Not device-tested** |
+| Libretro input | `hwfront.c` answers both analog sticks and analog L2/R2 pressure from a per-frame snapshot | **Compiled** (NDK 26.1, arm64). Not run against PPSSPP/Dolphin on a device |
+| GameCube mapping | Corrected against `libretro/dolphin` `Input.cpp`: A/B and X/Y were swapped, Z is R1, L/R are L2/R2 | Source-verified; **not device-tested** |
+| N64 | Overlay replaces the legacy skins by default (switch in N64 touch settings restores them); `OverlayController` shares state with hardware pads | **Compiled**; not device-tested. Accelerometer-as-stick and per-button auto-hold are not in the new overlay |
+| Hardware pads | Keys, sticks, triggers, hat; remap screen for SNES/PSP/GC; auto-hide on connect | **Automated-tested** (bindings, events); not device-tested |
+
+— Victorious

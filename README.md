@@ -60,7 +60,7 @@ Screenshots coming soon.
 - **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.
 - **Nearby play** — over the same Wi-Fi, or over Bluetooth with no internet.
-- **Bluetooth controllers and touch controls** — pair a gamepad or use the on-screen buttons.
+- **Bluetooth controllers and touch controls** — pair a gamepad (remap its buttons in Settings → Controller buttons) or use the on-screen controls: analog stick (fixed or floating), analog GameCube triggers, slide D-pad, console-accurate layouts for N64, SNES, PSP and GameCube, an in-game layout editor, haptics, and auto-hide when a controller connects. New and **not yet device-tested**; see [`docs/CONTROLS.md`](docs/CONTROLS.md).
 - **Save states** — save anywhere and resume later.
 
 ## Install
