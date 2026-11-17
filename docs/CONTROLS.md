@@ -7,6 +7,8 @@ One input system serves every console. Status labels follow the repo rule: **imp
 
 ## What it does
 
+Smoke-tested on an Android 14 **x86_64 emulator** only (overlay rendering, SNES with a locally generated stub ROM, the N64 test ROM, layout editing and persistence, the in-game menu entry, key rebinding). No physical device, no arm64, no PSP/GameCube core run, no real gamepad. Checklist: [`Victorious-Framework-Controls-Device-Test-Checklist.md`](Victorious-Framework-Controls-Device-Test-Checklist.md).
+
 | Feature | Where | Status |
 | --- | --- | --- |
 | True analog stick, **fixed or floating** base, radial dead zone, response curve, springing knob | `controls/StickMath.kt`, `TouchEngine.kt`, `TouchOverlayView.kt` | automated-tested (math + engine + view), not device-tested |

@@ -3,11 +3,11 @@ package org.victoriousframework.victorlink64.controls
 // Victorious Framework: data model for the shared on-screen overlay (all consoles).
 
 /** Consoles that use the shared overlay. [id] is the persistence key and must never change. */
-enum class Console(val id: String, val label: String) {
-    N64("n64", "Nintendo 64"),
-    SNES("snes", "Super Nintendo"),
-    PSP("psp", "PSP"),
-    GAMECUBE("gc", "GameCube");
+enum class Console(val id: String, val label: String, val shortLabel: String) {
+    N64("n64", "Nintendo 64", "N64"),
+    SNES("snes", "Super Nintendo", "SNES"),
+    PSP("psp", "PSP", "PSP"),
+    GAMECUBE("gc", "GameCube", "GameCube");
 
     companion object {
         fun fromId(id: String?): Console? = entries.firstOrNull { it.id == id }

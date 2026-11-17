@@ -52,6 +52,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.graphics.Color;
@@ -834,12 +835,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mGameSidebar.getMenu().findItem(R.id.menuItem_disable_frame_limiter);
         frameLimiterItem.setTitle(this.getString(resId));
 
-        // Touch layout items only exist with the VictorLink64 overlay; visibility toggle only with a pad attached
-        final MenuItem touchLayoutItem = mGameSidebar.getMenu().findItem(R.id.menuItem_touch_layout);
-        touchLayoutItem.setVisible(mVictorHost != null);
-        final MenuItem touchVisibilityItem = mGameSidebar.getMenu().findItem(R.id.menuItem_touch_visibility);
-        touchVisibilityItem.setVisible(mVictorHost != null && mHardwareControllers != null && mHardwareControllers.getConnected());
-        touchVisibilityItem.setTitle(mVictorForceShow ? R.string.menuItem_touchHide : R.string.menuItem_touchShow);
+        // The sidebar list ignores item visibility, so these items are added and removed instead. The layout editor exists
+        // only with the VictorLink64 overlay; the show/hide item only while a hardware controller is connected.
+        final Menu sidebarMenu = mGameSidebar.getMenu();
+        syncSidebarItem(sidebarMenu, R.id.menuItem_touch_layout, mVictorHost != null, R.string.menuItem_touchLayout);
+        syncSidebarItem(sidebarMenu, R.id.menuItem_touch_visibility,
+                mVictorHost != null && mHardwareControllers != null && mHardwareControllers.getConnected(),
+                mVictorForceShow ? R.string.menuItem_touchHide : R.string.menuItem_touchShow);
 
         //Reload player pak settings
         UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged[0], 1);
@@ -848,6 +850,24 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         UpdateControllerMenu(R.id.menuItem_player_four, mGamePrefs.isPlugged[3], 4);
 
         mGameSidebar.reload();
+    }
+
+    /** Adds, retitles or removes a sidebar item so that it exists exactly when [exists] is true. */
+    private static void syncSidebarItem(Menu menu, int id, boolean exists, int titleRes)
+    {
+        MenuItem item = menu.findItem(id);
+        if (exists && item == null)
+        {
+            menu.add(Menu.NONE, id, Menu.NONE, titleRes);
+        }
+        else if (!exists && item != null)
+        {
+            menu.removeItem(id);
+        }
+        else if (item != null)
+        {
+            item.setTitle(titleRes);
+        }
     }
 
     private void UpdateControllerMenu(int menuItemId, boolean isPlugged, int playerNumber)

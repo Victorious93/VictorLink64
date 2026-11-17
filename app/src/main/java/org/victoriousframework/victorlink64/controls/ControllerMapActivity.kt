@@ -92,7 +92,7 @@ class ControllerMapActivity : ComponentActivity() {
                 color = PadSteel, fontSize = 13.sp,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for (c in Console.entries) PadChip(if (c == console) "\u25CF ${c.label}" else c.label) { select(c) }
+                for (c in Console.entries) PadChip(if (c == console) "\u25CF ${c.shortLabel}" else c.shortLabel) { select(c) }
             }
             if (console == Console.N64) N64Card() else {
                 val r = remap

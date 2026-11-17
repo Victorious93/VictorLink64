@@ -6,4 +6,6 @@
     <string name="menuItem_touchLayout" translatable="false">Edit touch controls</string>
     <string name="menuItem_touchShow" translatable="false">Show touch controls</string>
     <string name="menuItem_touchHide" translatable="false">Hide touch controls</string>
+    <item name="menuItem_touch_visibility" type="id"/>
+    <item name="menuItem_touch_layout" type="id"/>
 </resources>
