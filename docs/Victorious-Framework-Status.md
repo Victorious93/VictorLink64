@@ -45,6 +45,10 @@ Known, not changed: a peer can send `resign` for the other side (trusted-friend 
 
 Built-in game (`:zombies` module + `ZombiesActivity`) with Bluetooth/Wi-Fi/online co-op through `ConnectSession`. Details, status table and device checklist: [`ZOMBIES.md`](ZOMBIES.md). **Co-op, touch controls and performance are unverified on devices.**
 
+## Graphics quality, Auto Best Settings, Shizuku boosts 2026-11-17
+
+Branch `graphics-auto-best`. Per-emulator picture settings, device profiler, Auto Best Settings with a live FPS/thermal tuner, a shared GL effect pass (also used by SNES), and optional Shizuku boosts. **Compiled and unit-tested (73 JVM + 6 host tests); effects rendered on a desktop GLES 3.2 implementation; nothing run on a phone.** Details, support matrix, what the cores cannot do and the device checklist: [`GRAPHICS.md`](GRAPHICS.md).
+
 ## SNES screen size and touch controls 2026-10-22
 
 Reported from a device screenshot: SNES picture far smaller than the screen, controls awkward. Items below are labelled by evidence level.
