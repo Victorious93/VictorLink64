@@ -45,6 +45,8 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Surface;
 
+import org.victoriousframework.victorlink64.graphics.N64Graphics;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -1073,6 +1075,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
 
             // Load the native libraries, this must be done outside the thread to prevent race conditions
             // that depend on the libraries being loaded after this call is made
+            N64Graphics.beginSession( getBaseContext(), mRomMd5, mGamePrefs.emulationProfile, mRomCountryCode );
             mCoreInterface.addOnFpsChangedListener( CoreService.this, 15, mCoreInterface );
 
             mRaphnetHandler = new RaphnetControllerHandler(getBaseContext(), this);
@@ -1105,6 +1108,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     public void onDestroy()
     {
         Log.i(TAG, "onDestroy");
+        N64Graphics.endSession();
 
         // Unregister since the activity is about to be closed.
         unregisterReceiver(mMessageReceiver);
@@ -1225,6 +1229,7 @@ public class CoreService extends Service implements CoreInterface.OnFpsChangedLi
     @Override
     public void onFpsChanged(int newValue) {
         mLastFpsChangedTime = System.currentTimeMillis() / 1000L;
+        N64Graphics.onFps(newValue);
 
         if (mListener != null) {
             mListener.onFpsChanged(newValue);
