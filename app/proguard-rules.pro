@@ -77,3 +77,8 @@
 
 #App specific code
 -keep class paulscode.android.mupen64plusae.** { *; }
+
+# Victorious Framework: Shizuku helper process loads this class by name; native code looks up GfxNative JNI methods by name.
+-keep class org.victoriousframework.victorlink64.shizuku.ShellService { *; }
+-keep class org.victoriousframework.victorlink64.graphics.HwGfxNative { *; }
+-keep class org.victoriousframework.victorlink64.graphics.SnesGfxNative { *; }

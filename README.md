@@ -62,6 +62,7 @@ Screenshots coming soon.
 - **Nearby play** — over the same Wi-Fi, or over Bluetooth with no internet.
 - **Bluetooth controllers and touch controls** — pair a gamepad (remap its buttons in Settings → Controller buttons) or use the on-screen controls: analog stick (fixed or floating), analog GameCube triggers, slide D-pad, console-accurate layouts for N64, SNES, PSP and GameCube, an in-game layout editor, haptics, and auto-hide when a controller connects. New and **not yet device-tested**; see [`docs/CONTROLS.md`](docs/CONTROLS.md).
 - **Save states** — save anywhere and resume later.
+- **Graphics & performance** — picture quality per emulator (resolution, filtering, anti-aliasing, widescreen, texture upscaling, screen effects), **Auto Best Settings** on by default that picks what your phone can run at full speed and remembers it per game, an FPS counter, and optional [Shizuku](https://shizuku.rikka.app/) boosts. New and **not yet device-tested**; see [`docs/GRAPHICS.md`](docs/GRAPHICS.md).
 
 ## Install
 
@@ -138,6 +139,7 @@ open-source projects:
 - [Mupen64Plus](https://github.com/mupen64plus) and [Mupen64Plus-AE](https://github.com/mupen64plus-ae/mupen64plus-ae) — N64 emulation (GPL v3). Upstream's original README is kept in [`UPSTREAM-README.md`](UPSTREAM-README.md).
 - [bsnes](https://github.com/libretro/bsnes) by byuu and contributors — Super Nintendo emulation (GPL v3)
 - [libGDX](https://github.com/libgdx/libgdx) — game framework for VictorOps Zombies (Apache-2.0)
+- [Shizuku API](https://github.com/RikkaApps/Shizuku-API) by RikkaApps — optional performance boosts (Apache-2.0)
 
 The chess engine, multiplayer, VictorOps Zombies and app screens are original VictorLink64 / Victorious Framework code.
 
