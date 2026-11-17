@@ -1,0 +1,4 @@
+/build
+/.cxx
+# Moonlight ships prebuilt OpenSSL libcrypto and Opus static libraries (see src/main/jni/moonlight-core/Build.txt).
+!*.a

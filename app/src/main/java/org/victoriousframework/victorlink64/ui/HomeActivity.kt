@@ -342,6 +342,8 @@ fun LibraryScreen() {
             }
             PlayBadge("Play zombies")
         }
+        Spacer(Modifier.height(10.dp))
+        org.victoriousframework.victorlink64.pc.PcGamesCard()
         Spacer(Modifier.height(12.dp))
         when {
             folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your N64, SNES, PSP and GameCube games live.")
@@ -472,6 +474,9 @@ fun AboutScreen() {
             "licensed under the GNU GPL v2.0 or later.\n\n" +
             "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
             "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
+            "PC game streaming uses Moonlight by Cameron Gutman and the Moonlight contributors " +
+            "(https://github.com/moonlight-stream/moonlight-android, with moonlight-common-c, ENet and nanors), " +
+            "licensed under the GNU GPL v3; it bundles OpenSSL (Apache-2.0) and Opus (BSD).\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +

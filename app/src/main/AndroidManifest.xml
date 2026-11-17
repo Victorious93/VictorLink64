@@ -100,6 +100,18 @@
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard|navigation|screenLayout"
             android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
         <activity
+            android:name="org.victoriousframework.victorlink64.pc.PcGamesActivity"
+            android:exported="false"
+            android:label="PC Games"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
+            android:name="org.victoriousframework.victorlink64.pc.PcStreamActivity"
+            android:exported="false"
+            android:label="PC Games"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboardHidden|keyboard|navigation|screenLayout|uiMode"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+        <activity
             android:name="org.victoriousframework.victorlink64.classic.ClassicCheckActivity"
             android:exported="false"
             android:label="Classic Android check"
