@@ -3,6 +3,7 @@ package org.victoriousframework.victorlink64.hw
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
@@ -30,13 +31,16 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 /**
- * Plays PSP (PPSSPP core) and GameCube (Dolphin core) discs through libvl64hw. Victorious Framework.
+ * Plays PSP (PPSSPP core), GameCube (Dolphin core) and PlayStation 2 (LRPS2 core) discs through libvl64hw.
+ * Victorious Framework.
  * Mirrors SnesActivity: one emulation thread owns the core and the GL context; the UI only queues work.
  * Input comes from the shared overlay ([PadSession]): true analog sticks, analog GameCube triggers, hardware pads.
  */
 class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
     companion object {
         const val EXTRA_ROM_URI = "rom_uri"; const val EXTRA_ROM_NAME = "rom_name"; const val EXTRA_SYSTEM = "system"
+        /** Track files of a .cue sheet (parallel arrays), opened beside the cue copy so the core finds them. */
+        const val EXTRA_COMPANION_NAMES = "companion_names"; const val EXTRA_COMPANION_URIS = "companion_uris"
         private const val TAG = "VL64Hw"
     }
 
@@ -50,6 +54,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
     private lateinit var frame: FrameLayout
     private lateinit var pad: PadSession
     private var romFd: ParcelFileDescriptor? = null
+    private val extraFds = mutableListOf<ParcelFileDescriptor>()
     private val surfaceReady = CountDownLatch(1)
     private val coreTasks = java.util.concurrent.ConcurrentLinkedQueue<() -> Unit>()
     @Volatile private var gfx: org.victoriousframework.victorlink64.graphics.GraphicsSession? = null
@@ -65,8 +70,11 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
         pad = PadSession(this, system.console, stickAsDpad = false, sink = ::sendPad)
         val chips = chipBar {
             if (!pad.editing) {
-                PadChip("SAVE") { saveState() }
-                PadChip("LOAD") { loadState() }
+                // PS2 save states are tens of MB and unverified here; PS2 games save to their memory card instead.
+                if (system != HwSystem.PS2) {
+                    PadChip("SAVE") { saveState() }
+                    PadChip("LOAD") { loadState() }
+                }
                 PadChip("EDIT") { pad.startEditing() }
                 PadVisibilityChip(pad)
             }
@@ -88,14 +96,28 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
         stateFile = File(saves, name.substringBeforeLast('.').replace(Regex("[^A-Za-z0-9._-]"), "_") + ".state")
         val core = File(applicationInfo.nativeLibraryDir, system.coreLib)
 
+        var coreOptions: Map<String, String> = emptyMap()
+        if (system == HwSystem.PS2) {
+            val bios = Ps2Bios.choose(Ps2Bios.list(Ps2Bios.biosDir(filesDir)), Ps2Prefs(this).bios)
+            if (bios == null) {
+                startActivity(Intent(this, Ps2SetupActivity::class.java).putExtra(Ps2SetupActivity.EXTRA_NEEDS_BIOS, true))
+                fail("PlayStation 2 needs a BIOS first. Add one in PlayStation 2 setup.")
+                return
+            }
+            coreOptions = Ps2Options.build(Ps2Prefs(this).resolution, bios.file.name)
+        }
+
         loop = thread(name = "hw-loop") {
             try {
                 if (!core.exists()) { fail("${system.label} needs a 64-bit ARM (arm64-v8a) device"); return@thread }
                 val romPath = openRom(uri, name)
                 gfx = org.victoriousframework.victorlink64.graphics.GraphicsHooks.forHw(this, system, name, frame)
                 if (!surfaceReady.await(10, TimeUnit.SECONDS)) { fail("No display surface"); return@thread }
+                HwCore.nativeClearOptions()
+                for ((k, v) in coreOptions) HwCore.nativeSetOption(k, v)
                 if (!HwCore.nativeLoad(core.absolutePath, romPath, sys.absolutePath, saves.absolutePath)) {
-                    fail("Could not load ${system.label} game"); return@thread
+                    fail(if (system == HwSystem.PS2) "Could not start this PlayStation 2 game. Check that your BIOS is a valid PS2 BIOS and the disc image is complete."
+                         else "Could not load ${system.label} game"); return@thread
                 }
                 aspect = HwCore.nativeAspect().takeIf { it > 0.1f } ?: (4f / 3f)
                 runOnUiThread { fitVideo(frame.width, frame.height) }
@@ -113,9 +135,26 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
      */
     private fun openRom(uri: Uri, name: String): String {
         if (uri.scheme == "file") return uri.path!!
+        val dir = File(cacheDir, "hw").apply { mkdirs(); listFiles()?.forEach { it.delete() } }
+        val trackNames = intent.getStringArrayExtra(EXTRA_COMPANION_NAMES)
+        val trackUris = intent.getStringArrayExtra(EXTRA_COMPANION_URIS)
+        if (name.endsWith(".cue", ignoreCase = true) && trackNames != null && trackUris != null && trackNames.size == trackUris.size) {
+            // A cue sheet names its track files; give the core a copy of the sheet with the tracks linked beside it.
+            val sheet = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: throw java.io.FileNotFoundException(name)
+            val text = String(sheet, Charsets.ISO_8859_1)
+            val cueFile = File(dir, name.replace(Regex("[^A-Za-z0-9._-]"), "_"))
+            cueFile.writeText(Ps2Disc.rewriteCue(text), Charsets.ISO_8859_1)
+            for (wanted in Ps2Disc.cueFiles(text).distinct()) {
+                val i = trackNames.indexOfFirst { it.equals(wanted, ignoreCase = true) }
+                if (i < 0) throw java.io.FileNotFoundException(wanted)
+                val pfd = contentResolver.openFileDescriptor(Uri.parse(trackUris[i]), "r") ?: throw java.io.FileNotFoundException(wanted)
+                extraFds += pfd
+                Os.symlink("/proc/self/fd/${pfd.fd}", File(dir, wanted).absolutePath)
+            }
+            return cueFile.absolutePath
+        }
         val pfd = contentResolver.openFileDescriptor(uri, "r") ?: throw java.io.FileNotFoundException(name)
         romFd = pfd
-        val dir = File(cacheDir, "hw").apply { mkdirs(); listFiles()?.forEach { it.delete() } }
         val link = File(dir, name.replace(Regex("[^A-Za-z0-9._-]"), "_"))
         Os.symlink("/proc/self/fd/${pfd.fd}", link.absolutePath)
         return link.absolutePath
@@ -198,6 +237,7 @@ class HwActivity : ComponentActivity(), SurfaceHolder.Callback {
         loop?.join(3000)
         gfx?.close()
         romFd?.close()
+        extraFds.forEach { it.close() }
         super.onDestroy()
     }
 }

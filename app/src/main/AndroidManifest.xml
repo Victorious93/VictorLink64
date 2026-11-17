@@ -121,6 +121,11 @@
             android:label="Controller buttons"
             android:theme="@android:style/Theme.Material.NoActionBar" />
         <activity
+            android:name="org.victoriousframework.victorlink64.hw.Ps2SetupActivity"
+            android:exported="false"
+            android:label="PlayStation 2"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
             android:name="org.victoriousframework.victorlink64.apkplayer.ApkPlayerActivity"
             android:exported="false"
             android:label="APK Player"

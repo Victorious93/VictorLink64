@@ -93,4 +93,28 @@ Mupen64Plus / Mupen64Plus-AE (N64), bsnes (SNES), PPSSPP (PSP) and Dolphin (Game
 
 No game, BIOS or ROM is distributed with VictorLink64. Bring your own legally obtained games.
 
+------------------------------------------------------------------------------
+PlayStation 2 core — LRPS2
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+- LRPS2, the libretro PlayStation 2 core, derived from PCSX2 (PCSX2 Team and contributors).
+  Source: https://github.com/libretro/ps2 — licence GPL-3.0 (COPYING.GPLv3 in that repository).
+- Binary: libretro buildbot nightly for Android arm64-v8a,
+  https://buildbot.libretro.com/nightly/android/latest/arm64-v8a/pcsx2_libretro_android.so.zip
+  (buildbot file dated Sun, 15 Nov 2026 22:58:08 GMT). Shipped as lib/arm64-v8a/liblrps2_libretro.so, unmodified.
+  SHA-256 of the extracted library: 7fbc421819bade622e04886b1ddb84b0cfdb9bc7a7ad97fdcee824ff82a4df06
+- Source commit: the buildbot binary does not record its commit. By build time it is libretro/ps2 master at
+  e0d67a29c4eefa1097a59a0ab30d9491c02ce4d7 (committed 2026-11-15 22:30 UTC) or the commit just before it,
+  4480355068686cdd174ca57c556693332d0b2646 (2026-11-15 20:15 UTC). This is inferred from timestamps. The
+  corresponding source is public at https://github.com/libretro/ps2 and can also be requested from the
+  VictorLink64 maintainers (https://github.com/Victorious93/VictorLink64).
+- Details and how to refresh the binary: docs/PS2.md and scripts/fetch-disc-cores.sh.
+
+Other cores (PPSSPP — GPL-2.0-or-later, Dolphin libretro — GPL-2.0-or-later, bsnes — GPL-3.0, Mupen64Plus-AE — GPL-2.0-or-later)
+are credited on the About screen and in UPSTREAM-README.md; their prebuilt libretro binaries are pinned by SHA-256
+in scripts/fetch-disc-cores.sh.
+
+No game, BIOS or ROM is distributed with VictorLink64. A PlayStation 2 BIOS must come from the user's own console
+and is only ever copied into the app's private storage on the user's device. Bring your own legally obtained games.
+
 — Victorious

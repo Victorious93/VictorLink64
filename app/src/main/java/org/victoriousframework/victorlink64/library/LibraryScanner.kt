@@ -9,6 +9,10 @@ import androidx.compose.runtime.setValue
 import androidx.documentfile.provider.DocumentFile
 import org.json.JSONArray
 import org.json.JSONObject
+import org.victoriousframework.victorlink64.hw.DiscDetect
+import org.victoriousframework.victorlink64.hw.DiscHit
+import org.victoriousframework.victorlink64.hw.HwSystem
+import org.victoriousframework.victorlink64.hw.Ps2Disc
 import org.victoriousframework.victorlink64.ui.Game
 import org.victoriousframework.victorlink64.ui.ScanResult
 import java.io.File
@@ -51,10 +55,13 @@ object LibraryScanner {
         var error: String? = null
         val reader = ArchiveReader(RarNative.backendOrNull())
         val docs = mutableListOf<DocumentFile>()
+        /** The other files of each file's folder; PlayStation 2 .cue sheets need them to find their track files. */
+        val siblings = HashMap<String, List<DocumentFile>>()
 
         fun walk(d: DocumentFile, depth: Int) {
-            for (f in d.listFiles()) {
-                if (f.isDirectory) { if (depth < MAX_DEPTH) walk(f, depth + 1) } else docs += f
+            val list = d.listFiles().toList()
+            for (f in list) {
+                if (f.isDirectory) { if (depth < MAX_DEPTH) walk(f, depth + 1) } else { docs += f; siblings[f.uri.toString()] = list }
             }
         }
         if (folder != null) {
@@ -73,10 +80,19 @@ object LibraryScanner {
         }
 
         val seenUris = HashSet<String>()
+        val trackFiles = HashSet<String>() // .bin tracks that belong to a PS2 .cue; they are not separate games or problems
         for (f in docs) {
             if (!seenUris.add(f.uri.toString())) continue
             seen++
             val name = f.name ?: continue
+            val ps2 = ps2Disc(c, f, name, siblings[f.uri.toString()] ?: listOf(f))
+            if (ps2 != null) {
+                out += Game(GameFormats.baseTitle(name), f.uri, f.length(), false, name, hw = HwSystem.PS2,
+                    disc = GameFormats.discNumber(name), sourceSize = f.length(), sourceModified = f.lastModified(),
+                    format = GameFormats.ext(name), tracks = ps2.companions)
+                ps2.companions.forEach { trackFiles += it.first }
+                continue
+            }
             try {
                 scanDocument(c, reader, f.uri, name, f.length(), f.lastModified(), out, problems)
             } catch (e: Exception) {
@@ -84,7 +100,18 @@ object LibraryScanner {
             }
         }
         val sorted = out.sortedWith(compareBy<Game>({ it.name.lowercase() }, { it.disc ?: 0 }, { it.archiveName.lowercase() }, { it.fileName.lowercase() }))
-        return ScanResult(sorted, seen, error, dedupeCdProblems(problems))
+        return ScanResult(sorted, seen, error, dedupeCdProblems(problems.filterNot { it.first in trackFiles }))
+    }
+
+    /**
+     * PlayStation 2 disc images are recognised by reading them (SYSTEM.CNF, CHD header, .cue tracks); the file name alone
+     * can't say. Only a PS2 result is taken here; everything else (PSP, GameCube, other discs) keeps the normal rules.
+     * Plain files only: PS2 discs are not read from inside archives. See docs/PS2.md.
+     */
+    private fun ps2Disc(c: Context, f: DocumentFile, name: String, sibs: List<DocumentFile>): DiscHit? {
+        val ext = GameFormats.ext(name)
+        if (GameFormats.archiveKind(name) != null || ext !in Ps2Disc.EXTENSIONS) return null
+        return runCatching { DiscDetect.detect(c, f, ext, sibs) }.getOrNull()?.takeIf { it.system == HwSystem.PS2 }
     }
 
     private fun scanDocument(c: Context, reader: ArchiveReader, uri: Uri, name: String, size: Long, modified: Long,

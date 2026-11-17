@@ -15,7 +15,9 @@ import org.victoriousframework.victorlink64.controls.ControlShape.SHOULDER_RIGHT
  *
  * Face-button positions follow the real pads: SNES diamond (X top, Y left, A right, B bottom), PSP symbols
  * (triangle top, square left, circle right, cross bottom), GameCube big A with a small B, kidney-shaped X and Y,
- * Z on the right shoulder and a C-stick, and N64 A/B with the yellow C-button cluster and a Z trigger.
+ * Z on the right shoulder and a C-stick, N64 A/B with the yellow C-button cluster and a Z trigger, and the
+ * DualShock 2 (PS2): D-pad and left stick on the left, symbols and right stick on the right, L1/L2 and R1/R2 on the
+ * shoulders, L3/R3 as small stick-click buttons beside the sticks, Select/Start in the middle.
  */
 object ConsoleLayouts {
     private const val LEFT = 0f
@@ -67,6 +69,18 @@ object ConsoleLayouts {
             ControlDef("x", "X", BUTTON, OVAL, 0.09f, 1.75f, listOf(RetroPad.X), fontScale = 1.25f),
             ControlDef("y", "Y", BUTTON, OVAL, 0.16f, 0.55f, listOf(RetroPad.Y), fontScale = 1.25f),
             pill("start", "START", RetroPad.START),
+        )
+        Console.PS2 -> listOf(
+            shoulder("l", "L1", RetroPad.L, true), shoulder("r", "R1", RetroPad.R, false),
+            shoulder("l2", "L2", RetroPad.L2, true), shoulder("r2", "R2", RetroPad.R2, false),
+            dpad(0.28f, retroDpad),
+            ControlDef("stick", "", STICK, CIRCLE, 0.27f, index = 0),
+            ControlDef("rstick", "", STICK, CIRCLE, 0.27f, index = 1),
+            face("tri", "\u25B3", RetroPad.X, 0.14f, 1.5f), face("sq", "\u25A1", RetroPad.Y, 0.14f, 1.5f),
+            face("cir", "\u25CB", RetroPad.A, 0.14f, 1.5f), face("cross", "\u2715", RetroPad.B, 0.14f, 1.5f),
+            ControlDef("l3", "L3", BUTTON, CIRCLE, 0.09f, bits = listOf(RetroPad.L3), accent = Accent.STEEL, fontScale = 0.75f),
+            ControlDef("r3", "R3", BUTTON, CIRCLE, 0.09f, bits = listOf(RetroPad.R3), accent = Accent.STEEL, fontScale = 0.75f),
+            pill("select", "SELECT", RetroPad.SELECT), pill("start", "START", RetroPad.START),
         )
         Console.N64 -> listOf(
             shoulder("l", "L", N64Pad.L, true), shoulder("r", "R", N64Pad.R, false),
@@ -121,6 +135,25 @@ object ConsoleLayouts {
             p("a", RIGHT, BOTTOM, .27f, .62f), p("x", RIGHT, BOTTOM, .10f, .62f),
             p("y", RIGHT, BOTTOM, .26f, .78f), p("b", RIGHT, BOTTOM, .44f, .55f),
             p("cstick", RIGHT, BOTTOM, .17f, .30f), p("start", CENTER, BOTTOM, 0f, .06f),
+        )
+        Console.PS2 -> if (landscape) listOf(
+            p("l", LEFT, TOP, .15f, .075f), p("r", RIGHT, TOP, .15f, .075f),
+            p("l2", LEFT, TOP, .15f, .20f), p("r2", RIGHT, TOP, .15f, .20f),
+            p("dpad", LEFT, BOTTOM, .22f, .58f), p("stick", LEFT, BOTTOM, .225f, .17f),
+            p("tri", RIGHT, BOTTOM, .24f, .65f), p("sq", RIGHT, BOTTOM, .37f, .52f),
+            p("cir", RIGHT, BOTTOM, .11f, .52f), p("cross", RIGHT, BOTTOM, .24f, .39f),
+            p("rstick", RIGHT, BOTTOM, .225f, .17f),
+            p("l3", LEFT, BOTTOM, .47f, .17f), p("r3", RIGHT, BOTTOM, .47f, .17f),
+            p("select", CENTER, BOTTOM, -.13f, .07f), p("start", CENTER, BOTTOM, .13f, .07f),
+        ) else listOf(
+            p("l", LEFT, BOTTOM, .15f, .98f), p("r", RIGHT, BOTTOM, .15f, .98f),
+            p("l2", LEFT, BOTTOM, .15f, .86f), p("r2", RIGHT, BOTTOM, .15f, .86f),
+            p("dpad", LEFT, BOTTOM, .18f, .62f), p("stick", LEFT, BOTTOM, .185f, .24f),
+            p("tri", RIGHT, BOTTOM, .20f, .72f), p("sq", RIGHT, BOTTOM, .32f, .60f),
+            p("cir", RIGHT, BOTTOM, .08f, .60f), p("cross", RIGHT, BOTTOM, .20f, .48f),
+            p("rstick", RIGHT, BOTTOM, .185f, .24f),
+            p("l3", LEFT, BOTTOM, .43f, .24f), p("r3", RIGHT, BOTTOM, .43f, .24f),
+            p("select", CENTER, BOTTOM, -.13f, .06f), p("start", CENTER, BOTTOM, .13f, .06f),
         )
         Console.N64 -> if (landscape) listOf(
             p("l", LEFT, TOP, .15f, .075f), p("r", RIGHT, TOP, .15f, .075f), p("z", RIGHT, TOP, .13f, .21f),

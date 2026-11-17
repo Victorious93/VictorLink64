@@ -71,11 +71,17 @@ jobs:
     - name: Verify APK payload
       run: |
         APK=app/build/outputs/apk/debug/VictorLink64-debug.apk
-        # PSP (PPSSPP) and GameCube (Dolphin) cores ship for arm64-v8a only; check them separately.
-        ARM64_ONLY='^(libppsspp_libretro|libdolphin_libretro)\.so$'
+        # PSP (PPSSPP), GameCube (Dolphin) and PlayStation 2 (LRPS2) cores ship for arm64-v8a only; check them separately.
+        ARM64_ONLY='^(libppsspp_libretro|libdolphin_libretro|liblrps2_libretro)\.so$'
         LIBS=$(unzip -l "$APK" | awk '{print $4}' | grep '^lib/arm64-v8a/' | xargs -n1 basename | grep -Ev "$ARM64_ONLY" | sort | paste -sd,)
         python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a,armeabi-v7a,x86,x86_64 --libs "$LIBS"
-        python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a --libs libppsspp_libretro.so,libdolphin_libretro.so,libvl64hw.so
+        # The disc cores must be exactly the pinned buildbot binaries (see NOTICE and scripts/fetch-disc-cores.sh);
+        # the same run rejects any bundled disc image or PS2 BIOS.
+        python3 -I scripts/verify_apk_payload.py "$APK" --abis arm64-v8a \
+          --libs libppsspp_libretro.so,libdolphin_libretro.so,liblrps2_libretro.so,libvl64hw.so \
+          --expect-sha256 lib/arm64-v8a/libppsspp_libretro.so=0c119025c0c3c1120a5ec2adc9c3d828a298db6c2e2277e2ba7411232ee2fd01 \
+          --expect-sha256 lib/arm64-v8a/libdolphin_libretro.so=0fe6a6c25aa05efb06e624f530ab4b2df5249d618259e29c7a95a91da80e7f02 \
+          --expect-sha256 lib/arm64-v8a/liblrps2_libretro.so=7fbc421819bade622e04886b1ddb84b0cfdb9bc7a7ad97fdcee824ff82a4df06
         ls -l "$APK"
         sha256sum "$APK"
 

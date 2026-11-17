@@ -141,4 +141,18 @@ Pick an APK, copy it into private storage, read its manifest and show a plain-la
 
 Upstream engine code was audited and edited before use (log upload, injection hook and detection-evasion code removed; permissions cut from 323 to 5): [`third_party/blackbox/UPSTREAM.md`](../third_party/blackbox/UPSTREAM.md).
 
+## PlayStation 2 (LRPS2) 2026-11-17
+
+PS2 through the libretro LRPS2 core, same frontend and overlay as PSP/GameCube. Design, provenance and limits: [`PS2.md`](PS2.md). Checklist: [`Victorious-Framework-PS2-Device-Test-Checklist.md`](Victorious-Framework-PS2-Device-Test-Checklist.md).
+
+| Area | Change | Evidence |
+| --- | --- | --- |
+| Core | `liblrps2_libretro.so` (arm64-v8a), libretro buildbot nightly of 2026-11-15, SHA-256 pinned; commit inferred (see NOTICE) | **Compiled into the APK**, digest verified in CI; **not run** on a device |
+| BIOS | Import screen (user's own files, validated like the core does, private storage), clear "needs a BIOS" message | **Automated-tested** (synthetic images); screen not device-tested |
+| Library | `.iso` / `.cso` by `SYSTEM.CNF` `BOOT2`, `.bin`+`.cue`, `.chd` by CHD header | **Automated-tested** on synthetic images; not tried with real games |
+| Controls | DualShock 2 overlay (two sticks, symbols, L1/L2/R1/R2, L3/R3, Select/Start), controller defaults | **Automated-tested** layout and mapping; mapping checked against `PAD.c` in `libretro/ps2`; not device-tested |
+| Picture size | Native / 2× / 3× via `pcsx2_upscale_multiplier`; speed note and warnings | **Automated-tested** option mapping; `3x` is not a value the core lists — **untested** |
+| APK verifier | Rejects PS2 BIOS (by name or content), `.chd/.cue/.zso`, pins the core digests | **Automated-tested** (29 verifier tests) |
+| Running a PS2 game | — | **Unverified.** arm64 core, x86_64 CI and dev machines |
+
 — Victorious

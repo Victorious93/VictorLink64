@@ -11,8 +11,13 @@ import org.victoriousframework.victorlink64.snes.SnesCore
 object GraphicsHooks {
     private fun display(fileName: String) = fileName.substringBeforeLast('.')
 
-    fun forHw(ctx: Context, system: HwSystem, fileName: String, frame: FrameLayout): GraphicsSession {
-        val g = when (system) { HwSystem.PSP -> GfxSystem.PSP; HwSystem.GAMECUBE -> GfxSystem.GAMECUBE }
+    /** PlayStation 2 has its own picture-size setting (Settings -> PlayStation 2) and no Auto Best session yet, so it gets none. */
+    fun forHw(ctx: Context, system: HwSystem, fileName: String, frame: FrameLayout): GraphicsSession? {
+        val g = when (system) {
+            HwSystem.PSP -> GfxSystem.PSP
+            HwSystem.GAMECUBE -> GfxSystem.GAMECUBE
+            HwSystem.PS2 -> return null
+        }
         val s = GraphicsSession.start(ctx, g, GameKeys.byFile(g, fileName), display(fileName), HwGfxNative) { HwCore.nativeFps() }
         frame.post { s.attach(frame) }
         ShizukuController.onGameStart(ctx, tracked = true)

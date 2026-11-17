@@ -67,6 +67,19 @@ local.properties
 *.rvz
 *.ciso
 
+# Victorious Framework: never commit PlayStation 2 disc images or BIOS dumps (user-supplied only)
+*.chd
+*.cue
+scph*.bin
+rom1.bin
+rom2.bin
+erom.bin
+*.rom1
+*.rom2
+*.mec
+*.nvm
+ps2/system/
+
 # Victorious Framework: vendored BlackBox core needs these two small binaries (see third_party/blackbox/UPSTREAM.md)
 !third_party/blackbox/Bcore/src/main/cpp/Dobby/*/libdobby.a
 !third_party/blackbox/Bcore/src/main/assets/empty.jar

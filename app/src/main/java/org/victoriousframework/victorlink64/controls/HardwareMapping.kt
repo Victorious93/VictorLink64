@@ -30,6 +30,14 @@ object RemapTargets {
             RemapTarget("L", RetroPad.L), RemapTarget("R", RetroPad.R),
             RemapTarget("Start", RetroPad.START), RemapTarget("Select", RetroPad.SELECT),
         ) + dpad
+        Console.PS2 -> listOf(
+            RemapTarget("\u2715 Cross", RetroPad.B), RemapTarget("\u25CB Circle", RetroPad.A),
+            RemapTarget("\u25A1 Square", RetroPad.Y), RemapTarget("\u25B3 Triangle", RetroPad.X),
+            RemapTarget("L1", RetroPad.L), RemapTarget("R1", RetroPad.R),
+            RemapTarget("L2", RetroPad.L2), RemapTarget("R2", RetroPad.R2),
+            RemapTarget("L3 (left stick click)", RetroPad.L3), RemapTarget("R3 (right stick click)", RetroPad.R3),
+            RemapTarget("Start", RetroPad.START), RemapTarget("Select", RetroPad.SELECT),
+        ) + dpad
         Console.GAMECUBE -> listOf(
             RemapTarget("A", RetroPad.A), RemapTarget("B", RetroPad.B), RemapTarget("X", RetroPad.X),
             RemapTarget("Y", RetroPad.Y), RemapTarget("Z", RetroPad.R),
@@ -79,7 +87,7 @@ class KeyRemap private constructor(val console: Console, private val byBit: Map<
         }
 
         /**
-         * Out-of-the-box bindings. SNES and PSP follow button position (the bottom face button is the bottom button on
+         * Out-of-the-box bindings. SNES, PSP and PS2 follow button position (the bottom face button is the bottom button on
          * the console); GameCube follows the printed label, matching Dolphin's own controller defaults.
          */
         fun defaults(console: Console): KeyRemap {
@@ -100,6 +108,14 @@ class KeyRemap private constructor(val console: Console, private val byBit: Map<
                     m[RetroPad.B] = KeyEvent.KEYCODE_BUTTON_A; m[RetroPad.A] = KeyEvent.KEYCODE_BUTTON_B
                     m[RetroPad.Y] = KeyEvent.KEYCODE_BUTTON_X; m[RetroPad.X] = KeyEvent.KEYCODE_BUTTON_Y
                     m[RetroPad.L] = KeyEvent.KEYCODE_BUTTON_L1; m[RetroPad.R] = KeyEvent.KEYCODE_BUTTON_R1
+                    m[RetroPad.START] = KeyEvent.KEYCODE_BUTTON_START; m[RetroPad.SELECT] = KeyEvent.KEYCODE_BUTTON_SELECT
+                }
+                Console.PS2 -> {
+                    m[RetroPad.B] = KeyEvent.KEYCODE_BUTTON_A; m[RetroPad.A] = KeyEvent.KEYCODE_BUTTON_B
+                    m[RetroPad.Y] = KeyEvent.KEYCODE_BUTTON_X; m[RetroPad.X] = KeyEvent.KEYCODE_BUTTON_Y
+                    m[RetroPad.L] = KeyEvent.KEYCODE_BUTTON_L1; m[RetroPad.R] = KeyEvent.KEYCODE_BUTTON_R1
+                    m[RetroPad.L2] = KeyEvent.KEYCODE_BUTTON_L2; m[RetroPad.R2] = KeyEvent.KEYCODE_BUTTON_R2
+                    m[RetroPad.L3] = KeyEvent.KEYCODE_BUTTON_THUMBL; m[RetroPad.R3] = KeyEvent.KEYCODE_BUTTON_THUMBR
                     m[RetroPad.START] = KeyEvent.KEYCODE_BUTTON_START; m[RetroPad.SELECT] = KeyEvent.KEYCODE_BUTTON_SELECT
                 }
                 Console.N64 -> return KeyRemap(console, emptyMap())

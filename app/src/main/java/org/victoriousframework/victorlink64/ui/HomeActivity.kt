@@ -61,13 +61,14 @@ private const val PREFS = "victorlink64_prefs"
 private const val KEY_FOLDER = "rom_folder"
 data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "",
     /** For archived games (zip, 7z, rar, tar, gz, xz): the game's entry inside the archive. */ val zipEntry: String? = null,
-    /** PSP / GameCube disc images. */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null,
+    /** PSP / GameCube / PS2 disc images (never inside archives for PS2). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null,
     /** Archive type when [zipEntry] is set. */ val archive: org.victoriousframework.victorlink64.library.ArchiveKind? = null,
     /** Disc number for multi-disc sets ("(Disc 2)"), null for single-disc games. */ val disc: Int? = null,
     /** Size and date of the file on storage (the archive, for archived games); keys the unpack cache. */
     val sourceSize: Long = size, val sourceModified: Long = 0L,
     /** Detected format, e.g. "z64", "iso", "rvz". */ val format: String = "",
-    /** File name of the archive the game lives in (empty for plain files); tells apart same-titled games. */ val archiveName: String = "") {
+    /** File name of the archive the game lives in (empty for plain files); tells apart same-titled games. */ val archiveName: String = "",
+    /** For PS2 .cue sheets: the track files named by the sheet. */ val tracks: List<Pair<String, Uri>> = emptyList()) {
     val systemLabel get() = hw?.label ?: if (snes) "SNES" else "N64"
 }
 
@@ -169,7 +170,8 @@ fun scanFolder(c: Context, tree: Uri?): ScanResult = org.victoriousframework.vic
 fun launchGame(c: Context, g: Game) {
     try {
         val uri = org.victoriousframework.victorlink64.library.GameLauncher.prepare(c, g) ?: return
-        if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
+        if (g.hw == HwSystem.PS2) org.victoriousframework.victorlink64.hw.Ps2SetupActivity.open(c, uri, g.fileName, g.name, g.tracks)
+        else if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_URI, uri.toString())
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_NAME, g.fileName)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_SYSTEM, g.hw.name)
@@ -326,7 +328,7 @@ fun LibraryScreen() {
                 ProblemsBanner(scanInfo) { showProblems = true }
                 EmptyState(scanInfo?.error ?: "No games found",
                     "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 finds N64 (.z64 .n64 .v64), SNES (.sfc .smc), " +
-                    "PSP (.iso .cso .chd .pbp) and GameCube (.iso .gcm .rvz .gcz .wia .ciso) games, also inside .zip .7z .rar .tar .gz .xz archives, up to 4 folders deep.")
+                    "PSP (.iso .cso .chd .pbp), PlayStation 2 (.iso .cso .chd .bin/.cue; not inside archives) and GameCube (.iso .gcm .rvz .gcz .wia .ciso) games, also inside .zip .7z .rar .tar .gz .xz archives, up to 4 folders deep.")
             }
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 item { ProblemsBanner(scanInfo) { showProblems = true } }
@@ -413,8 +415,11 @@ fun SettingsScreen() {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Text("Settings", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(Modifier.height(12.dp))
-        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP and GameCube") {
+        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP, GameCube and PS2") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.controls.ControllerMapActivity::class.java))
+        }
+        SettingRow("PlayStation 2", "Add your BIOS, choose picture size, read the speed note") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.hw.Ps2SetupActivity::class.java))
         }
         SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
@@ -484,6 +489,9 @@ fun AboutScreen() {
             "licensed under the GNU GPL v2.0 or later.\n\n" +
             "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
             "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
+            "PlayStation 2 emulation uses LRPS2, the libretro PlayStation 2 core (https://github.com/libretro/ps2), " +
+            "derived from PCSX2 by the PCSX2 Team and contributors and licensed under the GNU GPL v3. " +
+            "VictorLink64 does not include a PS2 BIOS; you add your own.\n\n" +
             "PC game streaming uses Moonlight by Cameron Gutman and the Moonlight contributors " +
             "(https://github.com/moonlight-stream/moonlight-android, with moonlight-common-c, ENet and nanors), " +
             "licensed under the GNU GPL v3; it bundles OpenSSL (Apache-2.0) and Opus (BSD). Full credits are in the " +
