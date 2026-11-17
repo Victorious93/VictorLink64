@@ -96,6 +96,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    testOptions { unitTests { includeAndroidResources = true } }
     lint {
         abortOnError = false
         checkReleaseBuilds = false
@@ -177,7 +178,11 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.10.1'
     implementation 'androidx.compose.material:material-icons-extended'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    // Victorious Framework: optional Shizuku support (Apache-2.0, credited in About). Never required.
+    implementation 'dev.rikka.shizuku:api:13.1.5'
+    implementation 'dev.rikka.shizuku:provider:13.1.5'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
     // org.json is stubbed in android.jar for JVM unit tests; use the real implementation there.
     testImplementation 'org.json:json:20240303'
 

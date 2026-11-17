@@ -16,8 +16,8 @@ object HwCore {
     @JvmStatic external fun nativeFps(): Double
     @JvmStatic external fun nativeAspect(): Float
     @JvmStatic external fun nativeRunFrame(audioOut: ShortArray): Int
-    @JvmStatic external fun nativeSetButtons(mask: Int)
-    @JvmStatic external fun nativeSetAnalog(x: Int, y: Int)
+    /** RetroPad bits, both sticks (-0x7FFF..0x7FFF, +y down) and analog L2/R2 pressure (0..0x7FFF). */
+    @JvmStatic external fun nativeSetPad(buttons: Int, lx: Int, ly: Int, rx: Int, ry: Int, lTrigger: Int, rTrigger: Int)
     @JvmStatic external fun nativeReset()
     @JvmStatic external fun nativeSaveState(): ByteArray?
     @JvmStatic external fun nativeLoadState(data: ByteArray): Boolean

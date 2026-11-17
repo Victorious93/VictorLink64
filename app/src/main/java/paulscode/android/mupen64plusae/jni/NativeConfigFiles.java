@@ -23,6 +23,8 @@ package paulscode.android.mupen64plusae.jni;
 import android.content.Context;
 import android.util.Log;
 
+import org.victoriousframework.victorlink64.graphics.CoreOptionMapping;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -251,6 +253,13 @@ class NativeConfigFiles
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableTexCoordBounds", String.valueOf(game.glideN64Prefs.enableTexCoordBounds ? 1 : 0) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableFBEmulation", boolToTF( game.glideN64Prefs.enableFBEmulation ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "BufferSwapMode", String.valueOf( game.glideN64Prefs.bufferSwapMode ));
+
+        // Victorious Framework: MSAA level chosen by the graphics settings (0 or absent leaves GLideN64's own value)
+        final int vlMsaa = game.emulationProfile.getInt( CoreOptionMapping.MSAA_KEY, 0 );
+        if (game.videoPluginLib == AppData.VideoPlugin.GLIDEN64 && vlMsaa > 0) {
+            mupen64plus_cfg.put( "Video-GLideN64", "MultiSampling", String.valueOf( vlMsaa ) );
+        }
+
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyColorToRDRAM", String.valueOf( game.glideN64Prefs.enableCopyColorToRDRAM ) );
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyAuxiliaryToRDRAM", boolToTF( game.glideN64Prefs.enableCopyAuxiliaryToRDRAM ));
         putGLideN64Setting(mupen64plus_cfg, glideN64_conf, game, "EnableCopyDepthToRDRAM", String.valueOf( game.glideN64Prefs.enableCopyDepthToRDRAM ) );

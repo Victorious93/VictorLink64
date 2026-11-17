@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="vl64_tagline" translatable="false">PLAY • CONNECT • CAST</string>
+    <string name="touchscreenVictorOverlay_title" translatable="false">VictorLink64 on-screen controls</string>
+    <string name="touchscreenVictorOverlay_summary" translatable="false">Console-accurate N64 layout with an analog stick, C-button cluster, layout editor and auto-hide when a controller is connected. Turn off to use the classic skins below.</string>
+    <string name="menuItem_touchLayout" translatable="false">Edit touch controls</string>
+    <string name="menuItem_touchShow" translatable="false">Show touch controls</string>
+    <string name="menuItem_touchHide" translatable="false">Hide touch controls</string>
+    <item name="menuItem_touch_visibility" type="id"/>
+    <item name="menuItem_touch_layout" type="id"/>
 </resources>
