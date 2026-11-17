@@ -40,7 +40,6 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.input.MouseButtonPacket
 import com.limelight.nvstream.jni.MoonBridge
 import com.limelight.preferences.PreferenceConfiguration
-import org.victoriousframework.victorlink64.ui.PadPrefs
 import kotlin.math.abs
 
 /*

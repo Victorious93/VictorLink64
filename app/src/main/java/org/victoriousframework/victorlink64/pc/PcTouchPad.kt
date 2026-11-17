@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.view.MotionEvent
 import android.view.View
-import org.victoriousframework.victorlink64.ui.padHaptic
 import kotlin.math.hypot
 import kotlin.math.min
 
