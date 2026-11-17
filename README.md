@@ -1,86 +1,80 @@
-<!-- victorious-fleet-readme-refresh:start -->
-<p align="center">
-  <img src="assets/logo.png" alt="VictorLink64 logo" width="200">
-</p>
+<div align="center">
+
+<img src="docs/assets/banner.png" alt="VictorLink64 — Part of the Victorious Framework fleet" width="1280" />
 
 # VictorLink64
 
-Multi-game emulator + play hub (N64/SNES, chess, multiplayer) — not remote-control fleet.
+**N64, Super Nintendo, PSP, and GameCube games, built-in chess, and multiplayer with friends — in one Android app.**
 
-**Package id:** `org.victoriousframework.victorlink64`
+Works on its own; fleet integration (droidcommand-AI) is optional
 
-> **Package note:** applicationId from `app/build.gradle` (namespace differs: `paulscode.android.mupen64plusae`).
-
-**Status:** early beta / public *(from [fleet-manifest ROADMAP](https://github.com/Victorious93/fleet-manifest/blob/main/ROADMAP.md))*
-
-## Install / build
-
-Gradle Android app with NDK pieces. Typical: `./gradlew :app:assembleDebug` (NDK required). See `app/build.gradle`.
-
-_Steps above are taken from this repo’s build files / existing docs; anything not exercised in this refresh is unlabeled as verified on a device._
-
-## Victorious fleet
-
-- Monorepo: [https://github.com/Victorious93/victorious-fleet](https://github.com/Victorious93/victorious-fleet)
-- Fleet site: [https://victorious-framework.pages.dev](https://victorious-framework.pages.dev)
-
-<!-- victorious-fleet-readme-refresh:end -->
-
-<p align="center">
-  <img src="assets/logo.png" width="200" alt="VictorLink64 logo">
+<p>
+  <a href="https://github.com/Victorious93/VictorLink64/releases"><img src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&label=Release&labelColor=041125&color=19C2FC" alt="Latest release" /></a>
+  <a href="gpl-license"><img src="https://img.shields.io/badge/License-GPL--3.0-1E78FF?style=flat-square&labelColor=041125" alt="License: GPL-3.0" /></a>
+  <a href="https://github.com/Victorious93/VictorLink64/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Victorious93/VictorLink64/build.yml?style=flat-square&label=CI&labelColor=041125&color=19C2FC" alt="CI" /></a>
+  <a href="https://victorious-framework.pages.dev"><img src="https://img.shields.io/badge/Fleet-Victorious_Framework-19C2FC?style=flat-square&labelColor=041125" alt="Victorious Framework fleet" /></a>
+  <a href="#coming-soon"><img src="https://img.shields.io/badge/Roadmap-Coming_soon-FC3640?style=flat-square&labelColor=041125" alt="Roadmap: coming soon" /></a>
 </p>
 
-<h1 align="center">VictorLink64</h1>
-
-<p align="center"><b>N64 and Super Nintendo games, built-in chess, and multiplayer with friends — in one Android app.</b></p>
-
-<p align="center">
-  <a href="https://github.com/Victorious93/VictorLink64/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&color=1EA0FF"></a>
-  <a href="gpl-license"><img alt="License: GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-FF3B3B?style=flat-square"></a>
-  <img alt="Android 9+" src="https://img.shields.io/badge/Android-9%2B-3DDC84?style=flat-square&logo=android&logoColor=white">
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Jetpack%20Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white">
-</p>
-
-## Overview
-
-VictorLink64 plays Nintendo 64 games (Mupen64Plus) and Super Nintendo games (bsnes) from game files you provide,
-includes a chess game and the VictorOps Zombies co-op shooter, and lets you connect with other players online,
-over Wi-Fi, or over Bluetooth.
-
-> **Early beta.** Releases are currently debug builds, and most features have not yet been tested on many real
-> devices, so expect rough edges. Casting to a TV and online play for N64/SNES games are not implemented yet;
-> online play currently covers chess and VictorOps Zombies (Zombies co-op has not been tested on real devices).
-
-Screenshots coming soon.
+</div>
 
 ## Features
 
-- **N64 and SNES emulation** — open your own game files and play. SNES (bsnes): size modes, multi-touch controls, save/load state on the emulation thread, colour fixes (Oct 21–22 Claude work).
+- **N64 and Super Nintendo** — open your own game files and play. N64 uses Mupen64Plus; Super Nintendo uses bsnes, with size modes, multi-touch controls, and save/load states.
+- **PSP and GameCube** — library support for PSP (`.iso`, `.cso`, `.pbp`) and GameCube (`.iso`, `.gcm`, `.rvz`, `.ciso`) files, using PPSSPP and Dolphin. These consoles are new and **have not yet been tested on a real phone**, so a game may fail to start until that work is finished.
 - **PlayStation 2 (new, not yet device-tested)** — plays PS2 discs (`.iso`, `.chd`, `.cso`, `.bin`/`.cue`) with the LRPS2 core on 64-bit ARM phones. You supply your own PS2 BIOS (Settings → PlayStation 2); DualShock 2 touch controls; picture size from Native to about 1080p. PS2 is very heavy: expect it to be slow on entry-level phones. See [`docs/PS2.md`](docs/PS2.md).
 - **Built-in chess** — play the phone (Easy to Expert) or pass the phone to a friend.
-- **VictorOps Zombies** — built-in top-down wave shooter: solo offline from the Library tab, or co-op with a connected friend from the Connect tab (2 players over Bluetooth). Co-op is new and **not yet device-tested**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
+- **VictorOps Zombies** — a built-in top-down wave shooter. Play solo from the Library tab, or co-op with a friend from the Connect tab (2 players over Bluetooth). Co-op is new and **has not yet been tested on real devices**; see [`docs/ZOMBIES.md`](docs/ZOMBIES.md).
 - **Online rooms** — create a room and share its 6-character code; friends enter it to join.
 - **Nearby play** — over the same Wi-Fi, or over Bluetooth with no internet.
 - **Bluetooth controllers and touch controls** — pair a gamepad (remap its buttons in Settings → Controller buttons) or use the on-screen controls: analog stick (fixed or floating), analog GameCube triggers, slide D-pad, console-accurate layouts for N64, SNES, PSP and GameCube, an in-game layout editor, haptics, and auto-hide when a controller connects. New and **not yet device-tested**; see [`docs/CONTROLS.md`](docs/CONTROLS.md).
 - **Save states** — save anywhere and resume later.
 - **Graphics & performance** — picture quality per emulator (resolution, filtering, anti-aliasing, widescreen, texture upscaling, screen effects), **Auto Best Settings** on by default that picks what your phone can run at full speed and remembers it per game, an FPS counter, and optional [Shizuku](https://shizuku.rikka.app/) boosts. New and **not yet device-tested**; see [`docs/GRAPHICS.md`](docs/GRAPHICS.md).
+- **Classic Android check** — a Settings screen that reports whether this phone can run old 32-bit Android apps. It is a diagnostic only; the player for those apps is not built yet.
 
-## Install
+> **Early beta.** Most features have not yet been tested on many real devices, so expect rough edges. Casting to a TV and online play for console games are not implemented yet; online play currently covers chess and VictorOps Zombies.
 
-1. On your Android phone (Android 9 or newer), download the latest `.apk` from the
-   [Releases page](https://github.com/Victorious93/VictorLink64/releases).
+## Coming soon
+
+> **These are plans, not finished features.** None of the items below are done yet, and you cannot use them today. The first one is being reviewed by Don; the rest are planned.
+
+| Coming soon | What it means for you | Where it stands |
+| --- | --- | --- |
+| **Top-quality touch controls for every console** | Better on-screen buttons, sticks, and triggers for every console, so playing on a touchscreen feels right. | In review ([PR #29](https://github.com/Victorious93/VictorLink64/pull/29)) — not released |
+| **Sharper graphics, up to 1080p** | Games drawn at up to 1080p, with optional filters and shaders for a different look, plus **Auto Best Settings** that picks good settings for your phone. | Planned |
+| **Optional Shizuku tweaks** | If you already use the Shizuku app, extra phone-level tweaks to help games run better. You will never need it to play. | Planned |
+| **Stream games from your own PC** | Play games from your own computer on your phone over your home network, using Moonlight and Sunshine. | Planned |
+| **Play PC games on your phone** | Run Windows PC games on the phone, in the style of Winlator. | Planned |
+| **Add games in any format** | Open games stored as zip, 7z, rar, iso, cso, chd, rvz, and more, read straight from the file with no unpacking first. | Planned |
+| **Universal APK player** | Run Android APK files without installing them, including old ones. | Planned |
+| **PS2 and PS Vita** | Emulators for PlayStation 2 and PlayStation Vita games. | Planned |
+
+When something here is finished and tested on a real phone, it moves up into **Features** and shows up in a new release. Until then, treat this list as a wish list, not a promise.
+
+## Screenshots
+
+No official screenshots are in the repository yet.
+
+## Install / download
+
+Releases are currently **debug / pre-release** builds — not finished software. Install only if you understand the risk, and only from this repository's Releases page.
+
+The latest GitHub Release (verified November 16, 2026) is tag [`v0.3.2-debug`](https://github.com/Victorious93/VictorLink64/releases/tag/v0.3.2-debug):
+
+- APK: [`VictorLink64-0.3.2-debug.apk`](https://github.com/Victorious93/VictorLink64/releases/download/v0.3.2-debug/VictorLink64-0.3.2-debug.apk) (about 102 MB)
+- All releases: <https://github.com/Victorious93/VictorLink64/releases>
+
+That APK was published October 15, 2026. It does **not** include later work now in this repository, such as PSP, GameCube, the Classic Android check, or the newer on-screen button layouts. To try the current source, build from source below.
+
+**On your phone (Android 9 or newer):**
+
+1. Download the `.apk` from the link above.
 2. Allow installing from unknown apps when Android asks.
 3. Open the downloaded file to install.
+4. Open VictorLink64, tap **Pick folder**, and choose the folder that holds your game files.
+5. Tap a game to play, or tap **Chess** for a quick match. To play with a friend, open the **Connect** tab.
 
-Only install builds from this repository's Releases page.
-
-## Usage
-
-1. Open VictorLink64, tap **Pick folder**, and choose the folder that holds your game files.
-2. Tap a game to play, or tap **Chess** for a quick match.
-3. To play with a friend, open the **Connect** tab.
-
-VictorLink64 does not include any games. Use game files you legally own, such as backups of your own cartridges.
+VictorLink64 does not include any games. Use game files you legally own, such as backups of your own cartridges or discs.
 
 ## Build from source
 
@@ -101,14 +95,15 @@ echo "sdk.dir=/path/to/android-sdk" > local.properties
 ./gradlew assembleDebug
 ```
 
-The APK is written to `app/build/outputs/apk/debug/VictorLink64-debug.apk`. The first native build covers four ABIs
-and takes several minutes. Run only one Gradle build per checkout at a time.
+The APK is written to `app/build/outputs/apk/debug/VictorLink64-debug.apk`. The application id is `org.victoriousframework.victorlink64`. The first native build covers four ABIs and takes several minutes. Run only one Gradle build per checkout at a time.
+
+Release signing keys are never committed to this repository.
 
 Run the tests:
 
 ```bash
 ./gradlew :app:testDebugUnitTest                      # chess engine, connect and Zombies adapter tests
-./gradlew :zombies:test                                # VictorOps Zombies game tests (67 original + 2)
+./gradlew :zombies:test                                # VictorOps Zombies game tests
 python3 -I -m unittest discover -s scripts/tests -v   # APK payload verifier tests
 ```
 
@@ -116,34 +111,38 @@ Project layout:
 
 | Path | Contents |
 | --- | --- |
-| `app/src/main/java/org/victoriousframework/victorlink64/` | Kotlin and Compose UI: `ui/`, `chess/`, `connect/`, `snes/`, `zombies/` |
+| `app/src/main/java/org/victoriousframework/victorlink64/` | Kotlin and Compose UI: `ui/`, `chess/`, `connect/`, `snes/`, `zombies/`, `hw/`, `classic/` |
 | `zombies/` | VictorOps Zombies game core (Kotlin + libGDX, JVM module) — see [`zombies/README.md`](zombies/README.md) |
 | `mupen64plus-*` | N64 emulator core and plugins (native modules) |
-| `app/src/main/jniLibs` | Prebuilt bsnes libretro core; rebuild with `scripts/build-bsnes.sh` |
+| `app/src/main/jniLibs` | Prebuilt libretro cores: bsnes (several ABIs), plus PPSSPP and Dolphin (`arm64-v8a`) |
 | `server/relay` | Cloudflare Worker and Durable Object for online rooms (`npx wrangler deploy`) |
 
 More detail: [`BUILDING.md`](BUILDING.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`TESTING.md`](TESTING.md),
 [`docs/NETPLAY.md`](docs/NETPLAY.md).
 
+## License
+
+Licensed under the **GNU General Public License v3** — see [`gpl-license`](gpl-license).
+
+## Credits
+
+VictorLink64 is made by Don Victor ([Victorious93](https://github.com/Victorious93)) and builds on these open-source projects:
+
+- [Mupen64Plus](https://github.com/mupen64plus) and [Mupen64Plus-AE](https://github.com/mupen64plus-ae/mupen64plus-ae) — N64 emulation (GPL v3). Upstream's original README is kept in [`UPSTREAM-README.md`](UPSTREAM-README.md).
+- [bsnes](https://github.com/libretro/bsnes) by byuu and contributors — Super Nintendo emulation (GPL v3)
+- [PPSSPP](https://github.com/hrydgard/ppsspp) by Henrik Rydgård and contributors — PSP emulation (libretro core)
+- [Dolphin](https://github.com/libretro/dolphin) by the Dolphin Emulator Project and contributors — GameCube emulation (libretro port, GNU GPL v2.0 or later)
+- [libGDX](https://github.com/libgdx/libgdx) — game framework for VictorOps Zombies (Apache-2.0)
+- [Shizuku API](https://github.com/RikkaApps/Shizuku-API) by RikkaApps — optional performance boosts (Apache-2.0)
+
+The chess engine, multiplayer, VictorOps Zombies, and app screens are original VictorLink64 / Victorious Framework code.
+
+Upstream trademarks and product names remain their owners'.
+
 ## FAQ
 
 **Is it free?** Yes. It is free and open source, with no ads or subscriptions.
 
-**Something doesn't work?** Please [open an issue](https://github.com/Victorious93/VictorLink64/issues) with your
-phone model and what happened.
+**Something doesn't work?** Please [open an issue](https://github.com/Victorious93/VictorLink64/issues) with your phone model and what happened.
 
-## Credits and license
-
-VictorLink64 is made by Don Victor ([Victorious93](https://github.com/Victorious93)) and builds on these
-open-source projects:
-
-- [Mupen64Plus](https://github.com/mupen64plus) and [Mupen64Plus-AE](https://github.com/mupen64plus-ae/mupen64plus-ae) — N64 emulation (GPL v3). Upstream's original README is kept in [`UPSTREAM-README.md`](UPSTREAM-README.md).
-- [bsnes](https://github.com/libretro/bsnes) by byuu and contributors — Super Nintendo emulation (GPL v3)
-- [libGDX](https://github.com/libgdx/libgdx) — game framework for VictorOps Zombies (Apache-2.0)
-- [Shizuku API](https://github.com/RikkaApps/Shizuku-API) by RikkaApps — optional performance boosts (Apache-2.0)
-
-The chess engine, multiplayer, VictorOps Zombies and app screens are original VictorLink64 / Victorious Framework code.
-
-Licensed under the **GNU General Public License v3** — see [`gpl-license`](gpl-license).
-
-<sub>Nintendo 64 and Super Nintendo are trademarks of Nintendo. VictorLink64 is not affiliated with or endorsed by Nintendo.</sub>
+<sub>Nintendo 64, Super Nintendo, and GameCube are trademarks of Nintendo. PlayStation Portable (PSP), PlayStation 2, and PlayStation Vita are trademarks of Sony. VictorLink64 is not affiliated with or endorsed by Nintendo or Sony.</sub>
