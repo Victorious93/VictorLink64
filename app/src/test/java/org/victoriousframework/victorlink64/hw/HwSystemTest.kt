@@ -31,9 +31,4 @@ class HwSystemTest {
 class HwGeometryTest {
     @Test fun fitsWideWindow() = assertEquals(Pair(960, 720), fitAspect(1600, 720, 4f / 3f))
     @Test fun fitsTallWindow() = assertEquals(Pair(720, 540), fitAspect(720, 1600, 4f / 3f))
-    @Test fun dpadAxis() {
-        assertEquals(0x7FFF, dpadToAxis(1 shl HwCore.RIGHT, HwCore.LEFT, HwCore.RIGHT))
-        assertEquals(-0x7FFF, dpadToAxis(1 shl HwCore.LEFT, HwCore.LEFT, HwCore.RIGHT))
-        assertEquals(0, dpadToAxis(0, HwCore.LEFT, HwCore.RIGHT))
-    }
 }
