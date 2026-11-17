@@ -73,6 +73,12 @@
         android:id="@+id/menuItem_reset"
         android:title="@string/inputMapActivity_reset"/>
     <item
+        android:id="@+id/menuItem_touch_layout"
+        android:title="@string/menuItem_touchLayout"/>
+    <item
+        android:id="@+id/menuItem_touch_visibility"
+        android:title="@string/menuItem_touchShow"/>
+    <item
         android:id="@+id/menuItem_achievements"
         android:icon="@drawable/ic_about"
         android:title="@string/menuItem_achievements"/>

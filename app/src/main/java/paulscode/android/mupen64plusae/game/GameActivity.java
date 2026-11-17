@@ -59,6 +59,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.PointerIcon;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
@@ -88,6 +89,7 @@ import paulscode.android.mupen64plusae.GameSidebar;
 import paulscode.android.mupen64plusae.GameSidebar.GameSidebarActionHandler;
 import paulscode.android.mupen64plusae.dialog.ConfirmationDialog.PromptConfirmListener;
 import paulscode.android.mupen64plusae.dialog.Prompt;
+import paulscode.android.mupen64plusae.input.OverlayController;
 import paulscode.android.mupen64plusae.input.PeripheralController;
 import paulscode.android.mupen64plusae.input.SensorController;
 import paulscode.android.mupen64plusae.input.TouchController;
@@ -106,6 +108,12 @@ import paulscode.android.mupen64plusae.persistent.GamePrefs;
 import paulscode.android.mupen64plusae.persistent.GlobalPrefs;
 import paulscode.android.mupen64plusae.jni.CoreTypes.PakType;
 import paulscode.android.mupen64plusae.profile.ControllerProfile;
+import org.victoriousframework.victorlink64.controls.Console;
+import org.victoriousframework.victorlink64.controls.ControlsPrefs;
+import org.victoriousframework.victorlink64.controls.HardwareControllers;
+import org.victoriousframework.victorlink64.controls.OverlayHost;
+import org.victoriousframework.victorlink64.controls.PadConvert;
+import kotlin.Unit;
 import paulscode.android.mupen64plusae.util.CountryCode;
 import paulscode.android.mupen64plusae.util.DisplayResolutionData;
 import paulscode.android.mupen64plusae.util.DisplayWrapper;
@@ -193,6 +201,12 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
     private AxisProvider mAxisProvider;
     TouchController mTouchscreenController;
     private SensorController mSensorController;
+
+    // VictorLink64 shared on-screen controller (replaces the legacy skin system unless switched off in settings)
+    private OverlayHost mVictorHost;
+    private OverlayController mVictorController;
+    private HardwareControllers mHardwareControllers;
+    private boolean mVictorForceShow = false;
     private long mLastTouchTime;
     private Handler mHandler;
 
@@ -551,7 +565,7 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         });
 
         // Initialize the screen elements
-        if( mGamePrefs.isTouchscreenEnabled )
+        if( mGamePrefs.isTouchscreenEnabled && !mGlobalPrefs.useVictorOverlay )
         {
             // The touch map and overlay are needed to display frame rate and/or controls
             mTouchscreenMap = new VisibleTouchMap( this.getResources() );
@@ -678,6 +692,10 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mSensorController.onResume();
         }
 
+        if (mHardwareControllers != null) {
+            mHardwareControllers.start();
+        }
+
         // Set the sidebar opacity
         mGameSidebar.setBackground(new DrawerDrawable(mGlobalPrefs.displayActionBarTransparency));
 
@@ -745,6 +763,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mSensorController.onPause();
         }
 
+        if (mHardwareControllers != null) {
+            mHardwareControllers.stop();
+        }
+        if (mVictorHost != null) {
+            mVictorHost.release();
+        }
+
         mGameSurface.stopGlContext();
     }
 
@@ -808,6 +833,13 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         final MenuItem frameLimiterItem =
             mGameSidebar.getMenu().findItem(R.id.menuItem_disable_frame_limiter);
         frameLimiterItem.setTitle(this.getString(resId));
+
+        // Touch layout items only exist with the VictorLink64 overlay; visibility toggle only with a pad attached
+        final MenuItem touchLayoutItem = mGameSidebar.getMenu().findItem(R.id.menuItem_touch_layout);
+        touchLayoutItem.setVisible(mVictorHost != null);
+        final MenuItem touchVisibilityItem = mGameSidebar.getMenu().findItem(R.id.menuItem_touch_visibility);
+        touchVisibilityItem.setVisible(mVictorHost != null && mHardwareControllers != null && mHardwareControllers.getConnected());
+        touchVisibilityItem.setTitle(mVictorForceShow ? R.string.menuItem_touchHide : R.string.menuItem_touchShow);
 
         //Reload player pak settings
         UpdateControllerMenu(R.id.menuItem_player_one, mGamePrefs.isPlugged[0], 1);
@@ -956,6 +988,14 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
             mCoreFragment.restart();
         } else if (menuItem.getItemId() == R.id.menuItem_achievements) {
             showAchievementsDialog();
+        } else if (menuItem.getItemId() == R.id.menuItem_touch_layout) {
+            if (mVictorHost != null) {
+                mDrawerLayout.closeDrawer( GravityCompat.START );
+                mVictorHost.startEditing();
+            }
+        } else if (menuItem.getItemId() == R.id.menuItem_touch_visibility) {
+            toggleVictorTouchControls();
+            mDrawerLayout.closeDrawer( GravityCompat.START );
         }
     }
 
@@ -1738,7 +1778,11 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
         }
 
         // Create the touchscreen controls
-        if( mGamePrefs.isTouchscreenEnabled )
+        if( mGamePrefs.isTouchscreenEnabled && mGlobalPrefs.useVictorOverlay )
+        {
+            initVictorOverlay();
+        }
+        else if( mGamePrefs.isTouchscreenEnabled )
         {
             if (!TextUtils.isEmpty(mGamePrefs.sensorAxisX) || !TextUtils.isEmpty(mGamePrefs.sensorAxisY)) {
                 // Create the sensor controller
@@ -1787,6 +1831,46 @@ public class GameActivity extends AppCompatActivity implements PromptConfirmList
                 initSingleController(index + 1, p);
             }
         }
+    }
+
+    /**
+     * Adds the shared VictorLink64 overlay over the game picture: console-accurate N64 layout (analog stick, C-button
+     * cluster, Z/L/R, START), multi-touch, haptics, layout editing and auto-hide while a hardware pad is connected.
+     */
+    private void initVictorOverlay()
+    {
+        mVictorController = new OverlayController(mCoreFragment);
+        mVictorHost = new OverlayHost(this, Console.N64, ControlsPrefs.INSTANCE.settings(this), ControlsPrefs.INSTANCE.layouts(this));
+        mVictorHost.setOnPadState(state -> {
+            mLastTouchTime = System.currentTimeMillis() / 1000L;
+            mVictorController.setState(state.getMask(), PadConvert.INSTANCE.n64AxisX(state), PadConvert.INSTANCE.n64AxisY(state));
+            return Unit.INSTANCE;
+        });
+        if (mGamePrefs.isTouchscreenHidden)
+        {
+            mVictorHost.setVisibility(View.GONE);
+        }
+        ((ViewGroup) mOverlay.getParent().getParent()).addView(mVictorHost,
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mHardwareControllers = new HardwareControllers(this, connected -> {
+            if (!connected) mVictorForceShow = false;
+            updateVictorVisibility();
+            return Unit.INSTANCE;
+        });
+    }
+
+    private void updateVictorVisibility()
+    {
+        if (mVictorHost == null || mHardwareControllers == null) return;
+        final boolean hide = mHardwareControllers.getConnected()
+                && ControlsPrefs.INSTANCE.settings(this).getHideWithController() && !mVictorForceShow;
+        mVictorHost.setHidden(hide);
+    }
+
+    private void toggleVictorTouchControls()
+    {
+        mVictorForceShow = !mVictorForceShow;
+        updateVictorVisibility();
     }
 
     private void initSingleController(int player, ControllerProfile p)

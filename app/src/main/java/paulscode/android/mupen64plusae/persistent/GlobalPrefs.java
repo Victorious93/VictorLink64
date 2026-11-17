@@ -191,6 +191,9 @@ public class GlobalPrefs
     /** The path of the user's custom cheat files. */
     public final String customCheats_txt;
 
+    /** True to use the VictorLink64 on-screen controller instead of the legacy skin system. */
+    public final boolean useVictorOverlay;
+
     /** True if the touchscreen feedback is enabled. */
     public final boolean isTouchscreenFeedbackEnabled;
 
@@ -501,6 +504,7 @@ public class GlobalPrefs
         fillAllowedCountryCodes();
 
         // Touchscreen prefs
+        useVictorOverlay = mPreferences.getBoolean( "touchscreenVictorOverlay", true );
         isTouchscreenFeedbackEnabled = mPreferences.getBoolean( "touchscreenFeedback", true );
         touchscreenScale = ( mPreferences.getInt( "touchscreenScaleV2", 100 ) ) / 100.0f;
         touchscreenTransparency = ( 255 * mPreferences.getInt( "touchscreenTransparencyV2", 60 ) ) / 100;
