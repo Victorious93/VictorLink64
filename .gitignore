@@ -66,3 +66,16 @@ local.properties
 *.gcm
 *.rvz
 *.ciso
+
+# Victorious Framework: never commit PlayStation 2 disc images or BIOS dumps (user-supplied only)
+*.chd
+*.cue
+scph*.bin
+rom1.bin
+rom2.bin
+erom.bin
+*.rom1
+*.rom2
+*.mec
+*.nvm
+ps2/system/
