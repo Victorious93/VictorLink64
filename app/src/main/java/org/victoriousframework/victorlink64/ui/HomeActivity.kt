@@ -299,6 +299,22 @@ fun LibraryScreen() {
             }
             PlayBadge("Play zombies")
         }
+        Spacer(Modifier.height(10.dp))
+        Row(
+            Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .12f))
+                .border(1.dp, NeonBlue, RoundedCornerShape(16.dp))
+                .clickable { ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.apkplayer.ApkPlayerActivity::class.java)) }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(Icons.Filled.Android, null, tint = NeonBlue, modifier = Modifier.size(32.dp))
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text("APK Player", color = Color.White, fontWeight = FontWeight.Bold)
+                Text("Run an Android app in a private sandbox · early beta", color = Muted, fontSize = 12.sp)
+            }
+            PlayBadge("Open APK Player")
+        }
         Spacer(Modifier.height(12.dp))
         when {
             !hasSource -> EmptyState("Add your games", "Tap “Pick folder” for a whole folder, or the add-file button for single games. " +
@@ -400,6 +416,9 @@ fun SettingsScreen() {
         }
         SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
+        SettingRow("APK Player", "Pick an Android app and run it in a private sandbox (early beta)") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.apkplayer.ApkPlayerActivity::class.java))
+        }
         SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
         }
@@ -466,6 +485,10 @@ fun AboutScreen() {
             "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
             "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
             "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +
+            "The APK Player's 32-bit helper app runs apps through the BlackBox virtual container core " +
+            "(NewBlackbox, a maintained fork of BlackBox, https://github.com/ALEX5402/NewBlackbox), licensed under the " +
+            "Apache License 2.0, modified for VictorLink64, with the xDL (MIT) and Dobby (Apache 2.0) native libraries. " +
+            "See NOTICE in the source repository.\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +

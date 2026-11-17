@@ -1,0 +1,72 @@
+// Victorious Framework: build file for the vendored BlackBox core (Apache-2.0, see ../UPSTREAM.md).
+// Replaces upstream's build.gradle so the module builds with this repository's toolchain.
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'top.niunaijun.blackbox'
+    compileSdkVersion 36
+    ndkVersion "26.1.10909125"
+
+    buildFeatures {
+        aidl true
+    }
+
+    defaultConfig {
+        minSdkVersion 28
+        consumerProguardFiles "consumer-rules.pro"
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/cpp/Android.mk'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << "-Xlint:-deprecation" << "-Xlint:-unchecked" << "-Xlint:-rawtypes"
+}
+
+// AIDL output carries a "Using: ..." comment that can contain backslash sequences javac mis-parses.
+tasks.matching { it.name.startsWith('compileReleaseJavaWithJavac') || it.name.startsWith('compileDebugJavaWithJavac') }.configureEach {
+    doFirst {
+        def aidlOut = layout.buildDirectory.dir("generated/aidl_source_output_dir").get().asFile
+        if (aidlOut.exists()) {
+            aidlOut.eachFileRecurse { f ->
+                if (f.name.endsWith('.java')) {
+                    def content = f.text
+                    if (content.contains(' * Using:')) {
+                        f.text = content.replaceAll(/(?m)^ \* Using:.*$/, '')
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
+    implementation project(':bb-reflection')
+    annotationProcessor project(':bb-compiler')
+}

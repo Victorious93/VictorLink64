@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Victorious Framework: only the APK Player's private library can be shared with the helper. -->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path name="apk_player" path="apk-player/" />
+</paths>

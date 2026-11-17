@@ -1,10 +1,54 @@
-VictorLink64 — third-party notices (Victorious Framework)
+VictorLink64 — third-party notices
+Victorious Framework
 
-VictorLink64 is free software under the GNU General Public License v3 (see gpl-license and README.md).
-Upstream attribution for the emulation engine is kept in UPSTREAM-README.md. This file lists the libraries the
-game-import feature (archives and disc/ROM formats) depends on. All of them are compatible with GPL-3.0.
+VictorLink64 is licensed under the GNU General Public License v3 (see gpl-license).
+Upstream attribution for the emulator code is kept in UPSTREAM-README.md and in the nested notices of each module.
 
-Archive and game-file import
+This file lists additional components that are included in the source tree or in the build.
+
+------------------------------------------------------------------------------
+APK Player: BlackBox virtual container core  (third_party/blackbox/)
+------------------------------------------------------------------------------
+Used only inside the separate "VictorLink64 32-bit Helper" app (module :box32). It is not part of the main app.
+
+  Project   NewBlackbox by ALEX5402 and contributors, https://github.com/ALEX5402/NewBlackbox
+            (a maintained fork of the BlackBox virtual engine; BlackBox itself builds on ideas from VirtualApp-style containers)
+  Revision  89b59836c66f173756a4ae258cf379a957649820 (2026-07-19)
+  License   Apache License, Version 2.0 — full text in third_party/blackbox/LICENSE
+            Copyright 2022 BlackBox (as stated in the upstream README); copyright of the upstream authors and contributors.
+  Changes   Modified by Victorious Framework; every change is listed in third_party/blackbox/UPSTREAM.md.
+            Removed: the log-upload feature, the root/virtualization-detection evasion code, the native-library injection hook, a bundled JUnit jar.
+
+Bundled with that code:
+
+  xDL (native dynamic-linker helper), https://github.com/hexhacking/xDL
+      MIT License. Copyright (c) HexHacking Team. Sources in third_party/blackbox/Bcore/src/main/cpp/xdl/.
+      The upstream copy has its per-file license headers stripped; the license is MIT.
+
+  Dobby (inline hooking library), https://github.com/jmpews/Dobby
+      Apache License 2.0. Prebuilt static libraries (arm64-v8a, armeabi-v7a) are taken unchanged from the upstream
+      NewBlackbox repository; they were NOT rebuilt from source by this project.
+
+  Android Open Source Project AIDL interface definitions (third_party/blackbox/Bcore/src/main/aidl/android/...)
+      Apache License 2.0. Copyright (C) The Android Open Source Project.
+
+  BlackReflection annotation library and annotation processor (third_party/blackbox/black-reflection, .../compiler)
+      Apache License 2.0, same upstream repository.
+
+Used as Maven dependencies (not copied into the repository):
+
+  LSPosed HiddenApiBypass 4.3, https://github.com/LSPosed/AndroidHiddenApiBypass — Apache License 2.0
+  Google AutoService 1.1.1 and Square JavaPoet 1.13.0 (annotation processor only) — Apache License 2.0
+  AndroidX AppCompat and Material Components — Apache License 2.0
+
+Apache-2.0 code may be combined into a GPL-3.0 work (the combined work is distributed under GPL-3.0); the reverse is not
+allowed, which is why the helper's engine was chosen from Apache-2.0 sources. See docs/APK-Player-Design.md.
+
+------------------------------------------------------------------------------
+Game import: archive and game-file reading
+------------------------------------------------------------------------------
+Used by the main app (Library tab) to read games straight from archives and disc images. All are compatible with GPL-3.0.
+
 - libarchive — https://libarchive.org — New BSD licence. Reads RAR (RAR 4 and RAR 5) archives.
 - libarchive-android (Java/JNI bindings and Android build of libarchive) by Hai Zhang —
   https://github.com/zhanghai/libarchive-android — Apache License 2.0. It bundles libarchive with zlib,
