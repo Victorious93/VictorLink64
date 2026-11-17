@@ -5,9 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import org.victoriousframework.victorlink64.hw.DiscDetect
 import org.victoriousframework.victorlink64.hw.HwSystem
-import org.victoriousframework.victorlink64.hw.Ps2SetupActivity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -189,7 +187,7 @@ fun scanFolder(c: Context, tree: Uri): ScanResult {
             val base = n.substringBeforeLast('.')
             when {
                 ext in ROM_EXT -> out += Game(base, f.uri, f.length(), ext in SNES_EXT, n)
-                ext in HwSystem.ALL_EXTENSIONS -> DiscDetect.detect(c, f, ext, files)
+                ext in HwSystem.ALL_EXTENSIONS -> org.victoriousframework.victorlink64.hw.DiscDetect.detect(c, f, ext, files)
                     ?.let { out += Game(base, f.uri, f.length(), false, n, hw = it.system, tracks = it.companions) }
                 ext == "zip" -> {
                     val key = f.uri.toString() + "#" + f.length() + "#" + f.lastModified()
@@ -235,7 +233,7 @@ fun extractZipRom(c: Context, g: Game): java.io.File {
 fun launchGame(c: Context, g: Game) {
     try {
         val uri = if (g.zipEntry != null) { toast(c, "Unpacking ${g.name}…"); Uri.fromFile(extractZipRom(c, g)) } else g.uri
-        if (g.hw == HwSystem.PS2) Ps2SetupActivity.open(c, uri, g.fileName, g.name, g.tracks)
+        if (g.hw == HwSystem.PS2) org.victoriousframework.victorlink64.hw.Ps2SetupActivity.open(c, uri, g.fileName, g.name, g.tracks)
         else if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_URI, uri.toString())
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_NAME, g.fileName)
@@ -428,7 +426,7 @@ fun SettingsScreen() {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.controls.ControllerMapActivity::class.java))
         }
         SettingRow("PlayStation 2", "Add your BIOS, choose picture size, read the speed note") {
-            ctx.startActivity(Intent(ctx, Ps2SetupActivity::class.java))
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.hw.Ps2SetupActivity::class.java))
         }
         SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }

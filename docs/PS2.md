@@ -96,4 +96,14 @@ Save states are hidden for PS2 (a PS2 state is tens of MB and this has not been 
 
 ## What was tested
 
-See the PR description for the exact list. In short: JVM unit tests (disc/BIOS/option/layout logic on synthetic data), the Python verifier tests, and the CI debug build + APK payload check. The core has **not** been run: the CI and development machines are x86_64 and cannot run an arm64 core.
+Everything here is from 2026-11-17. Tested means the thing named; it does not mean a PS2 game runs.
+
+| Check | Result |
+| --- | --- |
+| JVM unit tests (`./gradlew :app:testDebugUnitTest`): disc detection (ISO, raw CD sectors, CSO, CHD header, cue parsing), BIOS inspection/import/selection, option mapping, speed advice, DualShock 2 layout and controller mapping, plus all existing tests | 158 run, 0 failed, 1 skipped (the layout preview dev tool, which needs an env var) |
+| Python tests (`python3 -I -m unittest discover -s scripts/tests`): verifier BIOS/disc/pin checks | 29 run, 0 failed |
+| Debug APK built; payload verifier with the three core digests pinned | passed locally and in CI |
+| Android 14 **x86_64** emulator (with KVM), debug APK, synthetic fixtures made on the spot (a fake "BIOS" that only imitates the ROM directory, tiny ISO / cue+bin images with `SYSTEM.CNF`; none committed) | Library listed a `BOOT2` ISO and a cue+bin as PlayStation 2 and a `BOOT` ISO as before (PSP); tapping a PS2 game with no BIOS opened the setup screen with the BIOS message and a disabled Play button; the picker imported the fake BIOS ("USA v01.60 (14/06/2004)") and skipped a random 4 MB file with the plain-language reason; Remove deleted it; the file sits in `files/ps2/system/pcsx2/bios` with private permissions; the 2× warning and speed note appeared; with a BIOS present, Play started the game screen, which showed the DualShock 2 overlay and then closed with the "needs a 64-bit ARM device" message because the emulator has no arm64 core; a second tap skipped the setup screen |
+| LRPS2 core on an arm64 device (boot, picture, audio, speed, input, `3x`, BIOS acceptance by the real core, cue launch, real BIOS/disc files, GL ES context on the owner's phone) | **Not tested.** The emulator and CI are x86_64 and cannot run an arm64 core. The fake BIOS used above was never given to the real core, so "the core accepts what the app accepts" is source-checked (`BiosTools.c`), not run |
+
+The launch path for a `.cue` (copy the sheet to the cache, link the track files beside it) is compiled but could not be exercised: the emulator stops before it because the core is missing.
