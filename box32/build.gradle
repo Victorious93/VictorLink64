@@ -1,0 +1,56 @@
+// Victorious Framework: "VictorLink64 32-bit Helper".
+// A separate app whose native code is armeabi-v7a only, so Android starts every one of its processes in
+// 32-bit mode. It hosts the BlackBox container core (third_party/blackbox) and runs 32-bit APKs handed to it
+// by VictorLink64. See docs/APK-Player-Design.md.
+apply plugin: 'com.android.application'
+apply from: '../build_common/version_common.gradle'
+
+android {
+    namespace = "org.victoriousframework.victorlink64.box32"
+
+    defaultConfig {
+        applicationId = "org.victoriousframework.victorlink64.box32"
+        // The container core hooks Android internals and needs a host that targets API 28 (no scoped storage,
+        // no restrictions on running code from app storage). This is why the helper is not part of the main app.
+        targetSdkVersion 28
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            minifyEnabled false
+        }
+        release {
+            signingConfig = signingConfigs.debug
+            minifyEnabled false
+        }
+        android.applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                outputFileName = "VictorLink64-Box32-${variant.buildType.name}.apk"
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation project(':bb-core')
+}
