@@ -5,7 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import org.victoriousframework.victorlink64.graphics.GraphicsSettingsActivity
+import org.victoriousframework.victorlink64.graphics.N64Graphics
 import org.victoriousframework.victorlink64.hw.HwSystem
+import org.victoriousframework.victorlink64.shizuku.ShizukuController
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -76,6 +79,11 @@ class HomeActivity : ComponentActivity() {
             Thread { launchRom(this, Uri.parse(path), path.substringAfterLast('/')) }.start()
         }
         setContent { VictorTheme { VictorApp() } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ShizukuController.revertIfIdle(this)
     }
 }
 
@@ -257,6 +265,7 @@ fun launchRom(c: Context, uri: Uri, display: String) {
         val header = RomHeader(c, uri)
         if (!header.isValid) { toast(c, "Not a valid N64 ROM"); return }
         val md5 = c.contentResolver.openInputStream(uri)!!.use { FileUtil.computeMd5(java.io.BufferedInputStream(it)) }
+        N64Graphics.prepareLaunch(c, md5, header.name)
         ActivityHelper.startGameActivity(
             c, uri.toString(), null, md5, header.crc, header.name,
             header.countryCode.value, null, header.name, display, false
@@ -414,20 +423,29 @@ fun ComingSoon(title: String, body: String, icon: ImageVector) {
 fun SettingsScreen() {
     val ctx = LocalContext.current
     val p = prefs(ctx)
-    var vibrate by remember { mutableStateOf(p.getBoolean("haptics", true)) }
+    val overlay = remember { org.victoriousframework.victorlink64.controls.ControlsPrefs.settings(ctx) }
+    var vibrate by remember { mutableStateOf(overlay.haptics) }
+    var hideWithPad by remember { mutableStateOf(overlay.hideWithController) }
     var fps by remember { mutableStateOf(p.getBoolean("show_fps", false)) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Text("Settings", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(Modifier.height(12.dp))
-        SettingRow("Touch controls layout", "Adjust on-screen buttons") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
+        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP and GameCube") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.controls.ControllerMapActivity::class.java))
+        }
+        SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
         SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
         }
+        SettingRow("Graphics & performance", "Auto Best Settings, quality per emulator, FPS counter, Shizuku boosts") {
+            ctx.startActivity(Intent(ctx, GraphicsSettingsActivity::class.java))
+        }
         SettingRow("Forget ROM folder", "Clear the selected library folder") {
             p.edit().remove(KEY_FOLDER).apply(); Toast.makeText(ctx, "Library folder cleared", Toast.LENGTH_SHORT).show()
         }
-        ToggleRow("Haptic feedback", vibrate) { vibrate = it; p.edit().putBoolean("haptics", it).apply() }
+        ToggleRow("Haptic feedback on touch controls", vibrate) { vibrate = it; overlay.haptics = it }
+        ToggleRow("Hide touch controls when a controller is connected", hideWithPad) { hideWithPad = it; overlay.hideWithController = it }
         ToggleRow("Show FPS (coming soon)", fps) { fps = it; p.edit().putBoolean("show_fps", it).apply() }
     }
 }
@@ -478,10 +496,19 @@ fun AboutScreen() {
             "(https://github.com/moonlight-stream/moonlight-android, with moonlight-common-c, ENet and nanors), " +
             "licensed under the GNU GPL v3; it bundles OpenSSL (Apache-2.0) and Opus (BSD). Full credits are in the " +
             "NOTICE file in the source repository.\n\n" +
+            "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
+            "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
+            "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +
             "https://github.com/Victorious93/VictorLink64",
+            color = Muted, fontSize = 13.sp
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "Optional Shizuku support uses the Shizuku API by RikkaApps (https://github.com/RikkaApps/Shizuku-API), " +
+            "licensed under the Apache License 2.0. Shizuku itself is a separate app and is never required.",
             color = Muted, fontSize = 13.sp
         )
     }

@@ -45,6 +45,10 @@ Known, not changed: a peer can send `resign` for the other side (trusted-friend 
 
 Built-in game (`:zombies` module + `ZombiesActivity`) with Bluetooth/Wi-Fi/online co-op through `ConnectSession`. Details, status table and device checklist: [`ZOMBIES.md`](ZOMBIES.md). **Co-op, touch controls and performance are unverified on devices.**
 
+## Graphics quality, Auto Best Settings, Shizuku boosts 2026-11-17
+
+Branch `graphics-auto-best`. Per-emulator picture settings, device profiler, Auto Best Settings with a live FPS/thermal tuner, a shared GL effect pass (also used by SNES), and optional Shizuku boosts. **Compiled and unit-tested (73 JVM + 6 host tests); effects rendered on a desktop GLES 3.2 implementation; nothing run on a phone.** Details, support matrix, what the cores cannot do and the device checklist: [`GRAPHICS.md`](GRAPHICS.md).
+
 ## SNES screen size and touch controls 2026-10-22
 
 Reported from a device screenshot: SNES picture far smaller than the screen, controls awkward. Items below are labelled by evidence level.
@@ -106,5 +110,19 @@ Finished: Phase 1 build/identity/verifier. In progress: Phase 1 provenance and C
 1. Free or raise Actions artifact storage and re-run the failed job once so the CI-built APK can be downloaded.
 2. Obtain an Android device or emulator; install `VictorLink64-debug.apk` and boot the diagnostic asset, then a user-supplied ROM; record results here.
 3. Read upstream `FileUtil`/`CacheRomInfoService` import paths against the hardening requirements; then start Phase 2.
+
+— Victorious
+
+## Controls overhaul 2026-11-17
+
+New shared overlay for N64, SNES, PSP and GameCube plus gamepad remapping. Full table and design notes: [`CONTROLS.md`](CONTROLS.md).
+
+| Area | Change | Evidence |
+| --- | --- | --- |
+| Overlay engine | Radial-dead-zone analog stick (fixed/floating), analog triggers, 8-way slide D-pad, multi-touch, per-console layouts, edit mode with per-console/per-orientation persistence | **Automated-tested**: 118 JVM tests pass locally (`./gradlew :app:testDebugUnitTest`), including Robolectric tests that drive the real view with MotionEvents. **Not device-tested** |
+| Libretro input | `hwfront.c` answers both analog sticks and analog L2/R2 pressure from a per-frame snapshot | **Compiled** (NDK 26.1, arm64). Not run against PPSSPP/Dolphin on a device |
+| GameCube mapping | Corrected against `libretro/dolphin` `Input.cpp`: A/B and X/Y were swapped, Z is R1, L/R are L2/R2 | Source-verified; **not device-tested** |
+| N64 | Overlay replaces the legacy skins by default (switch in N64 touch settings restores them); `OverlayController` shares state with hardware pads | **Compiled**; not device-tested. Accelerometer-as-stick and per-button auto-hold are not in the new overlay |
+| Hardware pads | Keys, sticks, triggers, hat; remap screen for SNES/PSP/GC; auto-hide on connect | **Automated-tested** (bindings, events); not device-tested |
 
 — Victorious
