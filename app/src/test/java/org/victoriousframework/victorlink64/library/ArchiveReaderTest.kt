@@ -135,4 +135,33 @@ class ArchiveReaderTest {
         val head = reader.read(FileArchiveSource(f), ArchiveKind.ZIP, "a.z64") { ArchiveReader.readHeader(it, 4) }
         assertEquals("z64", GameFormats.n64Order(head))
     }
+
+    /** Stands in for the native libarchive reader: plays back entries from memory. */
+    private class FakeRar(val entries: List<Triple<String, Long, ByteArray>>) : RarBackend {
+        override fun forEach(source: ArchiveSource, visit: (String, Long, java.io.InputStream) -> Boolean) {
+            for ((n, size, bytes) in entries) if (!visit(n, size, bytes.inputStream())) break
+        }
+    }
+
+    @Test fun rarBackendListsAndUnpacksGames() {
+        val game = Fixtures.n64("v64")
+        val rarReader = ArchiveReader(FakeRar(listOf(
+            Triple("Games/Racer.v64", game.size.toLong(), game), Triple("notes.txt", 2L, "hi".toByteArray()),
+            Triple("Cube (Disc 2).iso", 0x400L, Fixtures.gameCubeIso()))))
+        val f = File(tmp.root, "set.rar").apply { writeBytes(Fixtures.magic("Rar!", 0x1A, 0x07, 0x01, 0x00)) }
+        val l = rarReader.list(FileArchiveSource(f), ArchiveKind.RAR)
+        assertEquals(listOf("Games/Racer.v64" to Console.N64, "Cube (Disc 2).iso" to Console.GAMECUBE), l.games.map { it.path to it.console })
+        val out = rarReader.extract(FileArchiveSource(f), ArchiveKind.RAR, "Games/Racer.v64", File(tmp.root, "x/Racer.v64"))
+        assertArrayEquals(game, out.readBytes())
+    }
+
+    @Test fun shortCopyIsReportedAsIncomplete() {
+        val rarReader = ArchiveReader(FakeRar(listOf(Triple("Big.iso", 5000L, ByteArray(1200)))))
+        val f = File(tmp.root, "cut.rar").apply { writeBytes(Fixtures.magic("Rar!", 0x1A, 0x07, 0x01, 0x00)) }
+        val dest = File(tmp.root, "y/Big.iso")
+        try { rarReader.extract(FileArchiveSource(f), ArchiveKind.RAR, "Big.iso", dest); fail("expected error") }
+        catch (e: FriendlyException) { assertTrue("incomplete" in e.message!!) }
+        assertFalse(dest.exists())
+        assertFalse(File(dest.parentFile, "Big.iso.part").exists())
+    }
 }

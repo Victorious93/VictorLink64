@@ -66,6 +66,33 @@ class ExtractCacheTest {
         assertTrue(mid.exists()) // the game being launched is never evicted
     }
 
+    @Test fun sizeCapEvictsLeastRecentlyUsedAndSparesTheGameBeingPlayed() {
+        val c = ExtractCache(tmp.root)
+        val a = put(c, "a", 1000, 1_000L)
+        val b = put(c, "b", 1000, 2_000L)
+        val d = put(c, "d", 1000, 3_000L)
+        val plenty = { 1L shl 40 }
+        // Room for one more 1000-byte game under a 2500-byte cap: the two oldest go.
+        c.ensureSpace(1000, keep = null, capBytes = 2500, freeBytes = plenty)
+        assertTrue(!a.exists() && !b.exists() && d.exists())
+        // A game bigger than the cap is still allowed (soft cap); the one being played is never removed.
+        val e = put(c, "e", 1000, 4_000L)
+        c.ensureSpace(5000, keep = e, capBytes = 2500, freeBytes = plenty)
+        assertTrue(!d.exists() && e.exists())
+        // No cap (0) removes nothing.
+        put(c, "f", 1000, 5_000L)
+        c.trimToCap(0)
+        assertEquals(2, c.entries().size)
+    }
+
+    @Test fun trimToCapAfterUnpack() {
+        val c = ExtractCache(tmp.root)
+        val a = put(c, "a", 1000, 1_000L)
+        val b = put(c, "b", 1000, 2_000L)
+        c.trimToCap(1500, keep = b)
+        assertTrue(!a.exists() && b.exists())
+    }
+
     @Test fun bytesAreHumanReadable() {
         assertEquals("512 B", formatBytes(512))
         assertEquals("1.5 MB", formatBytes(1572864))

@@ -172,6 +172,14 @@ object GameLauncher {
 
     fun cache(c: Context) = ExtractCache(cacheRoot(c))
 
+    /** Cache size cap choices in GB (0 = no cap) and the stored choice. The cap is soft: one big game may exceed it. */
+    val CAP_CHOICES_GB = listOf(2, 4, 8, 16, 0)
+    private const val KEY_CAP_GB = "unpack_cache_cap_gb"
+    private const val DEFAULT_CAP_GB = 4
+    fun capGb(c: Context): Int = c.getSharedPreferences("victorlink64_prefs", Context.MODE_PRIVATE).getInt(KEY_CAP_GB, DEFAULT_CAP_GB)
+    fun setCapGb(c: Context, gb: Int) { c.getSharedPreferences("victorlink64_prefs", Context.MODE_PRIVATE).edit().putInt(KEY_CAP_GB, gb).apply() }
+    fun capBytes(c: Context): Long = capGb(c).toLong() shl 30
+
     /** Call off the main thread. Returns null if the user cancelled. */
     fun prepare(c: Context, g: Game): Uri? {
         val entry = g.zipEntry ?: return g.uri
@@ -180,7 +188,7 @@ object GameLauncher {
         val slot = cache.slotFor(g.uri.toString(), g.sourceSize, g.sourceModified, entry)
         cache.reuse(slot)?.let { return Uri.fromFile(it) }
         cache.cleanPartials()
-        cache.ensureSpace(g.size, slot)
+        cache.ensureSpace(g.size, slot, capBytes(c))
         ImportProgress.cancelled = false
         ImportProgress.state = ImportProgress.State(g.name, 0, g.size)
         try {
@@ -190,6 +198,7 @@ object GameLauncher {
                 !ImportProgress.cancelled
             }
             cache.writeInfo(slot, g.name + (g.disc?.let { " (Disc $it)" } ?: ""), srcName)
+            cache.trimToCap(capBytes(c), keep = slot)
             return Uri.fromFile(slot)
         } catch (e: ArchiveReader.CancelledException) {
             slot.parentFile?.deleteRecursively()

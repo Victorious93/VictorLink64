@@ -98,6 +98,9 @@ class ArchiveReader(private val rar: RarBackend? = null) {
                     if (path != entryPath || data == null) return@forEachEntry true
                     found = true
                     part.outputStream().buffered(1 shl 16).use { out -> copy(data, out, size, onProgress) }
+                    // gzip/xz sizes are approximate (gzip stores the size modulo 4 GiB), so only trust the others.
+                    if (size >= 0 && kind != ArchiveKind.GZIP && kind != ArchiveKind.XZ && part.length() != size)
+                        throw FriendlyException("${src.name} looks incomplete or damaged (it may still be downloading). Download it again and retry.")
                     false
                 }
             }

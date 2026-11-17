@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -107,6 +108,21 @@ fun StorageScreen(onBack: () -> Unit) {
         Spacer(Modifier.height(8.dp))
         Text("Games inside archives are unpacked once and kept here so they start fast next time. " +
             "Deleting one only frees space — it's unpacked again the next time you play it.", color = Muted, fontSize = 13.sp)
+        Spacer(Modifier.height(12.dp))
+        var capGb by remember { mutableIntStateOf(GameLauncher.capGb(ctx)) }
+        Text("Keep unpacked games under", color = Color.White, fontWeight = FontWeight.SemiBold)
+        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            GameLauncher.CAP_CHOICES_GB.forEach { gb ->
+                FilterChip(
+                    selected = capGb == gb,
+                    onClick = { capGb = gb; GameLauncher.setCapGb(ctx, gb); cache.trimToCap(GameLauncher.capBytes(ctx)); version++ },
+                    label = { Text(if (gb == 0) "No limit" else "$gb GB") },
+                    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = NeonBlue, selectedLabelColor = Navy, labelColor = Color.White)
+                )
+            }
+        }
+        Text("When the limit is reached, the games you played longest ago are removed first. They unpack again when you play them.",
+            color = Muted, fontSize = 12.sp)
         Spacer(Modifier.height(12.dp))
         SectionHeader("Unpacked games", "${entries.size} · ${formatBytes(total)} used · ${formatBytes(free)} free on phone")
         Spacer(Modifier.height(8.dp))

@@ -50,19 +50,32 @@ class ExtractCache(val root: File) {
 
     /**
      * Makes room for [needed] bytes, deleting least-recently-used unpacked games (never [keep]).
-     * Throws a [FriendlyException] if there still isn't enough free space.
+     * Two limits apply: the user's size cap [capBytes] (0 = no cap; soft, so one game bigger than the cap is still
+     * allowed) and the phone's free space. Throws a [FriendlyException] if there still isn't enough free space.
      */
-    fun ensureSpace(needed: Long, keep: File? = null, freeBytes: () -> Long = { root.apply { mkdirs() }.usableSpace }) {
+    fun ensureSpace(needed: Long, keep: File? = null, capBytes: Long = 0L, freeBytes: () -> Long = { root.apply { mkdirs() }.usableSpace }) {
+        if (capBytes > 0) evictWhile(keep) { totalBytes() + needed > capBytes }
         if (needed <= 0) return
         val margin = 64L shl 20
         if (freeBytes() >= needed + margin) return
+        evictWhile(keep) { freeBytes() < needed + margin }
+        if (freeBytes() >= needed + margin) return
+        throw FriendlyException("Not enough free space to unpack this game (needs ${formatBytes(needed)}, " +
+            "${formatBytes(freeBytes().coerceAtLeast(0))} free). Free up space on your phone and try again.")
+    }
+
+    /** Trims the cache back under [capBytes] (0 = no cap), oldest first, never touching [keep]. */
+    fun trimToCap(capBytes: Long, keep: File? = null) {
+        if (capBytes > 0) evictWhile(keep) { totalBytes() > capBytes }
+    }
+
+    private inline fun evictWhile(keep: File?, tooFull: () -> Boolean) {
+        if (!tooFull()) return
         for (e in entries().sortedBy { it.lastUsed }) {
             if (keep != null && e.dir == keep.parentFile) continue
             delete(e)
-            if (freeBytes() >= needed + margin) return
+            if (!tooFull()) return
         }
-        throw FriendlyException("Not enough free space to unpack this game (needs ${formatBytes(needed)}, " +
-            "${formatBytes(freeBytes().coerceAtLeast(0))} free). Free up space on your phone and try again.")
     }
 
     companion object {

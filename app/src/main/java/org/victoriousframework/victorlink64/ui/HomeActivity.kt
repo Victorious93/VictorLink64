@@ -292,13 +292,13 @@ fun LibraryScreen() {
         Spacer(Modifier.height(12.dp))
         when {
             !hasSource -> EmptyState("Add your games", "Tap “Pick folder” for a whole folder, or the add-file button for single games. " +
-                "Zip, 7z, tar, gz and xz archives work too — no need to unzip.")
+                "Zip, 7z, RAR, tar, gz and xz archives work too — no need to unzip.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
             games.isEmpty() -> Column {
                 ProblemsBanner(scanInfo) { showProblems = true }
                 EmptyState(scanInfo?.error ?: "No games found",
                     "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 finds N64 (.z64 .n64 .v64), SNES (.sfc .smc), " +
-                    "PSP (.iso .cso .chd .pbp) and GameCube (.iso .gcm .rvz .gcz .wia .ciso) games, also inside .zip .7z .tar .gz .xz archives, up to 4 folders deep.")
+                    "PSP (.iso .cso .chd .pbp) and GameCube (.iso .gcm .rvz .gcz .wia .ciso) games, also inside .zip .7z .rar .tar .gz .xz archives, up to 4 folders deep.")
             }
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 item { ProblemsBanner(scanInfo) { showProblems = true } }
@@ -441,6 +441,9 @@ fun AboutScreen() {
             "(https://github.com/mupen64plus-ae/mupen64plus-ae), including its core, RSP, audio, input " +
             "and video plugins (GLideN64, Glide64mk2, Rice, gln64, Angrylion-Plus, paraLLEl). " +
             "Copyright © their respective authors and contributors.\n\n" +
+            "Importing games from archives uses libarchive (BSD licence, https://libarchive.org) through the " +
+            "libarchive-android bindings by Hai Zhang (Apache License 2.0) for RAR; Apache Commons Compress " +
+            "(Apache License 2.0) for zip, 7z and tar; and XZ for Java (public domain / 0BSD) for xz and 7z.\n\n" +
             "SNES emulation uses bsnes by byuu and contributors (libretro port, https://github.com/libretro/bsnes), " +
             "licensed under the GNU GPL v3; its bundled Game Boy core (SameBoy, © Lior Halphon) is MIT licensed.\n\n" +
             "PSP emulation uses PPSSPP by Henrik Rydgård and contributors (libretro core, https://github.com/hrydgard/ppsspp), " +
