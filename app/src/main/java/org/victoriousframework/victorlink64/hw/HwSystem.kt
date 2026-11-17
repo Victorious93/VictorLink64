@@ -7,8 +7,8 @@ import org.victoriousframework.victorlink64.controls.Console
  * [coreLib] is the file name under the app's native library dir (arm64-v8a only).
  */
 enum class HwSystem(val label: String, val coreLib: String, val dirName: String, val extensions: Set<String>, val console: Console) {
-    PSP("PSP", "libppsspp_libretro.so", "psp", setOf("iso", "cso", "pbp"), Console.PSP),
-    GAMECUBE("GameCube", "libdolphin_libretro.so", "gamecube", setOf("iso", "gcm", "rvz", "ciso"), Console.GAMECUBE),
+    PSP("PSP", "libppsspp_libretro.so", "psp", setOf("iso", "cso", "zso", "pbp", "chd"), Console.PSP),
+    GAMECUBE("GameCube", "libdolphin_libretro.so", "gamecube", setOf("iso", "gcm", "rvz", "gcz", "wia", "ciso"), Console.GAMECUBE),
     PS2("PlayStation 2", "liblrps2_libretro.so", "ps2", Ps2Disc.EXTENSIONS, Console.PS2);
 
     companion object {
@@ -23,8 +23,8 @@ enum class HwSystem(val label: String, val coreLib: String, val dirName: String,
          * PlayStation 2 images need their contents read, so they are recognised by [DiscDetect], not here.
          */
         fun detect(ext: String, header: ByteArray?): HwSystem? = when (ext.lowercase()) {
-            "cso", "pbp" -> PSP
-            "gcm", "rvz", "ciso" -> GAMECUBE
+            "cso", "zso", "pbp", "chd" -> PSP
+            "gcm", "rvz", "gcz", "wia", "ciso" -> GAMECUBE
             "iso" -> if (header != null && isGameCubeHeader(header)) GAMECUBE else PSP
             else -> null
         }

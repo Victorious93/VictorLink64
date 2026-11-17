@@ -59,18 +59,22 @@ val Muted = Color(0xFF8FA3C8)
 
 private const val PREFS = "victorlink64_prefs"
 private const val KEY_FOLDER = "rom_folder"
-private val N64_EXT = setOf("z64", "n64", "v64")
-private val SNES_EXT = setOf("sfc", "smc")
-private val ROM_EXT = N64_EXT + SNES_EXT
-
 data class Game(val name: String, val uri: Uri, val size: Long, val snes: Boolean = false, val fileName: String = "",
-    /** For .zip games: the ROM entry inside the archive. */ val zipEntry: String? = null,
-    /** PSP / GameCube / PS2 disc images (never zipped). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null,
+    /** For archived games (zip, 7z, rar, tar, gz, xz): the game's entry inside the archive. */ val zipEntry: String? = null,
+    /** PSP / GameCube / PS2 disc images (never inside archives for PS2). */ val hw: org.victoriousframework.victorlink64.hw.HwSystem? = null,
+    /** Archive type when [zipEntry] is set. */ val archive: org.victoriousframework.victorlink64.library.ArchiveKind? = null,
+    /** Disc number for multi-disc sets ("(Disc 2)"), null for single-disc games. */ val disc: Int? = null,
+    /** Size and date of the file on storage (the archive, for archived games); keys the unpack cache. */
+    val sourceSize: Long = size, val sourceModified: Long = 0L,
+    /** Detected format, e.g. "z64", "iso", "rvz". */ val format: String = "",
+    /** File name of the archive the game lives in (empty for plain files); tells apart same-titled games. */ val archiveName: String = "",
     /** For PS2 .cue sheets: the track files named by the sheet. */ val tracks: List<Pair<String, Uri>> = emptyList()) {
     val systemLabel get() = hw?.label ?: if (snes) "SNES" else "N64"
 }
 
-data class ScanResult(val games: List<Game>, val filesSeen: Int, val error: String? = null)
+/** [problems]: files that look like games but can't be added, each with a plain-language reason. */
+data class ScanResult(val games: List<Game>, val filesSeen: Int, val error: String? = null,
+    val problems: List<Pair<String, String>> = emptyList())
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,88 +163,13 @@ fun Header() {
 
 fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
-/** Finds the first ROM entry inside a zip (streamed; most ROM zips have a single entry). */
-fun findRomInZip(c: Context, uri: Uri): String? = runCatching {
-    c.contentResolver.openInputStream(uri)?.use { ins ->
-        java.util.zip.ZipInputStream(java.io.BufferedInputStream(ins)).use { z ->
-            var e = z.nextEntry
-            var guard = 0
-            while (e != null && guard++ < 64) {
-                if (!e.isDirectory && e.name.substringAfterLast('.', "").lowercase() in ROM_EXT) return@runCatching e.name
-                e = z.nextEntry
-            }
-            null
-        }
-    }
-}.getOrNull()
-
-/** First 64 bytes of a document, used to tell GameCube and PSP .iso images apart. */
-private fun readHeader(c: Context, uri: Uri): ByteArray? = runCatching {
-    c.contentResolver.openInputStream(uri)?.use { i -> ByteArray(64).also { b -> var n = 0; while (n < 64) { val k = i.read(b, n, 64 - n); if (k < 0) break; n += k } } }
-}.getOrNull()
-
-fun scanFolder(c: Context, tree: Uri): ScanResult {
-    val root = DocumentFile.fromTreeUri(c, tree) ?: return ScanResult(emptyList(), 0, "Folder can't be opened")
-    if (!root.canRead()) return ScanResult(emptyList(), 0, "No permission to read this folder — pick it again")
-    val zipCache = c.getSharedPreferences("victorlink64_zipcache", Context.MODE_PRIVATE)
-    val out = mutableListOf<Game>()
-    var seen = 0
-    fun walk(d: DocumentFile, depth: Int) {
-        val files = d.listFiles().toList()
-        for (f in files) {
-            if (f.isDirectory) { if (depth < 4) walk(f, depth + 1); continue }
-            seen++
-            val n = f.name ?: continue
-            val ext = n.substringAfterLast('.', "").lowercase()
-            val base = n.substringBeforeLast('.')
-            when {
-                ext in ROM_EXT -> out += Game(base, f.uri, f.length(), ext in SNES_EXT, n)
-                ext in HwSystem.ALL_EXTENSIONS -> org.victoriousframework.victorlink64.hw.DiscDetect.detect(c, f, ext, files)
-                    ?.let { out += Game(base, f.uri, f.length(), false, n, hw = it.system, tracks = it.companions) }
-                ext == "zip" -> {
-                    val key = f.uri.toString() + "#" + f.length() + "#" + f.lastModified()
-                    val entry = if (zipCache.contains(key)) zipCache.getString(key, "") else findRomInZip(c, f.uri).also { zipCache.edit().putString(key, it ?: "").apply() }
-                    if (!entry.isNullOrEmpty()) {
-                        val inner = entry.substringAfterLast('.', "").lowercase()
-                        out += Game(base, f.uri, f.length(), inner in SNES_EXT, entry.substringAfterLast('/'), entry)
-                    }
-                }
-            }
-        }
-    }
-    return try {
-        walk(root, 0)
-        ScanResult(out.sortedBy { it.name.lowercase() }, seen)
-    } catch (e: Exception) {
-        ScanResult(out, seen, "Scan failed: ${e.message}")
-    }
-}
-
-/** Extracts a zipped ROM to the app cache (re-used if already extracted). Call off the main thread. */
-fun extractZipRom(c: Context, g: Game): java.io.File {
-    val dir = java.io.File(c.cacheDir, "roms").apply { mkdirs() }
-    // Keyed by archive + entry + size so two different zips holding e.g. "game.z64" never share a cache file.
-    val tag = Integer.toHexString("${g.uri}#${g.zipEntry}#${g.size}".hashCode())
-    val out = java.io.File(dir, tag + "_" + g.fileName.replace(Regex("[^A-Za-z0-9._ -]"), "_"))
-    if (out.exists() && out.length() > 0) return out
-    // keep the cache small: only the most recent extracted ROM
-    dir.listFiles()?.forEach { it.delete() }
-    c.contentResolver.openInputStream(g.uri)!!.use { ins ->
-        java.util.zip.ZipInputStream(java.io.BufferedInputStream(ins)).use { z ->
-            var e = z.nextEntry
-            while (e != null) {
-                if (e.name == g.zipEntry) { val tmp = java.io.File(dir, out.name + ".part"); tmp.outputStream().use { z.copyTo(it) }; tmp.renameTo(out); return out }
-                e = z.nextEntry
-            }
-        }
-    }
-    throw java.io.FileNotFoundException("${g.zipEntry} not found in zip")
-}
+/** Scans the picked folder (if any) plus individually added files, including games inside archives. */
+fun scanFolder(c: Context, tree: Uri?): ScanResult = org.victoriousframework.victorlink64.library.LibraryScanner.scan(c, tree)
 
 /** Launches any library game (N64, SNES, PSP or GameCube; N64/SNES may be zipped). Call off the main thread. */
 fun launchGame(c: Context, g: Game) {
     try {
-        val uri = if (g.zipEntry != null) { toast(c, "Unpacking ${g.name}…"); Uri.fromFile(extractZipRom(c, g)) } else g.uri
+        val uri = org.victoriousframework.victorlink64.library.GameLauncher.prepare(c, g) ?: return
         if (g.hw == HwSystem.PS2) org.victoriousframework.victorlink64.hw.Ps2SetupActivity.open(c, uri, g.fileName, g.name, g.tracks)
         else if (g.hw != null) c.startActivity(Intent(c, org.victoriousframework.victorlink64.hw.HwActivity::class.java)
             .putExtra(org.victoriousframework.victorlink64.hw.HwActivity.EXTRA_ROM_URI, uri.toString())
@@ -252,8 +181,10 @@ fun launchGame(c: Context, g: Game) {
             .putExtra(org.victoriousframework.victorlink64.snes.SnesActivity.EXTRA_ROM_NAME, g.fileName)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         else launchRom(c, uri, g.name)
+    } catch (e: org.victoriousframework.victorlink64.library.FriendlyException) {
+        toast(c, e.message ?: "Could not open ${g.name}")
     } catch (e: Exception) {
-        toast(c, "Could not open ${g.name}: ${e.message}")
+        toast(c, "Could not open ${g.name}. The file may be damaged or still downloading.")
     }
 }
 
@@ -290,18 +221,31 @@ fun LibraryScreen() {
     var games by remember { mutableStateOf<List<Game>>(emptyList()) }
     var loading by remember { mutableStateOf(false) }
     var scanInfo by remember { mutableStateOf<ScanResult?>(null) }
+    var addedCount by remember { mutableStateOf(org.victoriousframework.victorlink64.library.LibraryScanner.addedFiles(ctx).size) }
+    var showProblems by remember { mutableStateOf(false) }
+    val hasSource = folder != null || addedCount > 0
 
     fun refresh() {
-        val f = folder ?: return
+        if (folder == null && org.victoriousframework.victorlink64.library.LibraryScanner.addedFiles(ctx).isEmpty()) { games = emptyList(); scanInfo = null; return }
+        val f = folder
         loading = true
         scope.launch {
-            val r = withContext(Dispatchers.IO) { runCatching { scanFolder(ctx, Uri.parse(f)) }.getOrElse { ScanResult(emptyList(), 0, it.message) } }
+            val r = withContext(Dispatchers.IO) { runCatching { scanFolder(ctx, f?.let(Uri::parse)) }.getOrElse { ScanResult(emptyList(), 0, "Couldn't read your games. Pick the folder again.") } }
             games = r.games; scanInfo = r
             loading = false
             when {
                 r.error != null -> Toast.makeText(ctx, r.error, Toast.LENGTH_LONG).show()
-                r.games.isEmpty() -> Toast.makeText(ctx, "No games found (${r.filesSeen} files checked). Supported: .z64 .n64 .v64 .sfc .smc .zip, PSP .iso .cso .pbp, GameCube .iso .gcm .rvz .ciso", Toast.LENGTH_LONG).show()
+                r.games.isEmpty() -> Toast.makeText(ctx, "No games found (${r.filesSeen} files checked).", Toast.LENGTH_LONG).show()
             }
+        }
+    }
+    val filePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        if (uris.isNotEmpty()) {
+            val kept = uris.filter { u -> runCatching { ctx.contentResolver.takePersistableUriPermission(u, Intent.FLAG_GRANT_READ_URI_PERMISSION) }.isSuccess }
+            if (kept.size < uris.size) Toast.makeText(ctx, "Some files can only be opened once. Copy them to your phone's storage to keep them in the library.", Toast.LENGTH_LONG).show()
+            org.victoriousframework.victorlink64.library.LibraryScanner.addFiles(ctx, kept)
+            addedCount = org.victoriousframework.victorlink64.library.LibraryScanner.addedFiles(ctx).size
+            refresh()
         }
     }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -313,11 +257,14 @@ fun LibraryScreen() {
         }
     }
     LaunchedEffect(folder) { refresh() }
+    org.victoriousframework.victorlink64.library.UnpackDialog()
+    if (showProblems) org.victoriousframework.victorlink64.library.ProblemsDialog(scanInfo?.problems.orEmpty()) { showProblems = false }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Library", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.weight(1f))
-            if (folder != null) IconButton(onClick = { refresh() }) { Icon(Icons.Filled.Refresh, "Rescan", tint = NeonBlue) }
+            if (hasSource) IconButton(onClick = { refresh() }) { Icon(Icons.Filled.Refresh, "Rescan", tint = NeonBlue) }
+            IconButton(onClick = { filePicker.launch(arrayOf("*/*")) }) { Icon(Icons.Filled.UploadFile, "Add game files", tint = NeonBlue) }
             Button(onClick = { picker.launch(null) }, colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)) {
                 Icon(Icons.Filled.Folder, null); Spacer(Modifier.width(6.dp)); Text(if (folder == null) "Pick folder" else "Change")
             }
@@ -372,11 +319,17 @@ fun LibraryScreen() {
         }
         Spacer(Modifier.height(12.dp))
         when {
-            folder == null -> EmptyState("Choose your ROM folder", "Tap “Pick folder” and select where your N64, SNES, PSP, GameCube and PS2 games live.")
+            !hasSource -> EmptyState("Add your games", "Tap “Pick folder” for a whole folder, or the add-file button for single games. " +
+                "Zip, 7z, RAR, tar, gz and xz archives work too — no need to unzip.")
             loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = NeonBlue) }
-            games.isEmpty() -> EmptyState(scanInfo?.error ?: "No games found",
-                "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 looks for .z64 .n64 .v64 (N64), .sfc .smc (SNES), .zip files containing them, .iso .cso .pbp (PSP), .iso .gcm .rvz .ciso (GameCube) and .iso .cso .chd .cue (PlayStation 2), up to 4 folders deep.")
+            games.isEmpty() -> Column {
+                ProblemsBanner(scanInfo) { showProblems = true }
+                EmptyState(scanInfo?.error ?: "No games found",
+                    "Checked ${scanInfo?.filesSeen ?: 0} files. VictorLink64 finds N64 (.z64 .n64 .v64), SNES (.sfc .smc), " +
+                    "PSP (.iso .cso .chd .pbp), PlayStation 2 (.iso .cso .chd .bin/.cue; not inside archives) and GameCube (.iso .gcm .rvz .gcz .wia .ciso) games, also inside .zip .7z .rar .tar .gz .xz archives, up to 4 folders deep.")
+            }
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                item { ProblemsBanner(scanInfo) { showProblems = true } }
                 items(games) { g ->
                     Row(
                         Modifier.fillMaxWidth().clip16().background(NavyCard)
@@ -390,14 +343,27 @@ fun LibraryScreen() {
                         }
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
-                            Text(g.name, color = Color.White, fontWeight = FontWeight.SemiBold)
-                            Text(g.systemLabel + (if (g.zipEntry != null) " · ZIP" else "") + " · %.1f MB".format(g.size / 1048576f), color = Muted, fontSize = 12.sp)
+                            Text(g.name + (g.disc?.let { " · Disc $it" } ?: ""), color = Color.White, fontWeight = FontWeight.SemiBold)
+                            Text(org.victoriousframework.victorlink64.library.gameSubtitle(g), color = Muted, fontSize = 12.sp)
                         }
                         PlayBadge("Play")
                     }
                 }
             }
         }
+    }
+}
+
+/** "3 files couldn't be added" banner; tap for the reasons. */
+@Composable
+fun ProblemsBanner(r: ScanResult?, onClick: () -> Unit) {
+    val n = r?.problems?.size ?: 0
+    if (n == 0) return
+    Row(Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .10f)).clickable(onClick = onClick).padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        Icon(Icons.Filled.Info, null, tint = NeonBlue)
+        Spacer(Modifier.width(10.dp))
+        Text(if (n == 1) "1 file couldn't be added — tap to see why" else "$n files couldn't be added — tap to see why", color = Color.White, fontSize = 13.sp)
     }
 }
 
@@ -461,6 +427,9 @@ fun SettingsScreen() {
         SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
         }
+        SettingRow("Game storage", "Unpacked games, added files and free space") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.library.StorageActivity::class.java))
+        }
         SettingRow("Graphics & performance", "Auto Best Settings, quality per emulator, FPS counter, Shizuku boosts") {
             ctx.startActivity(Intent(ctx, GraphicsSettingsActivity::class.java))
         }
@@ -509,6 +478,9 @@ fun AboutScreen() {
             "(https://github.com/mupen64plus-ae/mupen64plus-ae), including its core, RSP, audio, input " +
             "and video plugins (GLideN64, Glide64mk2, Rice, gln64, Angrylion-Plus, paraLLEl). " +
             "Copyright © their respective authors and contributors.\n\n" +
+            "Importing games from archives uses libarchive (BSD licence, https://libarchive.org) through the " +
+            "libarchive-android bindings by Hai Zhang (Apache License 2.0) for RAR; Apache Commons Compress " +
+            "(Apache License 2.0) for zip, 7z and tar; and XZ for Java (public domain / 0BSD) for xz and 7z.\n\n" +
             "SNES emulation uses bsnes by byuu and contributors (libretro port, https://github.com/libretro/bsnes), " +
             "licensed under the GNU GPL v3; its bundled Game Boy core (SameBoy, © Lior Halphon) is MIT licensed.\n\n" +
             "PSP emulation uses PPSSPP by Henrik Rydgård and contributors (libretro core, https://github.com/hrydgard/ppsspp), " +
