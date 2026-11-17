@@ -1,4 +1,4 @@
-// Victorious Framework: Moonlight streaming core for VictorLink64 "PC Games".
+// Victorious Framework: Moonlight streaming core for VictorLink64 "PC Streaming".
 // Vendored from moonlight-stream/moonlight-android (GPL-3.0) at commit b48494cb96bf
 // (moonlight-common-c 874ac9548f1b, enet aca87840b57f, nanors b1e3c22ca0cd).
 // Only the protocol, pairing, discovery, decoder and audio pieces are kept; the

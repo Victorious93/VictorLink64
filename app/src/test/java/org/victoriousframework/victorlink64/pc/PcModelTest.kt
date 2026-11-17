@@ -70,4 +70,22 @@ class PcModelTest {
         assertEquals(PadFlags.UP or PadFlags.LEFT, hatFlags(-1f, -1f))
         assertEquals(0, hatFlags(0f, 0.2f))
     }
+
+    @Test fun nintendoLayoutSwapsFaceButtonsOnly() {
+        assertEquals(PadFlags.B, remapFace(PadFlags.A, true))
+        assertEquals(PadFlags.A, remapFace(PadFlags.B, true))
+        assertEquals(PadFlags.Y, remapFace(PadFlags.X, true))
+        assertEquals(PadFlags.X, remapFace(PadFlags.Y, true))
+        assertEquals(PadFlags.START, remapFace(PadFlags.START, true))
+        assertEquals(PadFlags.LB, remapFace(PadFlags.LB, true))
+        assertEquals(PadFlags.A, remapFace(PadFlags.A, false))
+    }
+
+    @Test fun streamDefaultsAreSafe() {
+        val s = StreamSettings()
+        assertEquals(StreamRes.P720, s.res)
+        assertEquals(60, s.fps)
+        assertEquals(0, s.bitrateKbps)
+        assertEquals(false, s.swapAbxy)
+    }
 }

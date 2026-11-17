@@ -53,18 +53,18 @@ import org.victoriousframework.victorlink64.ui.VictorTheme
 import org.victoriousframework.victorlink64.ui.clip16
 
 /*
- * Victorious Framework: "PC Games" — stream games from your own PC (Sunshine or NVIDIA
+ * Victorious Framework: "PC Streaming" — stream games from your own PC (Sunshine or NVIDIA
  * GameStream) to this phone. Original VictorLink64 screens on top of the vendored
  * Moonlight core (moonlight-stream/moonlight-android, GPL-3.0).
  */
-class PcGamesActivity : ComponentActivity() {
+class PcStreamingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { VictorTheme { PcGamesApp(onExit = { finish() }) } }
+        setContent { VictorTheme { PcStreamingApp(onExit = { finish() }) } }
     }
 
     companion object {
-        fun launch(c: Context) = c.startActivity(Intent(c, PcGamesActivity::class.java))
+        fun launch(c: Context) = c.startActivity(Intent(c, PcStreamingActivity::class.java))
     }
 }
 
@@ -78,7 +78,7 @@ private sealed interface PcScreen {
 private enum class Reach { CHECKING, ONLINE, OFFLINE }
 
 @Composable
-private fun PcGamesApp(onExit: () -> Unit) {
+private fun PcStreamingApp(onExit: () -> Unit) {
     var screen by remember { mutableStateOf<PcScreen>(PcScreen.Hosts) }
     BackHandler { if (screen == PcScreen.Hosts) onExit() else screen = PcScreen.Hosts }
     Surface(color = Navy, modifier = Modifier.fillMaxSize()) {
@@ -149,7 +149,7 @@ private fun HostsScreen(onOpen: (String) -> Unit, onSettings: () -> Unit, onHelp
     }
 
     Column(Modifier.fillMaxSize()) {
-        TopRow("PC Games", onBack) {
+        TopRow("PC Streaming", onBack) {
             IconButton(onClick = onHelp) { Icon(Icons.Filled.HelpOutline, "How to set up your PC", tint = NeonBlue) }
             IconButton(onClick = onSettings) { Icon(Icons.Filled.Tune, "Stream settings", tint = NeonBlue) }
         }
@@ -423,6 +423,7 @@ private fun SettingsScreen(onBack: () -> Unit) {
             FramePacing.entries.forEach { p -> Radio(p.label, p.detail, s.pacing == p) { set(s.copy(pacing = p)) } }
             Section("Controls and extras")
             Toggle("On-screen controller", "Shows touch buttons. Turn off to use the screen as a mouse.", s.touchControls) { set(s.copy(touchControls = it)) }
+            Toggle("Nintendo-style buttons", "For a real controller whose A/B and X/Y labels are the other way round.", s.swapAbxy) { set(s.copy(swapAbxy = it)) }
             Toggle("Show stream stats", "Frame rate, lag and dropped frames in a corner.", s.showStats) { set(s.copy(showStats = it)) }
             Toggle("Also play sound on the PC", null, s.playAudioOnPc) { set(s.copy(playAudioOnPc = it)) }
             Spacer(Modifier.height(24.dp))
@@ -457,7 +458,7 @@ private fun HelpScreen(onBack: () -> Unit) {
         "Open Sunshine and make a login" to "Sunshine opens a web page at https://localhost:47990 on the PC. " +
             "Your browser may warn about the page; that's normal for Sunshine. Pick a username and password.",
         "Put both on the same Wi-Fi" to "Connect this phone to the same Wi-Fi or network as the PC. A PC plugged in with a cable is best.",
-        "Find your PC here" to "Open PC Games. Your PC should appear by itself. If not, tap “Add PC by address” and type the PC's IP address.",
+        "Find your PC here" to "Open PC Streaming. Your PC should appear by itself. If not, tap “Add PC by address” and type the PC's IP address.",
         "Pair once" to "Tap your PC. This phone shows a 4-digit PIN. In Sunshine, open the PIN page, type the PIN and a name for the phone, then send it.",
         "Pick a game and play" to "Choose “Desktop” or a game you added in Sunshine's Applications page. A controller you plug in or connect by Bluetooth works too.",
         "If it's laggy" to "Lower the quality or picture size in Stream settings, move closer to the router, or use 5 GHz Wi-Fi.",
@@ -474,9 +475,6 @@ private fun HelpScreen(onBack: () -> Unit) {
                     Column { Text(t, color = Color.White, fontWeight = FontWeight.Bold); Text(b, color = Muted, fontSize = 13.sp) }
                 }
             }
-            Spacer(Modifier.height(12.dp))
-            Text("PC streaming is powered by Moonlight (moonlight-stream.org), free software under the GNU GPL v3.",
-                color = Muted, fontSize = 12.sp)
         }
     }
 }

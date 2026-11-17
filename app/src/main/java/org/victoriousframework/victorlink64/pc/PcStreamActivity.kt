@@ -40,6 +40,7 @@ import com.limelight.nvstream.http.NvApp
 import com.limelight.nvstream.input.MouseButtonPacket
 import com.limelight.nvstream.jni.MoonBridge
 import com.limelight.preferences.PreferenceConfiguration
+import org.victoriousframework.victorlink64.ui.PadPrefs
 import kotlin.math.abs
 
 /*
@@ -167,6 +168,8 @@ class PcStreamActivity : Activity(), SurfaceHolder.Callback, NvConnectionListene
 
     private fun addPad(root: FrameLayout) {
         val p = PcTouchPad(this) { s -> touch = s; sendPad() }
+        val prefs = PadPrefs(this)
+        p.alphaLevel = prefs.opacity; p.sizeScale = prefs.scale
         root.addView(p, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         pad = p
     }
@@ -197,7 +200,12 @@ class PcStreamActivity : Activity(), SurfaceHolder.Callback, NvConnectionListene
     private fun showMenu(anchor: View) {
         val m = PopupMenu(this, anchor)
         m.menu.add(0, 1, 0, if (pad != null) "Hide on-screen controller" else "Show on-screen controller")
-        m.menu.add(0, 2, 1, "Stop streaming")
+        if (pad != null) {
+            val pp = PadPrefs(this)
+            m.menu.add(0, 3, 1, "Controller size: ${PadPrefs.scaleLabel(pp.scale)}")
+            m.menu.add(0, 4, 2, "Controller opacity: ${(pp.opacity * 100).toInt()}%")
+        }
+        m.menu.add(0, 2, 3, "Stop streaming")
         m.setOnMenuItemClickListener {
             when (it.itemId) {
                 1 -> {
@@ -206,6 +214,8 @@ class PcStreamActivity : Activity(), SurfaceHolder.Callback, NvConnectionListene
                         ?: run { addPad(root); anchor.bringToFront(); status.bringToFront(); stats.bringToFront() }
                 }
                 2 -> stopAndFinish()
+                3 -> pad?.let { p -> val pp = PadPrefs(this); pp.scale = PadPrefs.next(PadPrefs.SCALES, pp.scale); p.sizeScale = pp.scale }
+                4 -> pad?.let { p -> val pp = PadPrefs(this); pp.opacity = PadPrefs.next(PadPrefs.OPACITIES, pp.opacity); p.alphaLevel = pp.opacity }
             }
             true
         }
@@ -291,7 +301,7 @@ class PcStreamActivity : Activity(), SurfaceHolder.Callback, NvConnectionListene
 
     override fun dispatchKeyEvent(e: KeyEvent): Boolean {
         if (connected && isGamepad(e.device, e.source)) {
-            val f = keyFlag(e.keyCode)
+            val f = remapFace(keyFlag(e.keyCode), settings.swapAbxy)
             val trig = e.keyCode == KeyEvent.KEYCODE_BUTTON_L2 || e.keyCode == KeyEvent.KEYCODE_BUTTON_R2
             if (f != 0 || trig) {
                 val down = e.action == KeyEvent.ACTION_DOWN
@@ -451,7 +461,7 @@ class PcStreamActivity : Activity(), SurfaceHolder.Callback, NvConnectionListene
 
         /** Reads the GPU name once per OS build (Moonlight uses it for decoder quirks). */
         fun glRenderer(c: Context): String {
-            val sp = c.getSharedPreferences("vl64_pc_games", Context.MODE_PRIVATE)
+            val sp = c.getSharedPreferences("vl64_pc_streaming", Context.MODE_PRIVATE)
             if (sp.getString("gl_fp", null) == Build.FINGERPRINT) return sp.getString("gl_renderer", "") ?: ""
             val r = runCatching { queryGlRenderer() }.getOrNull() ?: ""
             sp.edit().putString("gl_fp", Build.FINGERPRINT).putString("gl_renderer", r).apply()

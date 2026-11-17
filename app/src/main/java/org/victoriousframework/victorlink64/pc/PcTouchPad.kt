@@ -5,9 +5,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
-import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
+import org.victoriousframework.victorlink64.ui.padHaptic
 import kotlin.math.hypot
 import kotlin.math.min
 
@@ -42,9 +42,10 @@ class PcTouchPad(context: Context, private val onState: (PadState) -> Unit) : Vi
     private val dpadBits = HashMap<Int, Int>()        // pointerId -> dpad flags
     private var state = PadState()
     var alphaLevel = 0.8f; set(v) { field = v; invalidate() }
+    var sizeScale = 1f; set(v) { field = v; if (width > 0) onSizeChanged(width, height, width, height); invalidate() }
 
     override fun onSizeChanged(w: Int, h: Int, ow: Int, oh: Int) {
-        val u = min(w, h) / 10f        // base unit
+        val u = min(w, h) / 10f * sizeScale        // base unit
         val m = u * 0.5f
         val b = u * 1.05f               // face button size
         val list = ArrayList<Ctl>()
@@ -86,7 +87,7 @@ class PcTouchPad(context: Context, private val onState: (PadState) -> Unit) : Vi
                 val i = e.actionIndex
                 val c = hit(e.getX(i), e.getY(i)) ?: return owner.isNotEmpty()
                 owner[e.getPointerId(i)] = c
-                performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+                padHaptic(this)
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
                 val id = e.getPointerId(e.actionIndex)

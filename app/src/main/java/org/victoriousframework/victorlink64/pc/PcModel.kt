@@ -4,7 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /*
- * Victorious Framework: VictorLink64 "PC Games" data model.
+ * Victorious Framework: VictorLink64 "PC Streaming" data model.
  * Plain Kotlin (no Android classes) so it can be unit tested on the JVM.
  * Streaming itself is done by the vendored Moonlight core (:moonlight, GPL-3.0).
  */
@@ -105,6 +105,8 @@ data class StreamSettings(
     val touchControls: Boolean = true,
     val showStats: Boolean = false,
     val playAudioOnPc: Boolean = false,
+    /** Real controllers: swap A/B and X/Y for Nintendo-style pads whose labels sit the other way round. */
+    val swapAbxy: Boolean = false,
 ) {
     val effectiveBitrateKbps get() = if (bitrateKbps > 0) bitrateKbps else recommendedBitrateKbps(res, fps)
 
@@ -130,6 +132,18 @@ object PadFlags {
     const val START = 0x0010; const val BACK = 0x0020; const val LS_CLICK = 0x0040; const val RS_CLICK = 0x0080
     const val LB = 0x0100; const val RB = 0x0200; const val GUIDE = 0x0400
     const val A = 0x1000; const val B = 0x2000; const val X = 0x4000; const val Y = 0x8000
+}
+
+/** Remaps a real controller's face-button flag for the chosen layout; other buttons pass through. */
+fun remapFace(flag: Int, swapAbxy: Boolean): Int {
+    if (!swapAbxy) return flag
+    return when (flag) {
+        PadFlags.A -> PadFlags.B
+        PadFlags.B -> PadFlags.A
+        PadFlags.X -> PadFlags.Y
+        PadFlags.Y -> PadFlags.X
+        else -> flag
+    }
 }
 
 /** Converts a -1..1 stick value to Moonlight's signed 16-bit range. Y is flipped (up = positive). */

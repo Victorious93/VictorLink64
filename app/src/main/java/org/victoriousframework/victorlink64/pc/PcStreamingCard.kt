@@ -22,23 +22,23 @@ import org.victoriousframework.victorlink64.ui.NeonBlue
 import org.victoriousframework.victorlink64.ui.PlayBadge
 import org.victoriousframework.victorlink64.ui.clip16
 
-/** Victorious Framework: Library entry for PC Games, styled like the Chess / Zombies cards. */
+/** Victorious Framework: Library entry for PC Streaming, styled like the Chess / Zombies cards. */
 @Composable
-fun PcGamesCard() {
+fun PcStreamingCard() {
     val ctx = LocalContext.current
     Row(
         Modifier.fillMaxWidth().clip16().background(NeonBlue.copy(alpha = .12f))
             .border(1.dp, NeonBlue, RoundedCornerShape(16.dp))
-            .clickable { PcGamesActivity.launch(ctx) }
+            .clickable { PcStreamingActivity.launch(ctx) }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(Icons.Filled.Computer, null, tint = NeonBlue, modifier = Modifier.size(30.dp))
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
-            Text("PC Games", color = Color.White, fontWeight = FontWeight.Bold)
+            Text("PC Streaming", color = Color.White, fontWeight = FontWeight.Bold)
             Text("Stream games from your own PC over Wi-Fi", color = Muted, fontSize = 12.sp)
         }
-        PlayBadge("Open PC Games")
+        PlayBadge("Open PC Streaming")
     }
 }

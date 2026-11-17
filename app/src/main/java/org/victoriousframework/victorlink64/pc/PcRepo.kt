@@ -18,7 +18,7 @@ import java.security.cert.X509Certificate
  */
 class PcRepo(context: Context) {
     private val ctx = context.applicationContext
-    private val sp = ctx.getSharedPreferences("vl64_pc_games", Context.MODE_PRIVATE)
+    private val sp = ctx.getSharedPreferences("vl64_pc_streaming", Context.MODE_PRIVATE)
 
     /** Random per-install client id that the PC remembers after pairing (Moonlight does the same). */
     val uniqueId: String
@@ -41,11 +41,12 @@ class PcRepo(context: Context) {
             touchControls = sp.getBoolean("touch", true),
             showStats = sp.getBoolean("stats", false),
             playAudioOnPc = sp.getBoolean("pc_audio", false),
+            swapAbxy = sp.getBoolean("swap_abxy", false),
         )
         set(s) = sp.edit().putString("res", s.res.name).putInt("fps", s.fps).putInt("kbps", s.bitrateKbps)
             .putString("codec", s.codec.name).putString("pacing", s.pacing.name)
             .putBoolean("touch", s.touchControls).putBoolean("stats", s.showStats)
-            .putBoolean("pc_audio", s.playAudioOnPc).apply()
+            .putBoolean("pc_audio", s.playAudioOnPc).putBoolean("swap_abxy", s.swapAbxy).apply()
 
     private fun http(h: PcHost) = NvHTTP(
         ComputerDetails.AddressTuple(h.address, h.httpPort), h.httpsPort, uniqueId,
