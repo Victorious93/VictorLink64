@@ -109,3 +109,19 @@ New shared overlay for N64, SNES, PSP and GameCube plus gamepad remapping. Full 
 | Hardware pads | Keys, sticks, triggers, hat; remap screen for SNES/PSP/GC; auto-hide on connect | **Automated-tested** (bindings, events); not device-tested |
 
 — Victorious
+
+## APK Player, phase 1 2026-11-17
+
+Pick an APK, copy it into private storage, read its manifest and show a plain-language status; hand 32-bit apps to a separate armeabi-v7a-only helper app (`:box32`) that hosts the BlackBox container core. Design, engine choice, license analysis, audit of upstream code and the phase 2 translator plan: [`APK-Player-Design.md`](APK-Player-Design.md). Device checklist: [`APK-Player-Device-Test-Checklist.md`](APK-Player-Device-Test-Checklist.md).
+
+| Area | Evidence |
+| --- | --- |
+| Intake, manifest/ABI reading, status rules, private store | **Automated-tested**: 26 JVM tests against APKs compiled by `aapt2` at test time (nothing committed) |
+| APK Player screens, 64-bit-only path, bad-file path, helper hand-off, signature gates | **Observed on x86_64 emulators** (Android 14 as a 64-bit-only stand-in; Android 11 with ARM translation). Not on a phone |
+| 32-bit helper APK | **Compiled**; CI verifies it is armeabi-v7a only with six permissions |
+| BlackBox container engine | **Compiled only.** On the translated emulator its native init crashed (expected under translation; says nothing about ARM hardware). **No sandboxed app has ever been started.** Android 16 support unknown |
+| 64-bit-only phones | **Not implemented.** Plan only (phase 2) |
+
+Upstream engine code was audited and edited before use (log upload, injection hook and detection-evasion code removed; permissions cut from 323 to 5): [`third_party/blackbox/UPSTREAM.md`](../third_party/blackbox/UPSTREAM.md).
+
+— Victorious

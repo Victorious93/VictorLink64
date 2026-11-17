@@ -8,6 +8,7 @@ VictorLink64 is an Android app (fork-derived from Mupen64Plus-AE, GPL-3.0) that 
 ## Layout
 - `app/` main app module (Java upstream code under `paulscode.android.mupen64plusae`, new Kotlin/Compose code under `org.victoriousframework.victorlink64`, native SNES frontend in `app/src/main/cpp`).
 - `mupen64plus-*` modules: core, audio, input (android, raphnet), RSP (hle, cxd4, parallel), video plugins (gliden64, glide64mk2, gln64, rice, angrylion-plus, parallel). `ae-bridge`, `miniupnp-bridge`: JNI glue. `ndkLibs/`: vendored native libs. Module list is in `settings.gradle`.
+- `box32/` + `third_party/blackbox/`: the APK Player's 32-bit helper app (armeabi-v7a only, targetSdk 28) and the vendored BlackBox container core (Apache-2.0, edited; see `third_party/blackbox/UPSTREAM.md` and `NOTICE`). Main-app side lives in `org.victoriousframework.victorlink64.apkplayer`. Design: `docs/APK-Player-Design.md`.
 - `server/relay/`: Cloudflare Worker + Durable Object (`Room`) relay for room codes; deploy with `npx wrangler deploy` (needs a Cloudflare account). The app's `RELAY_URL` buildConfigField in `app/build.gradle` points at `wss://victorlink64-relay.victorlink64.workers.dev`.
 - `scripts/`: `verify_apk_payload.py` (APK structure/ROM-payload verifier) + `tests/`, `build-bsnes.sh`, `gen_icons.py`. `tools/`: upstream helper scripts (auto-build, translations).
 - Docs: `BUILDING.md`, `TESTING.md`, `ARCHITECTURE.md`, `docs/` (status, upstream audit, APK validation, NETPLAY plan, `superpowers/` plans/specs), `UPSTREAM-README.md`.

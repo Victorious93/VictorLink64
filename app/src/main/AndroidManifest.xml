@@ -50,6 +50,8 @@
         <intent>
             <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
         </intent>
+        <!-- APK Player: lets VictorLink64 see whether the 32-bit helper app is installed. -->
+        <package android:name="${helperPackage}" />
     </queries>
     
     <application
@@ -103,6 +105,11 @@
             android:name="org.victoriousframework.victorlink64.controls.ControllerMapActivity"
             android:exported="false"
             android:label="Controller buttons"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <activity
+            android:name="org.victoriousframework.victorlink64.apkplayer.ApkPlayerActivity"
+            android:exported="false"
+            android:label="APK Player"
             android:theme="@android:style/Theme.Material.NoActionBar" />
         <activity
             android:name="org.victoriousframework.victorlink64.classic.ClassicCheckActivity"
@@ -474,6 +481,17 @@
                 <action android:name="${applicationId}.action.CLEAR_RETROACHIEVEMENTS_HOST_OVERRIDE" />
             </intent-filter>
         </receiver>
+
+        <!-- APK Player: shares one stored APK at a time with the 32-bit helper through a one-time read grant. -->
+        <provider
+            android:name="org.victoriousframework.victorlink64.apkplayer.ApkShareProvider"
+            android:authorities="${applicationId}.apkshare"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/apk_share_paths" />
+        </provider>
 
         <provider
             android:name="androidx.core.content.FileProvider"
