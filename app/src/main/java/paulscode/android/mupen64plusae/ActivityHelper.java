@@ -304,7 +304,7 @@ public class ActivityHelper
         context.startActivity( new Intent( context, ManageTouchscreenProfilesActivity.class ) );
     }
     
-    static void startManageControllerProfilesActivity( Context context )
+    public static void startManageControllerProfilesActivity( Context context )
     {
         context.startActivity( new Intent( context, ManageControllerProfilesActivity.class ) );
     }

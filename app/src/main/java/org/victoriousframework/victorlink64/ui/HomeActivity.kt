@@ -412,12 +412,17 @@ fun ComingSoon(title: String, body: String, icon: ImageVector) {
 fun SettingsScreen() {
     val ctx = LocalContext.current
     val p = prefs(ctx)
-    var vibrate by remember { mutableStateOf(p.getBoolean("haptics", true)) }
+    val overlay = remember { org.victoriousframework.victorlink64.controls.ControlsPrefs.settings(ctx) }
+    var vibrate by remember { mutableStateOf(overlay.haptics) }
+    var hideWithPad by remember { mutableStateOf(overlay.hideWithController) }
     var fps by remember { mutableStateOf(p.getBoolean("show_fps", false)) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Text("Settings", fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White)
         Spacer(Modifier.height(12.dp))
-        SettingRow("Touch controls layout", "Adjust on-screen buttons") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
+        SettingRow("Controller buttons", "Remap a gamepad for SNES, PSP and GameCube") {
+            ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.controls.ControllerMapActivity::class.java))
+        }
+        SettingRow("N64 touch controls", "Classic skins and options (edit any console's layout in-game with EDIT)") { ActivityHelper.startTouchscreenPrefsActivity(ctx) }
         SettingRow("Backup & restore", "Import/export saves and settings") { ActivityHelper.startImportExportActivity(ctx) }
         SettingRow("Classic Android check", "Can this phone run old 32-bit games?") {
             ctx.startActivity(Intent(ctx, org.victoriousframework.victorlink64.classic.ClassicCheckActivity::class.java))
@@ -425,7 +430,8 @@ fun SettingsScreen() {
         SettingRow("Forget ROM folder", "Clear the selected library folder") {
             p.edit().remove(KEY_FOLDER).apply(); Toast.makeText(ctx, "Library folder cleared", Toast.LENGTH_SHORT).show()
         }
-        ToggleRow("Haptic feedback", vibrate) { vibrate = it; p.edit().putBoolean("haptics", it).apply() }
+        ToggleRow("Haptic feedback on touch controls", vibrate) { vibrate = it; overlay.haptics = it }
+        ToggleRow("Hide touch controls when a controller is connected", hideWithPad) { hideWithPad = it; overlay.hideWithController = it }
         ToggleRow("Show FPS (coming soon)", fps) { fps = it; p.edit().putBoolean("show_fps", it).apply() }
     }
 }
@@ -472,6 +478,9 @@ fun AboutScreen() {
             "licensed under the GNU GPL v2.0 or later.\n\n" +
             "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
             "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
+            "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
+            "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
+            "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +

@@ -47,6 +47,12 @@
     xmlns:mupen64="http://schemas.android.com/apk/res-auto"
     android:key="screenRoot" >
 
+    <androidx.preference.CheckBoxPreference
+        android:defaultValue="true"
+        android:key="touchscreenVictorOverlay"
+        android:summary="@string/touchscreenVictorOverlay_summary"
+        android:title="@string/touchscreenVictorOverlay_title" />
+
     <paulscode.android.mupen64plusae.preference.SeekBarPreference
         android:defaultValue="100"
         android:key="touchscreenScaleV2"
