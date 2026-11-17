@@ -29,6 +29,8 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "HELPER_PACKAGE", '"org.victoriousframework.victorlink64.box32"'
+            manifestPlaceholders = [helperPackage: "org.victoriousframework.victorlink64.box32"]
             signingConfig = signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -37,6 +39,8 @@ android {
             }
         }
         debug {
+            buildConfigField "String", "HELPER_PACKAGE", '"org.victoriousframework.victorlink64.box32.debug"'
+            manifestPlaceholders = [helperPackage: "org.victoriousframework.victorlink64.box32.debug"]
             minifyEnabled false
             jniDebuggable true
             applicationIdSuffix ".debug"
@@ -122,6 +126,37 @@ tasks.register('extractGdxNatives') {
 }
 android.sourceSets.main.jniLibs.srcDir(gdxNativesDir)
 tasks.named('preBuild') { dependsOn 'extractGdxNatives' }
+
+// Victorious Framework: APK Player tests need real compiled manifests. aapt2 (from the SDK build-tools) turns the
+// XML fixtures in src/test/apk-fixtures into tiny APKs under build/, so no APK is ever committed.
+def testApkDir = layout.buildDirectory.dir('generated/test-apks').get().asFile
+tasks.register('generateTestApks') {
+    def fixtures = fileTree('src/test/apk-fixtures') { include '*.xml' }
+    inputs.files(fixtures)
+    outputs.dir(testApkDir)
+    doLast {
+        def sdk = android.sdkDirectory
+        def buildTools = new File(sdk, 'build-tools').listFiles().findAll { new File(it, 'aapt2').exists() }.sort { it.name }
+        if (buildTools.isEmpty()) throw new GradleException("aapt2 not found under ${sdk}/build-tools")
+        def aapt2 = new File(buildTools.last(), 'aapt2').absolutePath
+        def androidJar = new File(sdk, "platforms/android-${android.compileSdkVersion.replace('android-', '')}/android.jar").absolutePath
+        testApkDir.deleteDir()
+        testApkDir.mkdirs()
+        fixtures.each { f ->
+            def out = new File(testApkDir, f.name.replace('.xml', '.apk'))
+            def proc = new ProcessBuilder(aapt2, 'link', '--manifest', f.absolutePath, '-I', androidJar, '-o', out.absolutePath)
+                .redirectErrorStream(true).start()
+            def log = proc.inputStream.text
+            if (proc.waitFor() != 0) throw new GradleException("aapt2 link failed for ${f.name}:\n${log}")
+        }
+    }
+}
+tasks.matching { it.name == 'testDebugUnitTest' || it.name == 'testReleaseUnitTest' }.configureEach {
+    dependsOn 'generateTestApks'
+}
+android.testOptions.unitTests.all {
+    it.systemProperty 'vl64.testApkDir', testApkDir.absolutePath
+}
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

@@ -28,7 +28,7 @@ Create an untracked `local.properties` containing `sdk.dir=/path/to/android-sdk`
 ./gradlew assembleDebug
 ```
 
-Output: `app/build/outputs/apk/debug/VictorLink64-debug.apk`. A clean native build of four ABIs took about 6 minutes in the verification environment (warm Gradle cache).
+Output: `app/build/outputs/apk/debug/VictorLink64-debug.apk`, plus the APK Player's 32-bit helper `box32/build/outputs/apk/debug/VictorLink64-Box32-debug.apk` (armeabi-v7a only; install it from the same build as the main app). `:app:testDebugUnitTest` also runs `generateTestApks`, which compiles tiny test APKs with the SDK's `aapt2` into `app/build/` (never committed). A clean native build of four ABIs took about 6 minutes in the verification environment (warm Gradle cache).
 
 ## Verify
 
