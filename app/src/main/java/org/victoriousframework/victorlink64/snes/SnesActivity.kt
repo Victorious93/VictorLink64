@@ -175,8 +175,8 @@ class SnesActivity : ComponentActivity(), SurfaceHolder.Callback {
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = SnesCore.nativeSetSurface(holder.surface)
     override fun surfaceDestroyed(holder: SurfaceHolder) = SnesCore.nativeSetSurface(null)
 
-    override fun onPause() { super.onPause(); paused = true; pad.onPause() }
-    override fun onResume() { super.onResume(); paused = false; pad.onResume() }
+    override fun onPause() { super.onPause(); paused = true; if (::pad.isInitialized) pad.onPause() }
+    override fun onResume() { super.onResume(); paused = false; if (::pad.isInitialized) pad.onResume() }
     override fun onDestroy() {
         running = false
         loop?.join(2000)

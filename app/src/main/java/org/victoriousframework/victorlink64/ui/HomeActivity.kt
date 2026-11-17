@@ -478,6 +478,9 @@ fun AboutScreen() {
             "licensed under the GNU GPL v2.0 or later.\n\n" +
             "GameCube emulation uses Dolphin by the Dolphin Emulator Project and contributors (libretro port, " +
             "https://github.com/libretro/dolphin), licensed under the GNU GPL v2.0 or later.\n\n" +
+            "The on-screen controls (analog stick, slide D-pad, analog GameCube triggers, layout editor) are original " +
+            "VictorLink64 code. Their layouts and behaviour are modelled on the official on-screen controls of Dolphin " +
+            "Android and PPSSPP (both GPL v2.0 or later); no code was copied from them.\n\n" +
             "Chess engine and all VictorLink64 screens are original code.\n\n" +
             "This program is distributed WITHOUT ANY WARRANTY. See the GNU GPL v3 " +
             "(https://www.gnu.org/licenses/gpl-3.0.html) for details. Source code: " +
