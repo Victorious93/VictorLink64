@@ -39,20 +39,21 @@ Works on its own; fleet integration (droidcommand-AI) is optional
 
 ## Coming soon
 
-> **These are plans, not finished features.** None of the items below are done yet, and you cannot use them today. The first one is being reviewed by Don; the rest are planned.
+> **Status as of 2026-11-18.** Most items below are now in the source code (merged into `main`) and build in CI, but **none has been tried on a real phone yet**, and none is in a downloadable release. The `v0.3.2-debug` release APK does not include them. Treat "merged" as "written and compiled", not "works".
 
-| Coming soon | What it means for you | Where it stands |
+| Feature | What it means for you | Where it stands |
 | --- | --- | --- |
-| **Top-quality touch controls for every console** | Better on-screen buttons, sticks, and triggers for every console, so playing on a touchscreen feels right. | In review ([PR #29](https://github.com/Victorious93/VictorLink64/pull/29)) — not released |
-| **Sharper graphics, up to 1080p** | Games drawn at up to 1080p, with optional filters and shaders for a different look, plus **Auto Best Settings** that picks good settings for your phone. | Planned |
-| **Optional Shizuku tweaks** | If you already use the Shizuku app, extra phone-level tweaks to help games run better. You will never need it to play. | Planned |
-| **Stream games from your own PC** | Play games from your own computer on your phone over your home network, using Moonlight and Sunshine. | Planned |
+| **Top-quality touch controls for every console** | Better on-screen buttons, sticks, and triggers for every console, plus controller remapping. | Merged, not in a release, not tried on a phone |
+| **Sharper graphics, up to 1080p** | Picture-quality options per console, filters and shaders, and **Auto Best Settings** that picks settings for your phone. Not available for PS2 yet (it has its own picture-size setting). | Merged, not in a release, not tried on a phone |
+| **Optional Shizuku tweaks** | If you already use the Shizuku app, extra phone-level tweaks to help games run better. You never need it to play. | Merged, not in a release, not tried on a phone |
+| **Stream games from your own PC** | Play games from your own computer on your phone over your home network, using Moonlight and Sunshine. | Merged; never tested against a real PC |
+| **Add games in any format** | Open games stored as zip, 7z, rar, tar, and more, read straight from the file with no unpacking first. PS2 discs work only as plain files, not inside archives. | Merged, not tried on a phone |
+| **APK Player (early)** | Run an Android APK in a private sandbox through a separate 32-bit helper app, without installing the APK. Needs a phone with 32-bit support; 64-bit-only phones are not supported yet. | Merged; the container engine has never started an app |
+| **PlayStation 2** | Play PS2 discs with the LRPS2 core. You add your own PS2 BIOS. | Merged; the core has never been run on a device |
 | **Play PC games on your phone** | Run Windows PC games on the phone, in the style of Winlator. | Planned |
-| **Add games in any format** | Open games stored as zip, 7z, rar, iso, cso, chd, rvz, and more, read straight from the file with no unpacking first. | Planned |
-| **Universal APK player** | Run Android APK files without installing them, including old ones. | Planned |
-| **PS2 and PS Vita** | Emulators for PlayStation 2 and PlayStation Vita games. | Planned |
+| **PlayStation Vita** | An emulator for PlayStation Vita games. | Planned |
 
-When something here is finished and tested on a real phone, it moves up into **Features** and shows up in a new release. Until then, treat this list as a wish list, not a promise.
+Merged items are also described under **Features** with their test status. An item leaves this table once it has been tested on a real phone and shipped in a release. Until then, treat this list as a progress report, not a promise.
 
 ## Screenshots
 
