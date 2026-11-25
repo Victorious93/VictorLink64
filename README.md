@@ -9,11 +9,11 @@
 Works on its own; fleet integration (droidcommand-AI) is optional
 
 <p>
-  <a href="https://github.com/Victorious93/VictorLink64/releases"><img src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&label=Release&labelColor=041125&color=19C2FC" alt="Latest release" /></a>
-  <a href="gpl-license"><img src="https://img.shields.io/badge/License-GPL--3.0-1E78FF?style=flat-square&labelColor=041125" alt="License: GPL-3.0" /></a>
-  <a href="https://github.com/Victorious93/VictorLink64/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Victorious93/VictorLink64/build.yml?style=flat-square&label=CI&labelColor=041125&color=19C2FC" alt="CI" /></a>
-  <a href="https://victorious-framework.pages.dev"><img src="https://img.shields.io/badge/Fleet-Victorious_Framework-19C2FC?style=flat-square&labelColor=041125" alt="Victorious Framework fleet" /></a>
-  <a href="#coming-soon"><img src="https://img.shields.io/badge/Roadmap-Coming_soon-FC3640?style=flat-square&labelColor=041125" alt="Roadmap: coming soon" /></a>
+  <a href="https://github.com/Victorious93/VictorLink64/releases"><img src="https://img.shields.io/github/v/release/Victorious93/VictorLink64?include_prereleases&style=flat-square&label=Release&labelColor=0B0F1A&color=00E5FF" alt="Latest release" /></a>
+  <a href="gpl-license"><img src="https://img.shields.io/badge/License-GPL--3.0-FF2BD6?style=flat-square&labelColor=0B0F1A" alt="License: GPL-3.0" /></a>
+  <a href="https://github.com/Victorious93/VictorLink64/actions/workflows/build.yml"><img src="https://img.shields.io/github/actions/workflow/status/Victorious93/VictorLink64/build.yml?style=flat-square&label=CI&labelColor=0B0F1A&color=00E5FF" alt="CI" /></a>
+  <a href="https://victorious-framework.pages.dev"><img src="https://img.shields.io/badge/Fleet-Victorious_Framework-00E5FF?style=flat-square&labelColor=0B0F1A" alt="Victorious Framework fleet" /></a>
+  <a href="#coming-soon"><img src="https://img.shields.io/badge/Roadmap-Coming_soon-FF2BD6?style=flat-square&labelColor=0B0F1A" alt="Roadmap: coming soon" /></a>
 </p>
 
 </div>
@@ -123,6 +123,14 @@ Project layout:
 
 More detail: [`BUILDING.md`](BUILDING.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`TESTING.md`](TESTING.md),
 [`docs/NETPLAY.md`](docs/NETPLAY.md).
+
+## Victorious fleet
+
+VictorLink64 is part of the [Victorious Framework](https://victorious-framework.pages.dev), a family of Android and PC tools by Don Victor. **It works standalone; fleet integrations are optional.** Related: [droidcommand-AI](https://github.com/Victorious93/droidcommand-AI), [victorops-zombies](https://github.com/Victorious93/victorops-zombies), [ShizukuV](https://github.com/Victorious93/ShizukuV). The roster is in [victorious-fleet](https://github.com/Victorious93/victorious-fleet) and live status is in [fleet-manifest](https://github.com/Victorious93/fleet-manifest).
+
+## Contributing
+
+Issues and pull requests are welcome. Please describe what you changed and why, and keep documentation accurate to the code — do not invent features, builds, or test results.
 
 ## License
 
